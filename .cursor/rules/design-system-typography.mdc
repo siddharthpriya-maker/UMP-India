@@ -1,0 +1,30 @@
+---
+description: UMP Design System - Typography scale and rules
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Typography
+
+## Font Family
+Only Inter: `'Inter_Subset', 'Inter', sans-serif`
+
+## Scale (use explicit px in Tailwind)
+- Caption: `text-[10px]` uppercase, medium weight
+- XS: `text-[12px]` — labels, hyperlinks, descriptions
+- SM: `text-[14px]` — default UI text, buttons, filters
+- Base: `text-[16px]` — table data
+- LG: `text-[18px]` — card titles
+- XL: `text-[24px]`
+- 2XL: `text-[36px]`
+- Page title: `text-[32px] font-semibold`
+- Section title: `text-[20px] font-medium`
+
+## Weights
+- Regular: 400, Medium: 500, Semibold: 600, Bold: 700
+
+## Rules
+- DO NOT use Tailwind text size classes (text-lg, text-xl) for body text
+- DO NOT use Tailwind font weight classes (font-bold) unless requested
+- Use explicit pixel values: `text-[14px]`, `text-[12px]`
+- Line height: 1.5 for readability
