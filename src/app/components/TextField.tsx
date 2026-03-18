@@ -1,4 +1,4 @@
-import { useState, useRef, useId } from "react";
+import { useState, useRef, useId, useEffect, useCallback } from "react";
 
 interface TextFieldProps {
   label: string;
@@ -32,11 +32,28 @@ export function TextField({
   size = "default",
 }: TextFieldProps) {
   const [focused, setFocused] = useState(false);
+  const [autofilled, setAutofilled] = useState(false);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const id = useId();
 
+  const handleAnimationStart = useCallback(
+    (e: React.AnimationEvent) => {
+      if (e.animationName === "onAutoFillStart") setAutofilled(true);
+      if (e.animationName === "onAutoFillCancel") setAutofilled(false);
+    },
+    []
+  );
+
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    try {
+      if (el.matches(":-webkit-autofill")) setAutofilled(true);
+    } catch {}
+  }, []);
+
   const hasValue = value.length > 0;
-  const floated = focused || hasValue || type === "date";
+  const floated = focused || hasValue || autofilled || type === "date";
 
   const isCompact = size === "compact";
   const containerHeight = multiline ? undefined : isCompact ? 44 : 56;
@@ -133,6 +150,7 @@ export function TextField({
               onChange={(e) => onChange(e.target.value)}
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
+              onAnimationStart={handleAnimationStart}
               disabled={disabled}
               className={sharedInputClasses}
               style={

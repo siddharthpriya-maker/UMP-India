@@ -36,6 +36,7 @@ export default function App() {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/authorize" element={<AuthorizationPopupDemo />} />
+      <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<AppShell />} />
     </Routes>
   );

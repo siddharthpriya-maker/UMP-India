@@ -257,3 +257,15 @@
 html {
   font-size: var(--font-size);
 }
+
+/* Chrome autofill detection for floating-label TextField */
+@keyframes onAutoFillStart { from {} to {} }
+@keyframes onAutoFillCancel { from {} to {} }
+
+input:-webkit-autofill {
+  animation-name: onAutoFillStart;
+}
+
+input:not(:-webkit-autofill) {
+  animation-name: onAutoFillCancel;
+}
