@@ -122,15 +122,15 @@ export function PropertyPanel({ component, onClose, onUpdateProperty }: Property
             <div className="flex flex-col gap-2">
               {options.map((opt, idx) => (
                 <div key={idx} className="flex items-center gap-2">
-                  <TextField
-                    label={`Option ${idx + 1}`}
-                    size="compact"
+                  <input
                     value={opt}
-                    onChange={(v) => {
+                    onChange={(e) => {
                       const newOpts = [...options];
-                      newOpts[idx] = v;
+                      newOpts[idx] = e.target.value;
                       update("options", newOpts);
                     }}
+                    placeholder={`Option ${idx + 1}`}
+                    className="flex-1 h-[36px] px-3 border border-[#e0e0e0] rounded-[4px] text-[13px] text-[#101010] placeholder:text-[#7e7e7e] outline-none focus:border-[#004299] hover:border-[#004299] transition-colors bg-white"
                   />
                   <button
                     onClick={() => {

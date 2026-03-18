@@ -13,6 +13,7 @@ interface BuilderCanvasProps {
   onDeleteComponent: (id: string) => void;
   onReorderComponent: (id: string, newOrder: number) => void;
   onOpenCustomization: () => void;
+  onUpdateProperty?: (componentId: string, key: string, value: unknown) => void;
 }
 
 export function BuilderCanvas({
@@ -26,6 +27,7 @@ export function BuilderCanvas({
   onDeleteComponent,
   onReorderComponent,
   onOpenCustomization,
+  onUpdateProperty,
 }: BuilderCanvasProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -135,7 +137,7 @@ export function BuilderCanvas({
             >
               <GripVertical className="size-4 text-[#e0e0e0] mt-1 shrink-0 opacity-0 group-hover:opacity-100 cursor-grab transition-opacity" />
               <div className="flex-1">
-                <ComponentPreview component={comp} />
+                <ComponentPreview component={comp} onUpdateProperty={onUpdateProperty} />
               </div>
               <button
                 onClick={(e) => {
@@ -171,7 +173,12 @@ export function BuilderCanvas({
   );
 }
 
-function ComponentPreview({ component }: { component: BuilderComponent }) {
+interface ComponentPreviewProps {
+  component: BuilderComponent;
+  onUpdateProperty?: (componentId: string, key: string, value: unknown) => void;
+}
+
+function ComponentPreview({ component, onUpdateProperty }: ComponentPreviewProps) {
   const label = (component.properties.label as string) || component.label;
 
   switch (component.category) {
@@ -179,7 +186,12 @@ function ComponentPreview({ component }: { component: BuilderComponent }) {
       return <div className="h-[1px] bg-[#e0e0e0] w-full my-2" />;
     case "display":
       if (component.type === "cover_image")
-        return <CoverImagePreview />;
+        return (
+          <CoverImagePreview
+            src={(component.properties.src as string) || ""}
+            onChangeSrc={(src) => onUpdateProperty?.(component.id, "src", src)}
+          />
+        );
       if (component.type === "image")
         return (
           <div className="w-full h-[80px] bg-[#fafafa] border border-dashed border-[#e0e0e0] rounded-[8px] flex items-center justify-center text-[12px] text-[#7e7e7e]">
@@ -256,26 +268,30 @@ function InputPreview({ label }: { label: string }) {
   );
 }
 
-function CoverImagePreview() {
-  const [preview, setPreview] = useState<string | null>(null);
-
+function CoverImagePreview({
+  src,
+  onChangeSrc,
+}: {
+  src: string;
+  onChangeSrc: (dataUrl: string) => void;
+}) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = () => setPreview(reader.result as string);
+      reader.onload = () => onChangeSrc(reader.result as string);
       reader.readAsDataURL(file);
     }
   };
 
-  if (preview) {
+  if (src) {
     return (
       <div className="relative w-full h-[160px] rounded-[8px] overflow-hidden border border-[#e0e0e0]">
-        <img src={preview} alt="Cover" className="w-full h-full object-cover" />
+        <img src={src} alt="Cover" className="w-full h-full object-cover" />
         <button
           onClick={(e) => {
             e.stopPropagation();
-            setPreview(null);
+            onChangeSrc("");
           }}
           className="absolute top-2 right-2 size-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-[#fafafa] transition-colors"
         >

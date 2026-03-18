@@ -133,6 +133,7 @@ export function PageBuilder({ currentStep, onBack, onNext }: PageBuilderProps) {
           onDeleteComponent={handleDeleteComponent}
           onReorderComponent={handleReorderComponent}
           onOpenCustomization={() => setShowCustomization(!showCustomization)}
+          onUpdateProperty={handleUpdateProperty}
         />
 
         <PropertyPanel
