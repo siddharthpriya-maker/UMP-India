@@ -1,0 +1,31 @@
+---
+description: UMP Design System - Chart and data visualization guidelines
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Charts & Data Visualization
+
+## Library
+Use `recharts` for all chart components.
+
+## Color Tokens
+Apply chart CSS variables from `theme.css`:
+| Slot | Variable | Hex |
+|---|---|---|
+| 1 | `var(--chart-1)` | `#00b8f5` (Sky Blue) |
+| 2 | `var(--chart-2)` | `#21c179` (Green) |
+| 3 | `var(--chart-3)` | `#ff9d00` (Orange) |
+| 4 | `var(--chart-4)` | `#fd5154` (Red) |
+| 5 | `var(--chart-5)` | `#fed533` (Yellow) |
+
+## Patterns
+- Bar charts: rounded corners for bars
+- Donut charts: center text for metrics
+- Responsive: charts resize with container
+- Tooltips and legends follow typography scale
+
+## Currency Formatting
+- Indian Rupee: `₹` symbol
+- Indian number format: `₹10,12,950.60` (commas every 2 digits after the first 3)
+- Use `toLocaleString('en-IN')` for formatting

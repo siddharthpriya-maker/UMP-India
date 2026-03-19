@@ -1,0 +1,68 @@
+---
+description: UMP Design System - L1 Sidebar and L2 Submenu navigation components
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Sidebar (L1 Navigation)
+
+## Container
+- BG: `bg-[#e7f1f8]`
+- Width: `w-[88px]` fixed
+- Layout: vertical flex with `gap-8`
+- Position: `relative` (contains L2)
+
+## Logo
+- Size: 56px square at top
+
+## Nav Items
+- Width: `w-[60px]`
+- Icon container: `h-8 w-[60px] rounded-[32px]`
+- Active: `bg-[#b1e6fb]` (sky blue 100)
+- Hover: `hover:bg-[#fafafa]`
+- Label: `text-[10px] leading-[12px]`, bold when active
+- Icon: `size-6`
+- Spacing: `gap-4` between items
+
+## Divider
+- Between main and bottom nav
+- `bg-[#e0e0e0] h-1 w-8 rounded-[7px]`
+
+---
+
+# L2 Submenu (Settings Panel)
+
+## Trigger
+Clicking "Settings" nav item opens the L2 submenu.
+
+## Container
+- Position: `absolute left-[88px]` (adjacent to L1)
+- Width: `w-[236px]`
+- Height: full parent height
+- BG: `bg-[#e7f1f8]` (same as L1)
+- Border: `border-l border-border`
+- Top-right corner: `rounded-tr-[16px]`
+- Shadow: `shadow-[0_0_10px_rgba(0,0,0,0.15)]`
+- Padding: `pt-[22px] px-2`
+- Z-index: `z-10`
+
+## Category Headers
+- Text: `text-[12px] tracking-[0.6px] uppercase font-semibold text-[#101010] leading-[16px]`
+- Padding: `px-[12px] py-[16px]`
+- Chevron: `size-6 text-[#101010]`, hover: `hover:bg-[#e0e0e0]` (on icon only)
+- Rotates 180deg when collapsed
+
+## Menu Items
+- Layout: `flex items-center gap-[8px]`
+- Padding: `p-[12px]`
+- Border radius: `rounded-[12px]`
+- Hover: `hover:bg-[#b1e6fb]/50`
+- Active: `bg-[#b1e6fb]`
+- Icon: `size-6 text-[#101010]`
+- Label: `text-[14px] font-medium leading-[20px] text-[#101010]`
+
+## Behavior
+- Click outside closes submenu (`useRef` + `useEffect`)
+- Clicking other nav items closes submenu
+- First category expanded by default
+- Smooth transitions: `transition-colors`, `transition-transform`

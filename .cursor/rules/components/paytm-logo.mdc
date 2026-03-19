@@ -1,0 +1,18 @@
+---
+description: UMP Design System - Paytm logo placement and color rules
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Paytm Logo
+
+## On Dark Backgrounds
+Used on: `bg-[#004299]`, overlays, branded headers (login, authorization).
+- All SVG paths: `fill="white"` — entirely white, no accent colors
+- Position: top-left of container
+- Size: `w-[100px] h-[34px]`
+- Wrapper: `relative shrink-0`
+
+## Component
+- `PaytmLogoWhite` at `src/app/components/PaytmLogoWhite.tsx`
+- SVG `preserveAspectRatio` set for proper alignment

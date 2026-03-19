@@ -1,0 +1,82 @@
+---
+description: UMP Design System - TextField (Text Field_v2) — single source of truth for text/input fields
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# TextField (Text Field_v2)
+
+Shared floating-label input at `src/app/components/TextField.tsx`. **This is the only text/input field in the UMP component library.** All form text inputs, password fields, email fields, URL fields, date fields, and textareas MUST use this component.
+
+## When to Use
+- Login forms (email, password with eye toggle via `trailingIcon`)
+- Payment Pages forms (page info, settings, property panels)
+- Popup form fields (via `PopupInput` which wraps `TextField`)
+- Any form collecting text input
+
+## When NOT to Use
+- Search bars (Header, SearchWithDropdown) — standalone pill-shaped components
+- Checkboxes, toggles, radio buttons
+- File upload inputs
+- Select/dropdown menus
+- Inline row inputs (e.g., option items in PropertyPanel) — use plain `<input>`
+
+## Container
+- Height: 56px (`size="default"`), 44px (`size="compact"`)
+- **Same height in all states** (idle, focus, filled)
+- Border radius: `rounded-[4px]`
+- Border: 1px `#e0e0e0` (Normal/Filled), `#004299` (Hover/Focus), `#fd5154` (Error)
+- Background: `bg-white` (Normal), `bg-[#ebebeb]` (Disabled)
+- Padding: **16px** left/right (`px-[16px]`), **8px** top/bottom (`py-[8px]`)
+
+## Internal Layout (Filled/Focus)
+- Label height: **16px** (`leading-[16px]`)
+- Input value height: **24px** (`leading-[24px]`)
+- Math: 8px top + 16px label + 24px value + 8px bottom = **56px**
+
+## Floating Label States
+| State | Label | Border | Background |
+|---|---|---|---|
+| Normal (empty) | centered, `text-[14px] font-semibold text-[#7e7e7e]` | `#e0e0e0` | white |
+| Hover | same | `#004299` | white |
+| Focus (empty) | floats top-left, `text-[12px] font-normal text-[#7e7e7e]` | `#004299` | white |
+| Focus Filled | floated, input visible | `#004299` | white |
+| Filled (unfocused) | floated, input visible | `#e0e0e0` | white |
+| Disabled | `text-[#acacac]` | — | `#ebebeb` |
+
+## Variants
+- **Error**: border `#fd5154`, assistive text `text-[12px] text-[#fd5154]`
+- **Assistive text**: `text-[12px] text-[#101010]`
+- **Prefix**: left-aligned in `bg-[#fafafa]` with `border-r`
+- **Trailing icon**: right-aligned slot (e.g., Eye toggle)
+- **Multiline**: textarea mode with `rows` prop
+- **Compact**: `size="compact"` — 44px, `text-[13px]`
+
+## Autofill Detection
+Uses `onAnimationStart` + CSS `@keyframes onAutoFillStart` / `onAutoFillCancel` to detect Chrome autofill and float label correctly. Keyframes in `theme.css`.
+
+## Props
+```tsx
+interface TextFieldProps {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: "text" | "email" | "url" | "number" | "password" | "date";
+  disabled?: boolean;
+  error?: string;
+  assistiveText?: string;
+  required?: boolean;
+  prefix?: string;
+  trailingIcon?: React.ReactNode;
+  multiline?: boolean;
+  rows?: number;
+  size?: "default" | "compact";
+}
+```
+
+## Usage
+- **LoginPage**: `<TextField label="Mobile Number or Email" />`, `<TextField label="Paytm Password" type="password" trailingIcon={<Eye/>} />`
+- **PageInfoForm**: Form Name, URL Path (prefix), HTML Title, etc.
+- **AdditionalSettings**: Redirect URL, Success Message (multiline)
+- **PropertyPanel**: Compact variant for component properties
+- **PopupInput**: Wraps `TextField` for popup contexts

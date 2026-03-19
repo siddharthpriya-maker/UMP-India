@@ -1,0 +1,36 @@
+---
+description: UMP Design System - Pagination component
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Pagination
+
+## Layout
+- Flex: `flex items-center justify-between`
+- Page info left, navigation buttons right
+
+## Page Info (Left)
+- Text: `text-[14px] text-[#7e7e7e]`
+- Format: `"PAGE 1 OF 32"` (uppercase)
+
+## Navigation Buttons (Right)
+- Container: `flex items-center gap-2`
+- Each button:
+  - `px-4 py-2 text-[14px] text-[#101010]`
+  - `bg-white border border-[#e0e0e0] rounded-lg`
+  - `hover:bg-[#f5f9fe] transition-colors font-semibold`
+
+```tsx
+<div className="flex items-center justify-between">
+  <span className="text-[14px] text-[#7e7e7e]">PAGE 1 OF 32</span>
+  <div className="flex items-center gap-2">
+    <button className="px-4 py-2 text-[14px] text-[#101010] bg-white border border-[#e0e0e0] rounded-lg hover:bg-[#f5f9fe] transition-colors font-semibold">
+      Prev
+    </button>
+    <button className="px-4 py-2 text-[14px] text-[#101010] bg-white border border-[#e0e0e0] rounded-lg hover:bg-[#f5f9fe] transition-colors font-semibold">
+      Next
+    </button>
+  </div>
+</div>
+```

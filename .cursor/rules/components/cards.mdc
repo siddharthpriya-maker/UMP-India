@@ -1,0 +1,76 @@
+---
+description: UMP Design System - Card components (metric, action, notification, feature, consent, summary)
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Cards
+
+## Dashboard Metric Cards
+- Payments: `bg-[#F5FBFE]`, Settlement: `bg-[#F0FDF4]`, Refunds: `bg-[#FEF2F2]`
+- Shape: `rounded-[20px]`, padding: `p-5`
+- Layout: `flex flex-col gap-3`
+- Divider: `border-t border-border pt-3`
+
+## Action Cards
+- P0 (High Priority): `bg-[#ffebef]/60`, hover: `hover:bg-[#ffebef]`
+- P1 (Low Priority): `bg-[#fff8e1]/60`, hover: `hover:bg-[#fff8e1]`
+- No border/stroke, `rounded-lg`, `p-4`, `transition-colors`
+- Icon on right side
+
+## Notification Cards
+- BG: `bg-[#fafafa]` (read), `bg-[#F5F9FE]` (unread)
+- Shape: `rounded-[16px]`, padding: `p-[16px]`
+- Hover: `hover:bg-accent/50`
+- Unread indicator: `bg-primary size-2` blue dot
+
+## Summary Cards (Payments page)
+
+### Layout
+- Flex strip: `flex items-center gap-1`
+- Each card: `flex-1 rounded-[12px] p-5 flex flex-col`
+
+### Card Colors
+| Type | Background |
+|---|---|
+| Collections | `bg-[#eaf2fd]` |
+| Adjustments | `bg-[#fdeeee]` |
+| Deductions | `bg-[rgba(235,87,87,0.1)]` |
+| Settlement Processed | `bg-[rgba(39,174,95,0.1)]` |
+| Available for Settlement | `bg-[#e0f5fd]` |
+
+### Card Content
+- Label: `text-[14px] text-[#7e7e7e]`
+- Amount: `text-[20px] font-semibold text-[#101010]`
+- Link: `text-[12px] text-[#004299] font-medium hover:underline` with divider above
+
+### Operator Symbols (16×16, `shrink-0`)
+- Minus: single 2px×8px bar
+- Equals: two 1.33px×8px bars, `gap-[2px]`
+- Plus: cross of 1.33px bars
+
+## Feature / Service Cards
+- Container: `bg-white border border-[#e0e0e0] rounded-[12px] p-5 flex flex-col gap-4`
+- Hover: `hover:bg-[#f5f9fe]`
+- Icon: `size-10 rounded-[8px] bg-[#e0f5fd]`
+- Title: `text-[14px] font-semibold text-[#101010]`
+- Body: `text-[12px] text-[#7e7e7e] leading-[18px]`
+- CTA: Secondary button with `ArrowRight` (`size-3.5`)
+- Status chip: `px-2.5 py-0.5 rounded-full text-[12px] font-semibold`
+- Grid: `grid grid-cols-2 gap-6`
+
+## Device Cards (My Services)
+- Container: `bg-white border border-[#e0e0e0] rounded-[12px] p-5`
+- Header: title left + "View All" hyperlink right
+- Sub-items: `bg-[#fafafa] hover:bg-accent/50 rounded-[8px] p-3`, `gap-3`
+- Icon container: `size-10 rounded-[8px] bg-[#e0f5fd]`
+- Status text: due = `text-[#ff9d00]`, paid = `text-[#21c179]`
+
+## Consent / Agreement Cards
+- Container: `bg-white border border-[#e0e0e0] rounded-[12px] p-6 flex flex-col gap-4`
+- No hover effect
+- Title: `text-[16px] font-semibold`
+- Icon: `size-10 rounded-full` with solid semantic bg, `size-5 text-white` icon
+- Checkbox: `size-4 accent-[#004299]`, label `text-[14px]`, `items-center gap-3`
+- Links in label: `text-[#00b8f5] font-semibold hover:underline`
+- CTA: disabled state `bg-[#e0e0e0] text-[#7e7e7e] cursor-not-allowed`

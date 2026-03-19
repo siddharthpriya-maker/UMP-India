@@ -1,0 +1,48 @@
+---
+description: UMP Design System - Popup/Modal component with form, status, loader, and share variants
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Popup / Modal
+
+Component: `src/app/components/Popup.tsx`
+
+## Container
+- `bg-white w-[620px] max-h-[90vh] rounded-[4px] overflow-hidden`
+- Centered in viewport
+
+## Overlay
+- Strong: `bg-[#101010]/70`
+- Weak: `bg-[#101010]/13`
+
+## Close Button
+- `size-8 rounded-[4px] hover:bg-[#f5f9fe]`
+- Icon: `size-6 text-[#101010]`
+
+## Title
+- `text-[32px] font-bold leading-[36px] text-[#101010]`
+
+## Subtext
+- `text-[14px] leading-[20px] text-[#101010]`
+
+## Content Area
+- Padding: `px-8`
+- Gap: `gap-8` between sections
+
+## Footer Bar
+- Sky blue strip: `#00b8f5` (8px height)
+- Navy strip: `#012a72` (8px height)
+- Full width at bottom
+
+## Types
+| Type | Layout | Close Button |
+|---|---|---|
+| `status` | centered content | yes |
+| `form` | left-aligned fields | yes |
+| `loader` | centered spinner | no, auto-dismisses |
+| `share` | share options | yes |
+
+## Form Popup Fields
+- Uses `PopupInput` which wraps `TextField` internally
+- Maintains external API compatibility

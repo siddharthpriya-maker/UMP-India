@@ -1,0 +1,43 @@
+---
+description: UMP Design System - Authorization page (standalone full-screen, no sidebar/header)
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Authorization Page
+
+## Layout
+- Standalone full-screen (NO sidebar, NO header)
+- Top-level route outside `AppShell`
+- Page wrapper: `flex items-center justify-center min-h-screen bg-[#f5f9fe] p-6`
+
+## Card
+- `bg-white w-[620px] rounded-[4px] overflow-hidden`
+
+## Branded Header
+- `bg-[#004299]`
+- White Paytm logo top-left
+- `gap-[28px]` between logo and title+email group
+- Title+email grouped with `gap-3`
+- App name highlighted in `text-[#00b8f5]`
+
+## Permission Icons
+- Container: `bg-[#fafafa]` (neutral) — NOT `bg-[#e0f5fd]`
+
+## Checkbox Consent
+- No background card
+- `items-center` alignment
+- Checkbox + text inline with `gap-3`
+- Text: `text-[12px] leading-[20px]`
+
+## Disclaimer
+- `gap-0` between lines
+- First line: `text-[12px]`
+- Second line: `text-[10px]`
+
+## Buttons
+- Cancel (Medium emphasis) and Authorize (High emphasis)
+- Both `flex-1` for equal width
+
+## Footer Bar
+- Sky blue `#00b8f5` (8px) + Navy `#012a72` (8px) strip at bottom

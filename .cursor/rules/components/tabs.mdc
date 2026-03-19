@@ -1,0 +1,46 @@
+---
+description: UMP Design System - Primary and Secondary tab components
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Tabs
+
+## Primary Tabs
+Used for top-level page navigation within a section.
+
+| State | Style |
+|---|---|
+| Active | `text-[18px] font-bold text-[#004299]` + 4px underline `bg-[#004299]` |
+| Inactive | `text-[18px] font-normal text-[#101010]`, no underline |
+| Hover | `text-[18px] font-normal text-[#101010]` + 4px underline `bg-[#e0e0e0]` |
+
+- Gap between tabs: `32px`
+- Full-width 1px `bg-[#e0e0e0]` separator below
+- Optional badge: `bg-[#004299]` pill, `text-[10px] font-medium text-white`
+
+## Secondary Tabs
+Used for sub-navigation within a card or section.
+
+- Height: `h-[32px]`
+- Shape: `rounded-[8px]`
+- Padding: `px-[12px] py-[4px]`
+- Gap: `16px` (default, configurable)
+
+### Flat Variant
+| State | Style |
+|---|---|
+| Active | `bg-[#004299] text-white font-semibold text-[14px]` |
+| Inactive | `bg-[#f5f9fe] text-[#101010] font-normal text-[14px]` |
+| Hover | `bg-[#e0e0e0]` |
+
+### Outlined Variant
+| State | Style |
+|---|---|
+| Active | `bg-[#004299] text-white font-semibold text-[14px]` |
+| Inactive | `bg-white border border-[#cacaca] text-[#101010] font-normal text-[14px]` |
+| Hover | `border-[#7e7e7e]` |
+
+### Badge
+- Active tab: `bg-white text-[#004299]`
+- Inactive tab: `bg-[#004299] text-white`

@@ -1,0 +1,35 @@
+---
+description: UMP Design System - Login page component (default landing route)
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Login Page
+
+Component: `src/app/components/LoginPage.tsx`
+Route: `/login` (default landing — `/` redirects to `/login`)
+
+## Layout
+- Full screen, two-panel: left branded + right form
+- Left panel: `bg-[#004299]` gradient, centered white Paytm logo, phone mockup carousel
+- Right panel: white, form centered with `max-w-[400px]`
+
+## Form Fields
+- Uses `TextField` component for both email and password
+- Email: `<TextField label="Mobile Number or Email" />`
+- Password: `<TextField label="Paytm Password" type="password" trailingIcon={<Eye|EyeOff/>} />`
+
+## Button States
+- **Disabled** (empty fields): `bg-[#ebebeb] text-[#acacac] cursor-not-allowed`
+- **Enabled** (both filled): `bg-[#004299] text-white hover:bg-[#009de5]`
+- Logic: `isDisabled = !email.trim() || !password.trim()`
+- On click: `navigate("/home")`
+
+## Links
+- "Forgot Password": Subtle hyperlink, `ml-auto` (right-aligned)
+- "terms of use", "privacy policy": Subtle hyperlinks (`font-normal`)
+- "Create an account": Strong hyperlink (`font-semibold`)
+
+## Autofill Handling
+- Chrome autofill detection via `onAnimationStart` + CSS `@keyframes`
+- Labels float correctly when browser autofills credentials

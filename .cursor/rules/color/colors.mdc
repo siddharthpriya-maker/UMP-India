@@ -1,0 +1,59 @@
+---
+description: UMP Design System - Color tokens, semantic colors, and usage rules
+globs: **/*.tsx,**/*.css
+alwaysApply: false
+---
+
+# Color System
+
+All colors must use CSS variables from `/src/styles/theme.css` or the semantic tokens below. Reference: `/src/imports/SemanticsColorTokens.tsx`.
+
+## Primary Colors
+| Token | Hex | Alias | Usage |
+|---|---|---|---|
+| Background Primary 1 Strong | `#00b8f5` | sky_blue_400 | Brand primary, `var(--primary)` |
+| Background Primary 2 Strong | `#004299` | navy_blue_650 | Hyperlinks, CTA buttons |
+| Background Primary Weak | `#e0f5fd` | sky_blue_50 | Icon containers, subtle highlights |
+| Background Primary Medium | `#b1e6fb` | sky_blue_100 | Sidebar active state |
+
+## Semantic State Colors
+| State | Strong | Weak | Weak Usage |
+|---|---|---|---|
+| Positive (Success) | `#21c179` (green_400) | `#e3f6ec` (green_50) | Status chips, badges |
+| Notice (Warning) | `#ff9d00` (orange_700) | `#fff8e1` (orange_50) | P1 cards at 60% opacity |
+| Negative (Error) | `#fd5154` (red_400) | `#ffebef` (red_50) | P0 cards at 60% opacity, validation |
+
+## Neutral Colors
+| Token | Hex | CSS Variable | Usage |
+|---|---|---|---|
+| Foreground | `#101010` | `var(--foreground)` | Body text, headings |
+| Muted Foreground | `#7e7e7e` | `var(--muted-foreground)` | Labels, descriptions, placeholders |
+| Border | `#e0e0e0` | `var(--border)` | Borders, dividers, separators |
+| Background | `#ffffff` | `var(--background)` | Page backgrounds |
+| Surface Level 3 | `#fafafa` | `var(--surface-level-3)` | Table headers, card sub-sections |
+| Offset Weak | `#f5f9fe` | — | Search bars, input hover, subtle BG |
+| Sidebar BG | `#e7f1f8` | — | L1/L2 navigation background |
+| Disabled BG | `#ebebeb` | — | Disabled buttons, disabled inputs |
+| Disabled Text | `#acacac` | — | Disabled text content |
+
+## Chart Colors
+| Slot | Hex | CSS Variable |
+|---|---|---|
+| Chart 1 | `#00b8f5` | `var(--chart-1)` |
+| Chart 2 | `#21c179` | `var(--chart-2)` |
+| Chart 3 | `#ff9d00` | `var(--chart-3)` |
+| Chart 4 | `#fd5154` | `var(--chart-4)` |
+| Chart 5 | `#fed533` | `var(--chart-5)` |
+
+## Icon Colors
+- Container BG: `#e0f5fd` (Primary Weak)
+- Icon body/background: `white` (literal `fill="white"`)
+- Icon detail: `#101010` via `currentColor` — ALL icons use this single dark color
+- NEVER use `#004299` or `#00b8f5` inside SVGs — those are for links and buttons only
+
+## Rules
+- Use semantic color names in documentation, not raw hex
+- Opacity via Tailwind `/60` syntax: `bg-[#ffebef]/60`
+- Hyperlinks always `#004299`, destructive actions `var(--destructive)`
+- Don't mix semantic tokens with arbitrary hex — be consistent
+- SVG icons MUST use `currentColor` — see `icons/icons.mdc`

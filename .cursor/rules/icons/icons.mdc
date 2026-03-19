@@ -1,0 +1,116 @@
+---
+description: UMP Design System - SVG icon standards, sizing, color patterns, sources, and usage rules
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# SVG Icon System
+
+## Icon Categories & Sizes
+
+| Category | Tailwind | Pixels | ViewBox | Usage |
+|---|---|---|---|---|
+| Nav (L1 Sidebar) | `size-6` | 24×24 | `0 0 24 24` | Sidebar navigation icons |
+| L2 Submenu | `size-6` | 24×24 | `0 0 24 24` | Submenu item icons |
+| UI Actions | `size-6` | 24×24 | `0 0 24 24` | Buttons, toolbars, utility |
+| Product Illustration | `size-10` | 40×40 | `0 0 32 32` | Device/service cards (Card Machine, Sound Box) |
+| Inline Small | `size-4` | 16×16 | `0 0 24 24` | Chevrons, copy buttons, status |
+| Inline Medium | `size-5` | 20×20 | `0 0 24 24` | Status icons, search icon |
+| Promo/Feature | `size-6`–`size-8` | 24–32 | `0 0 24 24` | Feature cards (Connect Plus) |
+
+## Color Patterns
+
+### 1. `currentColor` Inheritance (REQUIRED for all icons)
+All SVG icons MUST use `currentColor` instead of hardcoded hex. The parent controls color via Tailwind `text-[color]`.
+
+```tsx
+// CORRECT
+<path stroke="currentColor" fill="currentColor" />
+<path fill="white" />  /* body fills only */
+
+// WRONG
+<path stroke="#004299" fill="#004299" />
+<path stroke="#101010" fill="#101010" />
+```
+
+### 2. Duo-Tone Pattern (Product & Feature Icons)
+- **Body shapes**: `fill="white"`
+- **Detail strokes/fills**: `stroke="currentColor"` / `fill="currentColor"`
+- **Resolved color**: `#101010` (Foreground) — inherited from parent
+- Container does NOT set explicit `text-[color]`
+
+### 3. Sidebar Icon Pattern
+Same `#101010` foreground with `white` body fills. Size: `size-6`.
+
+### 4. UI/Action Icons (Icons.tsx)
+Simple outline icons: `stroke="currentColor"`, `strokeWidth="2"`, `fill="none"`. Accept `className` prop.
+
+## Component Structure
+
+```tsx
+interface IconProps { className?: string; }
+
+function MyIcon({ className = "size-6" }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <path d="..." stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+```
+
+### Product Icon (32×32 viewBox)
+```tsx
+function ProductIcon() {
+  return (
+    <svg className="size-10" viewBox="0 0 32 32" fill="none">
+      <path d="..." fill="white" />
+      <path d="..." stroke="currentColor" />
+      <path d="..." fill="currentColor" />
+    </svg>
+  );
+}
+```
+
+## Icon Containers
+
+| Context | Container Class |
+|---|---|
+| Device/service card | `size-10 rounded-[8px] bg-[#e0f5fd] flex items-center justify-center` |
+| Promo card | `size-12 rounded-[12px] bg-[#e0f5fd] flex items-center justify-center` |
+| Circular (status) | `size-10 rounded-full bg-[#e3f6ec] flex items-center justify-center` |
+
+## Icon Source Priority
+1. **Figma SVG export** — product illustrations
+2. **`Icons.tsx` library** (`/src/app/components/Icons.tsx`) — 90+ generic UI icons
+3. **Lucide React** — supplementary only (`ChevronRight`, `X`, `Download`, etc.)
+4. **Imported SVGs** (`/src/imports/`) — legacy Paytm brand icons
+
+## Icon Colors by Semantic Meaning
+| Meaning | Color |
+|---|---|
+| Default | `currentColor` (inherits `#101010`) |
+| Primary action | `text-[#00b8f5]` |
+| Success | `text-[#21c179]` |
+| Warning | `text-[#ff9d00]` |
+| Error | `text-[#fd5154]` |
+| Muted | `text-[#7e7e7e]` |
+
+## Rules
+
+### DO
+- Use `currentColor` for all stroke/fill (except `white` body fills)
+- Use `viewBox` for scalability — never set fixed `width`/`height` in SVG attrs
+- Size via Tailwind: `className="size-6"`
+- Use `fill="none"` on root `<svg>`
+- Add `strokeLinecap="round"`, `strokeLinejoin="round"`
+- Wrap in bg container for card contexts
+
+### DO NOT
+- Hardcode hex in SVG paths
+- Use `#00b8f5`, `#004299`, or `#101010` directly in SVGs
+- Mix icon sizing conventions
+- Use raster `<image>` inside SVGs
+- Add `width`/`height` attrs to `<svg>` — use `className`
+- Create icons < `size-5` for touch targets
+- Use Lucide when matching icon exists in `Icons.tsx`

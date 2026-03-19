@@ -1,0 +1,38 @@
+---
+description: UMP Design System - Unified search widget with dropdown type selector
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Search with Dropdown
+
+Combined dropdown selector + search input in a single bordered container.
+Component: `src/app/components/SearchWithDropdown.tsx`
+
+## Container
+- `bg-white border border-[#e0e0e0] rounded-lg h-[40px]`
+- Default width: `w-[560px]`
+- Overflow: `overflow-hidden`
+- Alignment: `ml-auto` (pushes to right)
+
+## Left Section (Type Dropdown)
+- Trigger: transparent bg, `hover:bg-[#f5f9fe]`, `h-[40px]`, `px-3 py-2`
+- Text: `text-[14px] font-semibold text-[#101010]`, `whitespace-nowrap`
+- Chevron: `size-4`, rotates 180deg when open
+- Options: Transaction ID, Order ID, Refund ID, RRN
+- Dropdown menu: `bg-white border rounded-lg shadow-lg w-[180px] z-10`
+
+## Divider
+- `h-full w-[1px] bg-[#e0e0e0]`
+
+## Right Section (Search Input)
+- Container: `flex-1 flex items-center px-3`
+- Search icon: `size-5 text-[#7e7e7e] mr-2`
+- Input: `flex-1 bg-transparent text-[14px] font-semibold text-[#101010]`
+- Placeholder: `text-[#7e7e7e]`, dynamic based on selected filter
+
+## Behavior
+- Click outside closes dropdown
+- Selecting option updates filter + closes dropdown
+- Placeholder updates dynamically
+- This is a standalone search — does NOT use `TextField`

@@ -1,0 +1,26 @@
+---
+description: UMP Design System - Connect Plus activation flow (service card → consent → loader → enabled)
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Connect Plus Activation Flow
+
+## Default State
+- "Get Started" CTA in Grow your Business grid → opens form popup
+
+## Form Popup
+- Checkbox consent → "Accept and Continue" CTA
+- Uses consent card pattern (see `cards.mdc`)
+
+## Loader Popup
+- `type="loader"`, no close button
+- Auto-dismisses after 6 seconds
+
+## After Loader
+- Opens new tab + sets enabled state on current page
+
+## Enabled State
+- Card moves from "Grow your Business" to "My Services" section
+- Displayed with "Enabled" status chip + "Open Connect Plus" CTA
+- Constrained to first-column width via `grid grid-cols-2 gap-6` wrapper

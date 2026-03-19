@@ -1,0 +1,58 @@
+---
+description: UMP Design System - Button_v2 component with emphasis, size, icon, and state variants
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Buttons (Button_v2)
+
+All buttons: `rounded-[8px] font-semibold transition-colors`, centered text+icon layout.
+
+## Props
+- `emphasis`: High | Medium | Low
+- `size`: Large | Medium | Small
+- `icon`: None | Leading | Trailing | Both | Only
+- `state`: Normal | Hover | Loading
+- `enabled`: boolean
+
+## Emphasis Levels
+
+### High (Primary)
+- `bg-[#004299] text-white`
+- Hover: `hover:bg-[#009de5]`
+
+### Medium (Secondary)
+- `border border-[#004299] text-[#004299]`
+- Hover: `hover:bg-[#e7f1f8] hover:border-[#009de5] hover:text-[#009de5]`
+
+### Low (Tertiary)
+- `bg-[#e7f1f8] text-[#004299]`
+- Hover: `hover:bg-[#f5f9fe] hover:text-[#009de5]`
+
+## Sizes
+
+| Size | Padding | Min Width | Text | Height |
+|---|---|---|---|---|
+| Large | `p-4` | `min-w-[120px]` | `text-[16px] leading-[20px]` | 56px |
+| Medium | `px-4 py-2.5` | `min-w-[120px]` | `text-[14px] leading-[20px]` | 40px |
+| Small | `px-4 py-2` | `min-w-[80px]` | `text-[12px] leading-[16px]` | 32px |
+
+## States
+
+### Disabled (all emphasis levels)
+- `bg-[#ebebeb] text-[#acacac] opacity-64 cursor-not-allowed`
+
+### Loading
+- Replace label with animated dots, same container styling
+
+## Icon Variants
+- **Leading/Trailing**: icon + label in row, `gap-2`
+- **Both**: leading icon + label + trailing icon
+- **Only**: square (56×56 / 40×40 / 32×32), icon centered, no label
+
+## Special Buttons
+- **"Save & Publish"**: success green `bg-[#21c179] hover:bg-[#1aa866]`
+- **"Settle Now"**: small primary `bg-[#004299] text-white text-[12px] px-4 py-2 rounded-[8px]`
+
+## Legacy CTA Pattern (from Guidelines.md)
+Some older pages use: `bg-[#004299] text-white text-[14px] font-semibold px-6 py-3 rounded-lg hover:bg-[#003377]`. Prefer Button_v2 for new code.

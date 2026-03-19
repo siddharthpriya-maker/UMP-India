@@ -1,0 +1,56 @@
+---
+description: UMP Design System - Typography scale, font weights, and usage rules
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Typography
+
+## Font Family
+Only Inter: `'Inter_Subset', 'Inter', sans-serif` — defined in `/src/styles/theme.css`.
+
+## Scale
+Use explicit pixel values in Tailwind (`text-[Npx]`). Never use Tailwind's named sizes for body text.
+
+| Name | Size | CSS Variable | Weight | Usage |
+|---|---|---|---|---|
+| Caption | `text-[10px]` | `var(--text-caption)` | medium, uppercase | Tiny labels |
+| XS | `text-[12px]` | `var(--text-xs)` | varies | Labels, hyperlinks, descriptions, section headers |
+| SM | `text-[14px]` | `var(--text-sm)` | varies | Default UI text, buttons, filters, row data |
+| Base | `text-[16px]` | `var(--text-base)` | varies | Table data (some views), consent card titles |
+| LG | `text-[18px]` | `var(--text-lg)` | semibold | Card titles, primary tab labels |
+| XL | `text-[24px]` | `var(--text-xl)` | varies | — |
+| 2XL | `text-[32px]` | — | semibold | Page titles (`h1`) |
+| 3XL | `text-[36px]` | `var(--text-2xl)` | bold | Hero amounts in drawers |
+
+## Heading Hierarchy
+- **Page title (h1)**: `text-[32px] font-semibold text-[#101010]`
+- **Section title (h2)**: `text-[20px] font-medium text-[#101010]`
+- **Card title (h3)**: `text-[18px] font-semibold text-[#101010]`
+- **Subtitle/description**: `text-[12px] text-[#7e7e7e]`
+
+## Font Weights
+| Name | Value | CSS Variable | Tailwind |
+|---|---|---|---|
+| Regular | 400 | `var(--font-weight-regular)` | `font-normal` |
+| Medium | 500 | `var(--font-weight-medium)` | `font-medium` |
+| Semibold | 600 | `var(--font-weight-semibold)` | `font-semibold` |
+| Bold | 700 | `var(--font-weight-bold)` | `font-bold` |
+
+## Line Heights
+- Default: `1.5` for readability
+- Compact: `leading-[16px]` for labels, `leading-[20px]` for buttons, `leading-[24px]` for row data
+- Large: `leading-[40px]` for hero amounts
+
+## Section Header Labels
+Uppercase labels used in tables, filters, and drawer section headers:
+```
+text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold
+```
+
+## Rules
+- DO NOT use Tailwind named text sizes (`text-lg`, `text-xl`, `text-2xl`) for body text
+- DO NOT use Tailwind named font weights (`font-bold`) unless specifically requested
+- Use explicit pixel values: `text-[14px]`, `text-[12px]`
+- Default heading styles in `theme.css` (h1–h4, p, label, button, input)
+- Indian Rupee: `₹` symbol, commas in Indian format: `₹10,12,950.60`

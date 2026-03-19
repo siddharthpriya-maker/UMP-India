@@ -1,0 +1,41 @@
+---
+description: UMP Design System - Hyperlink styling (Strong and Subtle variants)
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Hyperlinks
+
+## Strong (Primary Action Links)
+Used for: "Create an account", "View All", "Learn More", "View Breakdown"
+```
+text-[#004299] hover:underline font-semibold
+```
+
+## Subtle (Secondary/Auxiliary Links)
+Used for: "Forgot Password", "terms of use", "privacy policy"
+```
+text-[#004299] hover:underline font-normal
+```
+
+## Size Rules
+- Default: `text-[12px]` in body copy, cards, compact layouts
+- Standalone: `text-[14px]` for prominent links
+- In larger text: match parent text size
+
+## Interactive Links (Inside Consent/Cards)
+```
+text-[#00b8f5] font-semibold hover:underline
+```
+
+## Teal Accent Links (Drawers)
+```
+text-[#00b8f5] font-semibold hover:underline
+```
+Used for: "Need Help?", "Download", "Reward Points Payment Detail"
+
+## Rules
+- Always `hover:underline` for clean appearance
+- Hyperlinks default to navy blue `#004299`
+- Only hyperlink text inside charges column gets `font-semibold` — see `payment-settings.mdc`
+- Never use `text-decoration: underline` as default state

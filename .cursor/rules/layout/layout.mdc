@@ -1,0 +1,105 @@
+---
+description: UMP Design System - Page layout, spacing, borders, shadows, responsive patterns, interactions
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Layout & Spacing
+
+## Page Container
+- Padding: `px-[32px] pt-[12px] pb-[32px]`
+- Background: `bg-[#ffffff]` (`bg-white`)
+- Min height: `min-h-full`
+- Section gap: `gap-4 md:gap-6`
+
+```tsx
+<div className="flex flex-col gap-4 md:gap-6 bg-white min-h-full px-[32px] pt-[12px] pb-[32px]">
+```
+
+## Edge-to-Edge Separators
+Full-width lines that span outside the page padding:
+```tsx
+<div className="w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]" />
+```
+
+## Border Radius
+| Element | Radius | Tailwind |
+|---|---|---|
+| Button | 8px | `rounded-[8px]` |
+| Default | 8px | `rounded-lg` |
+| Card | 12px | `rounded-[12px]` |
+| Dashboard cards | 20px | `rounded-[20px]` |
+| TextField | 4px | `rounded-[4px]` |
+| Dropdown menu | 8px | `rounded-lg` |
+| Full-round (avatar, pill) | 50% | `rounded-full` |
+
+## Shadows & Elevation
+- Small: `shadow-elevation-sm` → `0 8px 16px rgba(16,16,16,0.07)` — use sparingly for cards, dropdowns
+- Drawer: `shadow-[-4px_0_24px_rgba(0,0,0,0.08)]`
+
+## Component Internal Padding
+- Cards: `p-5` (20px)
+- Table cells: `px-6 py-4` (rows), `px-6 py-3` (headers)
+- Modals/Popups: `px-8`
+- Drawers: `px-6`
+
+## Spacing Patterns
+- Section gaps: `gap-4 md:gap-6`
+- Card grid gaps: `gap-4` or `gap-6`
+- Summary card strip: `gap-1` (4px) between cards + operator symbols
+- Filter row gaps: `gap-5` (20px desktop), `gap-[15px]` (mobile)
+
+## Scrollbar Styling
+```
+[&::-webkit-scrollbar]:w-2
+[&::-webkit-scrollbar-track]:bg-transparent
+[&::-webkit-scrollbar-thumb]:bg-gray-300
+[&::-webkit-scrollbar-thumb]:rounded-full
+[&::-webkit-scrollbar-thumb]:hover:bg-gray-400
+```
+
+## Interaction Patterns
+
+### Hover States
+- Cards: opacity change (60% → 100%) or background color change
+- Buttons: background color lightening/darkening
+- Links: underline appearance
+- Dropdowns/rows: `hover:bg-[#f5f9fe]`
+
+### Transitions
+- Colors: `transition-colors`
+- Shadows: `transition-shadow`
+- Icon rotations: `transition-transform`
+- Duration: default Tailwind timing (150–200ms)
+
+### Click Outside Detection
+```tsx
+const ref = useRef<HTMLDivElement>(null);
+useEffect(() => {
+  const handler = (e: MouseEvent) => {
+    if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+  };
+  document.addEventListener("mousedown", handler);
+  return () => document.removeEventListener("mousedown", handler);
+}, []);
+```
+
+## Responsive Design
+- Mobile-first: `sm:`, `md:`, `lg:` breakpoints
+- Grid: `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
+- Flex direction: `flex-col sm:flex-row`
+- Spacing: `gap-4 md:gap-6`
+- Padding: `p-4 md:p-6 lg:p-8`
+
+## Date & Time Formatting
+- Date: "Today, 24 Jan" / "Yesterday, 23 Jan"
+- Time: "7:30 AM, 23 Sep" / "8:00 AM Everyday"
+- Use relative dates when appropriate
+
+## Common Mistakes
+- DO NOT use arbitrary hex without design system reference
+- DO NOT hardcode spacing values — use Tailwind spacing scale
+- DO NOT forget transitions on interactive elements
+- DO use CSS variables from theme.css
+- DO provide hover states for all interactive elements
+- DO ensure mobile responsiveness

@@ -1,0 +1,47 @@
+---
+description: UMP Design System - Payment Pages (SwiftPay Builder) dashboard, wizard, and builder specs
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Payment Pages (SwiftPay Builder)
+
+## Dashboard (`/payment-pages`)
+- Standard page pattern: `px-[32px] pt-[12px] pb-[32px] bg-white min-h-full`
+- Action bar: "Create Page" Primary CTA (High emphasis, `Plus` icon) + search + filters
+- Table: `grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr]`, without vertical separators
+- Status chips: Active `text-[#21c179] bg-[#e3f6ec]`, Expired `text-[#fd5154] bg-[#ffebef]`, Draft `text-[#7e7e7e] bg-[#fafafa]`
+- Actions: kebab menu (Share, Download QR, Edit, Expire/Reactivate, Delete)
+
+## Create Page Entry
+- Popup (`type="form"`) with 4 option cards
+- Each card: `border border-[#e0e0e0] rounded-[12px] p-5 hover:bg-[#f5f9fe]`
+- Icon: `size-10 rounded-[8px] bg-[#e0f5fd]`
+
+## Step Wizard
+- 3 steps: Page Information → Page Builder → Additional Settings
+- Active: `bg-[#004299] text-white` circle
+- Completed: `bg-[#21c179]` with check
+- Upcoming: `bg-[#e0e0e0]`
+- Connected by `h-[2px]` lines (green if completed)
+
+## Step 1: Page Information
+- Centered form `max-w-[640px]`
+- All inputs use `TextField` (floating-label, 56px, `rounded-[4px]`)
+- Fields: Form Name, URL Path (prefix), HTML Title, Support Contact/Email, Freeze Date
+- Cover Image has moved to Step 2
+
+## Step 2: Page Builder
+- Three-panel: Palette `w-[280px]` | Canvas `flex-1` | Properties `w-[320px]`
+- **Palette**: categorised draggable components (Display, Layout, Input, Choices, Date, Pricing, Verification, Address, eCommerce, Other)
+- **Display** includes Cover Image (drag-and-drop upload, PNG/JPG up to 5MB)
+- **Canvas**: `bg-[#fafafa]`, drop zone `border-[#004299] bg-[#f5f9fe]`, selected `border-[#004299]`
+- Input previews: `h-[56px] border border-[#e0e0e0] rounded-[4px]` floating-label style
+- **Properties**: Label, Placeholder, Required/Show toggles, Options list, Validation
+- HTML5 Drag and Drop (no external dependency)
+
+## Step 3: Additional Settings
+- Primary tabs: Post Transaction | Notifications
+- Post Transaction: Redirect URL, Success Message
+- Notifications: SMS toggle + text, Email toggle + subject + body
+- "Save & Publish": `bg-[#21c179] hover:bg-[#1aa866]`

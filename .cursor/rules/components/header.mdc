@@ -1,0 +1,31 @@
+---
+description: UMP Design System - Top header bar with search, actions, and profile avatar
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Header
+
+## Container
+- Layout: flex row with responsive stacking
+- Padding: `px-4 md:px-6 lg:px-8 py-3`
+
+## Search Bar
+- BG: `bg-[#f5f9fe]`
+- Border radius: `rounded-[100px]` (pill)
+- Padding: `p-3 md:p-4`
+- Max width: `md:max-w-[560px] lg:w-[560px]`
+- Icon: `Search size-6`
+- Input: transparent bg, placeholder styling
+- This is a standalone search — does NOT use `TextField`
+
+## Action Links
+- "What's New" and "Contact Us" — hidden on mobile
+- Standard hyperlink styling
+
+## Profile Avatar
+- BG: `bg-[#f5f9fe]`
+- Border: `border border-[#e0e0e0]`
+- Size: `size-9 md:size-10`
+- Shape: `rounded-full`
+- Content: bold initials centered
