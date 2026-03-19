@@ -3,6 +3,7 @@ import { ChevronDown, Copy, Download, RefreshCw, ChevronRight } from "lucide-rea
 import { SecondaryButton } from "./SecondaryButton";
 import { TertiaryButton } from "./TertiaryButton";
 import { SearchWithDropdown } from "./SearchWithDropdown";
+import { PaymentDetailDrawer } from "./PaymentDetailDrawer";
 import SuccessSmall from "../../imports/SuccessSmall";
 
 // Mock data for payments
@@ -54,6 +55,7 @@ export function PaymentsPage() {
   const [statusFilter, setStatusFilter] = useState("Success");
   const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<(typeof mockTransactions)[number] | null>(null);
 
   const dateDropdownRef = useRef<HTMLDivElement>(null);
   const statusDropdownRef = useRef<HTMLDivElement>(null);
@@ -332,6 +334,7 @@ export function PaymentsPage() {
           {mockTransactions.map((transaction, index) => (
             <div
               key={transaction.id}
+              onClick={() => setSelectedTransaction(transaction)}
               className={`grid grid-cols-[90px_1fr_110px_130px_140px_130px_40px] gap-8 px-6 py-4 hover:bg-[#f5f9fe] transition-colors cursor-pointer items-center ${
                 index < mockTransactions.length - 1 ? "border-b border-[#e0e0e0]" : ""
               }`}
@@ -372,6 +375,13 @@ export function PaymentsPage() {
           </button>
         </div>
       </div>
+
+      {/* Payment Detail Drawer */}
+      <PaymentDetailDrawer
+        open={!!selectedTransaction}
+        onClose={() => setSelectedTransaction(null)}
+        transaction={selectedTransaction}
+      />
     </div>
   );
 }

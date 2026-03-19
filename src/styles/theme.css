@@ -258,6 +258,16 @@ html {
   font-size: var(--font-size);
 }
 
+/* Right drawer slide-in animation */
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.25s ease-out;
+}
+
 /* Chrome autofill detection for floating-label TextField */
 @keyframes onAutoFillStart { from {} to {} }
 @keyframes onAutoFillCancel { from {} to {} }

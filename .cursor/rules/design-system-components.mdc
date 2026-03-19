@@ -125,6 +125,54 @@ interface TextFieldProps {
 - **PropertyPanel**: Compact variant for component properties
 - **PopupInput**: Wraps `TextField` for popup form contexts
 
+## Right Drawer (Detail Panel)
+Shared slide-in drawer for displaying detailed information (payment, settlement, refund, transaction details). File: `src/app/components/RightDrawer.tsx`.
+
+### Shell (`RightDrawer`)
+- Slides in from right edge, full viewport height
+- Default width: `420px`, configurable via `width` prop
+- Overlay: `bg-[#101010]/50`, click to close
+- Shadow: `shadow-[-4px_0_24px_rgba(0,0,0,0.08)]`
+- Animate: `slideInRight 0.25s ease-out`
+- Close on `Escape` key, body scroll locked
+
+### Sub-components
+| Component | Purpose |
+|---|---|
+| `DrawerHeader` | Close (X) button left + optional actions (e.g. "Need Help?", "Download") right |
+| `DrawerBody` | Scrollable content area (`flex-1 overflow-y-auto`) |
+| `DrawerHero` | Title, large amount, subtitle, status badge (success/pending/failed/submitted) |
+| `DrawerBanner` | Info/warning/success callout with left accent border |
+| `DrawerSectionHeader` | `bg-[#f5f9fe]` full-width bar with uppercase label |
+| `DrawerRow` | Key-value pair (label left, value right) |
+| `DrawerActionRow` | Clickable action (e.g. "Initiate Refund") with icon + chevron |
+| `DrawerCard` | Bordered card with optional uppercase title header |
+| `DrawerCardRow` | Key-value inside a card (supports bold, indent, separator) |
+
+### Status Badge Colors
+- Success: `bg-[#e3f6ec]` circle, `text-[#21c179]`
+- Pending: `bg-[#fff4e0]` circle, `text-[#ff9d00]`
+- Failed: `bg-[#ffebef]` circle, `text-[#fd5154]`
+- Submitted: `bg-[#e7f1f8]` circle, `text-[#004299]`
+
+### Section Header
+- Full-width `bg-[#f5f9fe]`, `px-6 py-2.5`
+- Text: `text-[12px] uppercase tracking-[0.6px] font-semibold text-[#7e7e7e]`
+
+### Key-Value Row
+- `px-6 py-2.5`, label: `text-[14px] text-[#7e7e7e]`, value: `text-[14px] text-[#101010]`
+- Bold variant for totals/settlement amounts
+
+### Use Cases
+- **Payment Detail**: amount, FROM section, Initiate Refund CTA, customer details, payment details, amount breakdown card
+- **Settlement Detail**: settled amount, bank info + UTR, settlement invoice card, payment history list
+- **Transaction Detail**: order/transaction IDs, customer details, item details card, shipping address, discount details, payment breakup card
+
+### Interaction
+- Opens when user clicks a table row (payment, settlement, refund, transaction)
+- Row click sets selected item in state → drawer opens
+- Close via X button, Escape key, or overlay click
+
 ## Device Cards (My Services)
 - Card: `bg-white border border-[#e0e0e0] rounded-[12px] p-5`, header has title left + "View All" hyperlink right
 - Sub-items: `bg-[#fafafa] hover:bg-accent/50 rounded-[8px] p-3`, gap between items: `gap-3` (12px)
