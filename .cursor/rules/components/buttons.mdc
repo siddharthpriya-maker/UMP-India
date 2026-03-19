@@ -54,5 +54,5 @@ All buttons: `rounded-[8px] font-semibold transition-colors`, centered text+icon
 - **"Save & Publish"**: success green `bg-[#21c179] hover:bg-[#1aa866]`
 - **"Settle Now"**: small primary `bg-[#004299] text-white text-[12px] px-4 py-2 rounded-[8px]`
 
-## Legacy CTA Pattern (from Guidelines.md)
+## Legacy CTA Pattern
 Some older pages use: `bg-[#004299] text-white text-[14px] font-semibold px-6 py-3 rounded-lg hover:bg-[#003377]`. Prefer Button_v2 for new code.
