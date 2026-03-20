@@ -4,6 +4,7 @@ import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, L
 import imgTataCLiQ from "../../imports/tata-cliq-logo";
 import { Dashboard1 } from "./Dashboard1";
 import { Dashboard2 } from "./Dashboard2";
+import { ActivationSuccessPopup } from "./ActivationSuccessPopup";
 
 const paymentData = [
   { date: "01", amount: 650, count: 550 },
@@ -45,11 +46,24 @@ export function Dashboard() {
   const [dateRange, setDateRange] = useState("Today, 24 Jan");
   const [summaryDateRange, setSummaryDateRange] = useState("This month 01 Jan -24 Jan");
   const [sourceDateRange, setSourceDateRange] = useState("This month 01 Jan -24 Jan");
+  const [showActivation, setShowActivation] = useState(() => {
+    const seen = sessionStorage.getItem("activation_popup_seen");
+    return !seen;
+  });
+
+  const handleCloseActivation = () => {
+    sessionStorage.setItem("activation_popup_seen", "1");
+    setShowActivation(false);
+  };
 
   return (
     <div className="flex flex-col w-full min-h-screen bg-[var(--background,#ffffff)]">
       <Dashboard1 />
       <Dashboard2 />
+      <ActivationSuccessPopup
+        visible={showActivation}
+        onClose={handleCloseActivation}
+      />
     </div>
   );
 }

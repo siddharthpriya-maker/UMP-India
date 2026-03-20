@@ -1,0 +1,40 @@
+---
+description: UMP Design System - First-time login activation success popup for merchant onboarding
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Activation Success Popup
+
+Component: `src/app/components/ActivationSuccessPopup.tsx`
+Appears once per session on first login via `sessionStorage`.
+
+## Container
+- Uses `Overlay` (strong) + standard popup shell (`w-[620px] max-h-[90vh] rounded-[4px]`)
+- Scrollable content area + fixed CTA + footer bar
+
+## Hero
+- Success circle: `size-10 rounded-full bg-[#e3f6ec]`, `CheckCircle size-6 text-[#21c179]`
+- Title: `text-[20px] font-bold text-[#101010]` — "Your account is now active"
+- Subtitle: `text-[14px] text-[#7e7e7e]` — Merchant ID
+
+## Info Card (single card, line-separated sections)
+Container: `border border-[#e0e0e0] rounded-[12px] divide-y divide-[#e0e0e0]`
+Each section: `p-5`
+
+1. **Payment instruments**: title + description + "Upgrade limit" Medium button (right-aligned)
+2. **Settlement**: title + settlement cycle description
+3. **Credentials**: title + "View credentials" Subtle hyperlink
+4. **Documentation**: title + "View document" Subtle hyperlink
+
+## What's Next Banner
+- `bg-[#fafafa] rounded-[12px] px-5 py-4`
+- Bold title + muted description
+
+## Primary CTA
+- Full-width Large High-emphasis button: "Explore Dashboard" + `ArrowRight`
+- `bg-[#004299] text-white text-[16px] font-semibold py-4 rounded-[8px]`
+- Dismisses popup + sets `sessionStorage` flag
+
+## Footer Bar
+- Sky blue `#00b8f5` (8px) + Navy `#012a72` (8px)
