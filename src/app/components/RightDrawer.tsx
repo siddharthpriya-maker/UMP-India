@@ -12,7 +12,7 @@ export function RightDrawer({
   open,
   onClose,
   children,
-  width = 420,
+  width = 520,
 }: RightDrawerProps) {
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -60,7 +60,7 @@ interface DrawerHeaderProps {
 
 export function DrawerHeader({ onClose, actions }: DrawerHeaderProps) {
   return (
-    <div className="flex items-center justify-between px-6 pt-5 pb-3 shrink-0">
+    <div className="flex items-center justify-between px-8 pt-5 pb-3 shrink-0">
       <button
         onClick={onClose}
         className="size-8 flex items-center justify-center rounded-[4px] hover:bg-[#f5f9fe] transition-colors"
@@ -106,7 +106,7 @@ interface DrawerHeroProps {
 
 export function DrawerHero({ title, amount, subtitle, status }: DrawerHeroProps) {
   return (
-    <div className="flex items-start justify-between px-6 pb-5">
+    <div className="flex items-start justify-between px-8 pb-5">
       <div className="flex flex-col gap-0.5">
         <span className="text-[14px] font-semibold text-[#101010]">{title}</span>
         <span className="text-[32px] font-bold text-[#101010] leading-[40px]">{amount}</span>
@@ -148,7 +148,7 @@ export function DrawerBanner({ children, variant = "info" }: DrawerBannerProps) 
   };
 
   return (
-    <div className={`mx-6 mb-4 px-4 py-3 rounded-[8px] border-l-[3px] ${bgMap[variant]}`}>
+    <div className={`mx-8 mb-4 px-4 py-3 rounded-[8px] border-l-[3px] ${bgMap[variant]}`}>
       {children}
     </div>
   );
@@ -158,7 +158,7 @@ export function DrawerBanner({ children, variant = "info" }: DrawerBannerProps) 
 
 export function DrawerSectionHeader({ children }: { children: ReactNode }) {
   return (
-    <div className="bg-[#f5f9fe] px-6 py-2.5">
+    <div className="bg-[#f5f9fe] px-8 py-2.5">
       <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold">
         {children}
       </span>
@@ -177,7 +177,7 @@ interface DrawerRowProps {
 
 export function DrawerRow({ label, value, bold }: DrawerRowProps) {
   return (
-    <div className="flex items-start justify-between px-6 py-2.5 gap-4">
+    <div className="flex items-start justify-between px-8 py-2.5 gap-4">
       <span className="text-[14px] text-[#7e7e7e] shrink-0">{label}</span>
       <span
         className={`text-[14px] text-right ${
@@ -202,7 +202,7 @@ export function DrawerActionRow({ icon, label, onClick }: DrawerActionRowProps) 
   return (
     <button
       onClick={onClick}
-      className="flex items-center justify-between w-full px-6 py-3.5 border-t border-b border-[#e0e0e0] hover:bg-[#f5f9fe] transition-colors"
+      className="flex items-center justify-between w-full px-8 py-3.5 border-t border-b border-[#e0e0e0] hover:bg-[#f5f9fe] transition-colors"
     >
       <div className="flex items-center gap-3">
         {icon && <span className="text-[#004299]">{icon}</span>}
@@ -222,7 +222,7 @@ interface DrawerCardProps {
 
 export function DrawerCard({ title, children }: DrawerCardProps) {
   return (
-    <div className="mx-6 my-4 border border-[#e0e0e0] rounded-[8px] overflow-hidden">
+    <div className="mx-8 my-4 border border-[#e0e0e0] rounded-[8px] overflow-hidden">
       {title && (
         <div className="bg-[#fafafa] px-4 py-2.5 border-b border-[#e0e0e0]">
           <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold">

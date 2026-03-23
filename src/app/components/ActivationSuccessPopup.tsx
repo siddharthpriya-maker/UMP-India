@@ -4,6 +4,7 @@ import { Overlay } from "./Overlay";
 interface ActivationSuccessPopupProps {
   visible: boolean;
   onClose: () => void;
+  onUpgradeLimit?: () => void;
   merchantId?: string;
   paymentLimit?: string;
   settlementCycle?: string;
@@ -12,6 +13,7 @@ interface ActivationSuccessPopupProps {
 export function ActivationSuccessPopup({
   visible,
   onClose,
+  onUpgradeLimit,
   merchantId = "MQQVCS05838368647127",
   paymentLimit = "₹50,000 / month",
   settlementCycle = "T+2 days",
@@ -53,7 +55,10 @@ export function ActivationSuccessPopup({
                     Your payment acceptance limit is {paymentLimit}
                   </span>
                 </div>
-                <button className="border border-[#004299] text-[#004299] text-[14px] font-semibold px-4 py-2.5 rounded-[8px] hover:bg-[#e7f1f8] hover:border-[#009de5] hover:text-[#009de5] transition-colors whitespace-nowrap shrink-0">
+                <button
+                  onClick={onUpgradeLimit}
+                  className="border border-[#004299] text-[#004299] text-[14px] font-semibold px-4 py-2.5 rounded-[8px] hover:bg-[#e7f1f8] hover:border-[#009de5] hover:text-[#009de5] transition-colors whitespace-nowrap shrink-0"
+                >
                   Upgrade limit
                 </button>
               </div>

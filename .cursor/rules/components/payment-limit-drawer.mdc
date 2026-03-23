@@ -1,0 +1,71 @@
+---
+description: UMP Design System - Payment limit upgrade drawer triggered from activation popup
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Payment Limit Drawer
+
+Component: `src/app/components/PaymentLimitDrawer.tsx`
+Triggered from "Upgrade limit" button in `ActivationSuccessPopup`.
+
+## Shell
+- Uses `RightDrawer` (default `520px` width) + `DrawerHeader` + `DrawerBody`
+- Rendered at Dashboard level, not inside the popup
+
+## Header
+- Standard `DrawerHeader` with X close button on left (UMP pattern)
+- Title below header: `text-[24px] font-bold text-[#101010] leading-[32px]` — "Increase your payment limits"
+
+## Trigger
+- "Upgrade limit" button fires `onUpgradeLimit` callback
+- Parent (Dashboard) closes popup + opens drawer simultaneously
+
+## Content (inside `DrawerBody`, `px-8`, `gap-5`)
+
+### Value Proposition
+- `bg-[#fafafa] rounded-[12px] px-5 py-4`
+- Text: `text-[14px] text-[#101010]`
+
+### Status Indicator
+- `border border-[#e0e0e0] rounded-[12px] px-5 py-4`
+- Left: `Info` icon (`size-5 text-[#004299]`) + "Current status" label
+- Right: `text-[14px] font-semibold text-[#ff9d00]` — "Pending verification"
+
+### Preparation Checklist
+- `border border-[#e0e0e0] rounded-[12px] p-5`
+- Title: `text-[16px] font-semibold`
+- Subtitle: `text-[14px] text-[#7e7e7e]`
+- Items: numbered circles `size-7 rounded-full bg-[#fafafa] border border-[#e0e0e0] text-[12px] font-semibold text-[#101010]` (neutral, non-interactive) + label `text-[#101010]`
+
+### Estimated Time
+- `bg-[#fafafa] rounded-[12px] px-5 py-4`
+- `Clock` icon + bold label + muted value
+
+## Sticky Footer
+- `border-t border-[#e0e0e0] px-8 pt-5 pb-6`
+- Checkbox consent: `size-4 accent-[#004299]` + `text-[14px]`
+- CTA: full-width High emphasis button — "Start video KYC"
+- Disabled state when checkbox unchecked: `bg-[#ebebeb] text-[#acacac] cursor-not-allowed`
+
+## Post-Action States
+
+### State: Processing
+- Triggered immediately on CTA click, replaces form content
+- `DrawerHeader` (X close) + centered body
+- `LoaderDots` animation (5 dots: navy/sky blue, varying opacity + pulse)
+- Title: `text-[20px] font-bold` — "VKYC in progress"
+- Subtitle: `text-[14px] text-[#7e7e7e]` — "Your video KYC is in progress…"
+- Auto-transitions to success after 3 seconds (no user action)
+
+### State: Success / Review Pending
+- `DrawerHeader` (X close) + centered body
+- Success icon: `size-16 rounded-full bg-[#e3f6ec]`, `CheckCircle size-8 text-[#21c179]`
+- Title: `text-[20px] font-bold` — "Verification submitted"
+- Subtitle: `text-[14px] text-[#7e7e7e]` — "All done from your side."
+- Info card: `bg-[#fafafa] rounded-[12px] px-5 py-4`, two muted lines explaining next steps
+- No footer / CTA — user can only close the drawer
+
+## State Flow
+`form` → (CTA click) → `processing` → (3s auto) → `success`
+Drawer resets to `form` when reopened.

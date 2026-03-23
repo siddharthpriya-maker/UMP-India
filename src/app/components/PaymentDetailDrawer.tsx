@@ -70,7 +70,7 @@ export function PaymentDetailDrawer({
         />
 
         {/* FROM section */}
-        <div className="px-6 py-3 flex flex-col gap-0.5">
+        <div className="px-8 py-3 flex flex-col gap-0.5">
           <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold">From</span>
           <div className="flex items-center justify-between">
             <div className="flex flex-col">

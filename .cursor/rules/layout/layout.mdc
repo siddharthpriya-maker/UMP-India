@@ -41,7 +41,7 @@ Full-width lines that span outside the page padding:
 - Cards: `p-5` (20px)
 - Table cells: `px-6 py-4` (rows), `px-6 py-3` (headers)
 - Modals/Popups: `px-8`
-- Drawers: `px-6`
+- Drawers: `px-8`
 
 ## Spacing Patterns
 - Section gaps: `gap-4 md:gap-6`

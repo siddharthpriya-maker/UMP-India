@@ -5,6 +5,7 @@ import imgTataCLiQ from "../../imports/tata-cliq-logo";
 import { Dashboard1 } from "./Dashboard1";
 import { Dashboard2 } from "./Dashboard2";
 import { ActivationSuccessPopup } from "./ActivationSuccessPopup";
+import { PaymentLimitDrawer } from "./PaymentLimitDrawer";
 
 const paymentData = [
   { date: "01", amount: 650, count: 550 },
@@ -50,10 +51,16 @@ export function Dashboard() {
     const seen = sessionStorage.getItem("activation_popup_seen");
     return !seen;
   });
+  const [showLimitDrawer, setShowLimitDrawer] = useState(false);
 
   const handleCloseActivation = () => {
     sessionStorage.setItem("activation_popup_seen", "1");
     setShowActivation(false);
+  };
+
+  const handleUpgradeLimit = () => {
+    handleCloseActivation();
+    setShowLimitDrawer(true);
   };
 
   return (
@@ -63,6 +70,11 @@ export function Dashboard() {
       <ActivationSuccessPopup
         visible={showActivation}
         onClose={handleCloseActivation}
+        onUpgradeLimit={handleUpgradeLimit}
+      />
+      <PaymentLimitDrawer
+        open={showLimitDrawer}
+        onClose={() => setShowLimitDrawer(false)}
       />
     </div>
   );

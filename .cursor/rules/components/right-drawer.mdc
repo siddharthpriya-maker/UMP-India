@@ -10,7 +10,7 @@ Shared slide-in drawer at `src/app/components/RightDrawer.tsx`.
 
 ## Shell (`RightDrawer`)
 - Slides from right edge, full viewport height
-- Default width: `420px` (configurable via `width` prop)
+- Default width: `520px` (configurable via `width` prop)
 - Overlay: `bg-[#101010]/50`, click to close
 - Shadow: `shadow-[-4px_0_24px_rgba(0,0,0,0.08)]`
 - Animation: `slideInRight 0.25s ease-out`
@@ -40,11 +40,11 @@ Shared slide-in drawer at `src/app/components/RightDrawer.tsx`.
 | Submitted | `bg-[#e7f1f8]` | `text-[#004299]` | ↗ |
 
 ## Section Header
-- Full width `bg-[#f5f9fe]`, `px-6 py-2.5`
+- Full width `bg-[#f5f9fe]`, `px-8 py-2.5`
 - Text: `text-[12px] uppercase tracking-[0.6px] font-semibold text-[#7e7e7e]`
 
 ## Key-Value Row
-- `px-6 py-2.5`
+- `px-8 py-2.5`
 - Label: `text-[14px] text-[#7e7e7e]`
 - Value: `text-[14px] text-[#101010]`, bold variant for totals
 
