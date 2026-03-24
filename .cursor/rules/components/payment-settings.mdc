@@ -4,19 +4,7 @@ globs: **/*.tsx
 alwaysApply: false
 ---
 
-# Payment Settings
-
-## Summary strip (above secondary tabs)
-
-Aligned with **Summary Cards (Payments page)** in `cards.mdc` and `PaymentsPage.tsx`:
-
-- Layout: `flex flex-col gap-1 md:flex-row md:items-stretch` (stack on small screens, strip on md+)
-- **Payment Acceptance Limit**: `bg-[#eaf2fd] rounded-[12px] p-5 flex-1` — label `text-[14px] text-[#7e7e7e]`, amount `text-[20px] font-semibold text-[#101010]`
-- **Remaining for this month**: `bg-[rgba(39,174,95,0.1)]` — amount `text-[#21c179] font-semibold`
-- **CTA card**: `bg-[#e0f5fd]` — helper `text-[12px] text-[#7e7e7e]`, Primary button “Upgrade Account” (`text-[12px] font-semibold`, `min-w-[120px]`, `rounded-[8px]`)
-- **Disclaimer** below: `bg-[#fafafa] rounded-[12px] px-6 py-3`, notice text `text-[12px] text-[#ff9d00]`
-
-## Charges Section
+# Payment Settings — Charges Section
 
 Settings → Payment Settings uses a Table/Listing (with vertical separators, `grid-cols-[1fr_1.5fr_0.5fr]`) for payment instruments, charges, and status across QR, Card Machine, and Payment Links tabs.
 

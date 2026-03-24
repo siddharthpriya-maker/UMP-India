@@ -205,44 +205,47 @@ function PaymentSettingsContent() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Payment settings summary — UMP summary strip (see cards.mdc, PaymentsPage) */}
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-1 md:flex-row md:items-stretch">
-          {/* Payment Acceptance Limit */}
-          <div className="bg-[#eaf2fd] rounded-[12px] p-5 flex flex-col flex-1 min-w-0">
-            <span className="text-[14px] text-[#7e7e7e] leading-[20px]">
-              Payment Acceptance Limit
-            </span>
-            <span className="text-[20px] font-semibold text-[#101010] leading-[28px] mt-1">
-              ₹1,00,00,000 / month
-            </span>
+      {/* Payment Acceptance Limit Card */}
+      <div className="rounded-[12px] overflow-hidden">
+        <div className="bg-[#fafafa] p-6 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            {/* Limit */}
+            <div className="flex flex-col gap-1">
+              <p className="text-[14px] text-[#7e7e7e] leading-[20px]">
+                Payment Acceptance Limit
+              </p>
+              <p className="text-[16px] font-semibold text-[#101010] leading-[24px]">
+                ₹1,00,00,000 / month
+              </p>
+            </div>
+
+            {/* Vertical Separator */}
+            <div className="w-px h-[40px] bg-[#e0e0e0]" />
+
+            {/* Remaining */}
+            <div className="flex flex-col gap-1">
+              <p className="text-[14px] text-[#7e7e7e] leading-[20px]">
+                Remaining for this month
+              </p>
+              <p className="text-[16px] font-semibold text-[#21c179] leading-[24px]">
+                ₹75,00,000
+              </p>
+            </div>
           </div>
 
-          {/* Remaining for this month */}
-          <div className="bg-[rgba(39,174,95,0.1)] rounded-[12px] p-5 flex flex-col flex-1 min-w-0">
-            <span className="text-[14px] text-[#7e7e7e] leading-[20px]">
-              Remaining for this month
-            </span>
-            <span className="text-[20px] font-semibold text-[#21c179] leading-[28px] mt-1">
-              ₹75,00,000
-            </span>
-          </div>
-
-          {/* CTA — matches “Available for Settlement” card pattern */}
-          <div className="bg-[#e0f5fd] rounded-[12px] p-5 flex flex-col flex-1 min-w-[240px] justify-between gap-4">
-            <p className="text-[12px] text-[#7e7e7e] leading-[16px]">
+          <div className="flex items-center gap-6">
+            <p className="text-[12px] text-[#7e7e7e] leading-[16px] text-right max-w-[200px]">
               Collect payments from your customers without any limits
             </p>
-            <button
-              type="button"
-              className="bg-[#004299] text-white text-[12px] font-semibold px-4 py-2 min-w-[120px] rounded-[8px] hover:bg-[#009de5] transition-colors w-fit"
-            >
+            <button className="bg-[#004299] hover:bg-[#009de5] text-white text-[14px] font-semibold px-4 py-2.5 rounded-[8px] whitespace-nowrap transition-colors">
               Upgrade Account
             </button>
           </div>
         </div>
 
-        <div className="bg-[#fafafa] rounded-[12px] px-6 py-3">
+        <div className="h-px bg-[#e0e0e0]" />
+
+        <div className="bg-[#fafafa] px-6 py-3">
           <p className="text-[12px] text-[#ff9d00] leading-[20px]">
             Acceptance limits for all types of methods is common.
           </p>
