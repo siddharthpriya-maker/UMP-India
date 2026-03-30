@@ -96,6 +96,18 @@ useEffect(() => {
 - Time: "7:30 AM, 23 Sep" / "8:00 AM Everyday"
 - Use relative dates when appropriate
 
+## Module & page layouts
+
+Full-route / module specs (page shells, flows, multi-step layouts) live under this folder — not under `components/`:
+
+| Rule file | Module |
+|---|---|
+| `layout/connect-plus.mdc` | Connect Plus activation |
+| `layout/payment-pages.mdc` | Payment Pages (SwiftPay Builder) |
+| `layout/payment-settings.mdc` | Settings → Payment settings |
+
+Use `components/` rules for reusable UI pieces (buttons, cards, drawers); use `layout/*.mdc` for how entire pages or modules are structured.
+
 ## Common Mistakes
 - DO NOT use arbitrary hex without design system reference
 - DO NOT hardcode spacing values — use Tailwind spacing scale

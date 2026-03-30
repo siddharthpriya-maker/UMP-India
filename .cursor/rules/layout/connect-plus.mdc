@@ -1,17 +1,19 @@
 ---
-description: UMP Design System - Connect Plus activation flow (service card → consent → loader → enabled)
+description: UMP — Connect Plus module (page layout & activation flow)
 globs: **/*.tsx
 alwaysApply: false
 ---
 
-# Connect Plus Activation Flow
+# Connect Plus (module)
+
+Module route and page-level layout for Connect Plus activation.
 
 ## Default State
 - "Get Started" CTA in Grow your Business grid → opens form popup
 
 ## Form Popup
 - Checkbox consent → "Accept and Continue" CTA
-- Uses consent card pattern (see `cards.mdc`)
+- Uses consent card pattern (see `components/cards.mdc`)
 
 ## Loader Popup
 - `type="loader"`, no close button

@@ -234,7 +234,7 @@ function PaymentSettingsContent() {
           </div>
 
           <div className="flex items-center gap-6">
-            <p className="text-[12px] text-[#7e7e7e] leading-[16px] text-right max-w-[200px]">
+            <p className="text-[12px] text-[#101010] leading-[16px] text-right max-w-[200px]">
               Collect payments from your customers without any limits
             </p>
             <button className="bg-[#004299] hover:bg-[#009de5] text-white text-[14px] font-semibold px-4 py-2.5 rounded-[8px] whitespace-nowrap transition-colors">

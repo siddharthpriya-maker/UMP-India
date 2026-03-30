@@ -1,10 +1,12 @@
 ---
-description: UMP Design System - Payment Pages (SwiftPay Builder) dashboard, wizard, and builder specs
+description: UMP — Payment Pages module (SwiftPay Builder) — routes, wizard, and page layout
 globs: **/*.tsx
 alwaysApply: false
 ---
 
 # Payment Pages (SwiftPay Builder)
+
+Module: `/payment-pages` and create-page wizard. Defines page shell, steps, and builder layout (not individual UI components).
 
 ## Dashboard (`/payment-pages`)
 - Standard page pattern: `px-[32px] pt-[12px] pb-[32px] bg-white min-h-full`
@@ -38,6 +40,7 @@ alwaysApply: false
 - **Canvas**: `bg-[#fafafa]`, drop zone `border-[#004299] bg-[#f5f9fe]`, selected `border-[#004299]`
 - Input previews: `h-[56px] border border-[#e0e0e0] rounded-[4px]` floating-label style
 - **Properties**: Label, Placeholder, Required/Show toggles, Options list, Validation
+- **Bottom bar**: `PageLevelMenu` (`src/app/components/payment-pages/PageLevelMenu.tsx`) — sticky footer `bg-[#f5f9fe]`, `px-[32px]`, assistive line + “Clear all” (left), Medium + High emphasis buttons (right)
 - HTML5 Drag and Drop (no external dependency)
 
 ## Step 3: Additional Settings

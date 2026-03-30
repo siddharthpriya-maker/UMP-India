@@ -3,6 +3,7 @@ import { StepWizard } from "./StepWizard";
 import { ComponentPalette } from "./ComponentPalette";
 import { BuilderCanvas } from "./BuilderCanvas";
 import { PropertyPanel } from "./PropertyPanel";
+import { PageLevelMenu } from "./PageLevelMenu";
 import type { BuilderStep, BuilderComponent, BuilderPage, PaletteComponent } from "./types";
 
 interface PageBuilderProps {
@@ -112,11 +113,16 @@ export function PageBuilder({ currentStep, onBack, onNext }: PageBuilderProps) {
     setSelectedComponentId(null);
   };
 
+  const handleClearAll = useCallback(() => {
+    setPages((prev) => prev.map((p) => ({ ...p, components: [] })));
+    setSelectedComponentId(null);
+  }, []);
+
   return (
-    <div className="flex flex-col h-screen bg-white">
+    <div className="flex flex-col h-screen min-h-0 bg-white">
       <StepWizard currentStep={currentStep} />
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
         <ComponentPalette onDragStart={() => {}} />
 
         <BuilderCanvas
@@ -143,21 +149,14 @@ export function PageBuilder({ currentStep, onBack, onNext }: PageBuilderProps) {
         />
       </div>
 
-      {/* Footer */}
-      <div className="flex items-center gap-5 px-[32px] py-4 border-t border-[#e0e0e0] bg-white">
-        <button
-          onClick={onBack}
-          className="flex items-center justify-center border border-[#004299] text-[#004299] hover:bg-[#e7f1f8] hover:border-[#009de5] hover:text-[#009de5] text-[14px] leading-[20px] font-semibold px-4 py-2.5 min-w-[120px] rounded-[8px] transition-colors"
-        >
-          Back to Page Info
-        </button>
-        <button
-          onClick={onNext}
-          className="flex items-center justify-center bg-[#004299] hover:bg-[#009de5] text-white text-[14px] leading-[20px] font-semibold px-4 py-2.5 min-w-[120px] rounded-[8px] transition-colors flex-1"
-        >
-          Save & Continue
-        </button>
-      </div>
+      <PageLevelMenu
+        onClearAll={handleClearAll}
+        secondaryLabel="Back to Page Info"
+        onSecondary={onBack}
+        primaryLabel="Save & Continue"
+        onPrimary={onNext}
+        ariaLabel="Page builder actions"
+      />
     </div>
   );
 }
