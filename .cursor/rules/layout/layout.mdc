@@ -6,6 +6,9 @@ alwaysApply: false
 
 # Layout & Spacing
 
+## App shell: 16:9 product frame
+The **entire** shell (sidebar + header + content) is drawn inside the **largest 16:9 rectangle** that fits the viewport: `.app-product-letterbox` centers it; `.app-product-frame` uses `width: min(100vw, 100vh×16/9)` and `height: min(100vh, 100vw×9/16)`. Non-16:9 viewports show **letterboxing** (gray bars). **Scrolling:** sidebar nav uses `overflow-y-auto` on its inner stack; **main** uses `flex-1 min-h-0 overflow-y-auto` on `.shell-main-canvas` so route content scrolls inside the main column. Routed content may also use a **max width 1440px** centered column via `.shell-main-canvas`.
+
 ## Page Container
 - Padding: `px-[32px] pt-[12px] pb-[32px]`
 - Background: `bg-[#ffffff]` (`bg-white`)

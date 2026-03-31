@@ -64,7 +64,7 @@ export function Dashboard() {
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-[var(--background,#ffffff)]">
+    <div className="flex flex-col w-full min-h-full bg-[var(--background,#ffffff)]">
       <Dashboard1 />
       <Dashboard2 />
       <ActivationSuccessPopup

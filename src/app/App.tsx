@@ -44,27 +44,33 @@ export default function App() {
 
 function AppShell() {
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-white">
-      <Sidebar />
-      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
-        <Header />
-        <main className="flex-1 overflow-y-auto bg-[#f5f9fe]">
-          <Routes>
-            <Route path="/home" element={<Dashboard />} />
-            <Route path="/payments" element={<PaymentsPage />} />
-            <Route path="/settlements" element={<SettlementsPage />} />
-            <Route path="/connect-plus" element={<ConnectPlusPage />} />
-            <Route path="/my-services" element={<MyServicesPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/refunds" element={<DesignInProgress pageName="Refunds" />} />
-            <Route path="/reports" element={<DesignInProgress pageName="Reports" />} />
-            <Route path="/accept-payments" element={<DesignInProgress pageName="Accept Payments" />} />
-            <Route path="/payment-links" element={<DesignInProgress pageName="Payment Links" />} />
-            <Route path="/payment-pages" element={<PaymentPagesPage />} />
-            <Route path="/developer" element={<DesignInProgress pageName="Developer" />} />
-            <Route path="*" element={<Navigate to="/home" replace />} />
-          </Routes>
-        </main>
+    <div className="app-product-letterbox">
+      <div className="app-product-frame">
+        <div className="flex h-full w-full min-h-0 overflow-hidden bg-white">
+          <Sidebar />
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+            <Header />
+            <main className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[#f5f9fe]">
+              <div className="shell-main-canvas min-h-0 min-w-0 flex-1 overflow-y-auto">
+                <Routes>
+                  <Route path="/home" element={<Dashboard />} />
+                  <Route path="/payments" element={<PaymentsPage />} />
+                  <Route path="/settlements" element={<SettlementsPage />} />
+                  <Route path="/connect-plus" element={<ConnectPlusPage />} />
+                  <Route path="/my-services" element={<MyServicesPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/refunds" element={<DesignInProgress pageName="Refunds" />} />
+                  <Route path="/reports" element={<DesignInProgress pageName="Reports" />} />
+                  <Route path="/accept-payments" element={<DesignInProgress pageName="Accept Payments" />} />
+                  <Route path="/payment-links" element={<DesignInProgress pageName="Payment Links" />} />
+                  <Route path="/payment-pages" element={<PaymentPagesPage />} />
+                  <Route path="/developer" element={<DesignInProgress pageName="Developer" />} />
+                  <Route path="*" element={<Navigate to="/home" replace />} />
+                </Routes>
+              </div>
+            </main>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -13,51 +13,88 @@ interface StepWizardProps {
   currentStep: BuilderStep;
 }
 
+function StepIndicator({
+  index,
+  isCompleted,
+  isActive,
+}: {
+  index: number;
+  isCompleted: boolean;
+  isActive: boolean;
+}) {
+  if (isCompleted) {
+    return (
+      <div
+        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#22C55E] text-white shadow-sm"
+        aria-hidden
+      >
+        <Check className="size-[18px]" strokeWidth={2.5} />
+      </div>
+    );
+  }
+  if (isActive) {
+    return (
+      <div
+        className="flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-[#22C55E] bg-transparent text-[14px] font-semibold leading-none text-[#22C55E]"
+        aria-hidden
+      >
+        {index + 1}
+      </div>
+    );
+  }
+  return (
+    <div
+      className="flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-[#e0e0e0] bg-[#ffffff] text-[14px] font-semibold leading-none text-[#7e7e7e]"
+      aria-hidden
+    >
+      {index + 1}
+    </div>
+  );
+}
+
 export function StepWizard({ currentStep }: StepWizardProps) {
   const currentIdx = stepOrder.indexOf(currentStep);
 
   return (
-    <div className="flex items-center justify-center gap-0 py-6">
-      {steps.map((step, idx) => {
-        const isCompleted = idx < currentIdx;
-        const isActive = idx === currentIdx;
+    <nav
+      aria-label="Create payment page steps"
+      className="w-full shrink-0 bg-[#fafafa] px-[32px] py-5"
+    >
+      <ul className="mx-0 flex w-full list-none flex-wrap items-center justify-start gap-y-4 p-0">
+        {steps.map((step, idx) => {
+          const isCompleted = idx < currentIdx;
+          const isActive = idx === currentIdx;
+          const segmentCompleted = idx < currentIdx;
 
-        return (
-          <div key={step.key} className="flex items-center">
-            <div className="flex items-center gap-2">
-              <div
-                className={`size-8 rounded-full flex items-center justify-center text-[14px] font-semibold shrink-0 ${
-                  isCompleted
-                    ? "bg-[#21c179] text-white"
-                    : isActive
-                    ? "bg-[#004299] text-white"
-                    : "bg-[#e0e0e0] text-white"
-                }`}
-              >
-                {isCompleted ? <Check className="size-4" /> : idx + 1}
+          return (
+            <li key={step.key} className="flex items-center">
+              <div className="flex items-center gap-3">
+                <StepIndicator index={idx} isCompleted={isCompleted} isActive={isActive} />
+                <span
+                  className={`max-w-[200px] text-left text-[13px] leading-5 sm:max-w-[260px] sm:text-[14px] ${
+                    isCompleted
+                      ? "font-semibold text-[#22C55E]"
+                      : isActive
+                        ? "font-semibold text-[#101010]"
+                        : "font-medium text-[#7e7e7e]"
+                  }`}
+                >
+                  {step.label}
+                </span>
               </div>
-              <span
-                className={`text-[14px] whitespace-nowrap ${
-                  isActive
-                    ? "font-semibold text-[#004299]"
-                    : isCompleted
-                    ? "font-semibold text-[#21c179]"
-                    : "text-[#7e7e7e]"
-                }`}
-              >
-                {step.label}
-              </span>
-            </div>
-            {idx < steps.length - 1 && (
-              <div
-                className={`w-[60px] h-[2px] mx-4 ${
-                  idx < currentIdx ? "bg-[#21c179]" : "bg-[#e0e0e0]"
-                }`}
-              />
-            )}
-          </div>
-        );
-      })}
-    </div>
+
+              {idx < steps.length - 1 && (
+                <div
+                  className={`mx-3 h-0 w-12 shrink-0 border-t-2 border-dashed sm:mx-4 sm:w-20 md:w-24 ${
+                    segmentCompleted ? "border-[#22C55E]" : "border-[#e0e0e0]"
+                  }`}
+                  aria-hidden
+                />
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
   );
 }

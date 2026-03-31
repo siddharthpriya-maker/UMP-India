@@ -1,0 +1,40 @@
+---
+description: UMP — StepWizard (horizontal progress / step indicator) for multi-step flows
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Step Wizard (`StepWizard`)
+
+**Path:** `src/app/components/payment-pages/StepWizard.tsx`
+
+Horizontal step indicator for the Payment Pages creation flow (and reusable for other 3-step wizards using `BuilderStep`).
+
+## Container
+- Full width, `shrink-0`
+- `bg-[#fafafa]` (no bottom border)
+- Padding: `px-[32px] py-5` (aligns with page content gutters)
+- Inner row: `w-full mx-0`, `flex flex-wrap items-center justify-start`, `list-none` on `<ul>` (left-aligned; same content width as page body)
+
+## Layout
+- Each step: **indicator left**, **label right** (`gap-3`)
+- Between steps: **dashed connector** — `border-t-2 border-dashed`, width `w-12 sm:w-20 md:w-24`, horizontal margin `mx-3 sm:mx-4`
+- Connector color: `#22C55E` when the segment is completed (previous step done), else `#e0e0e0` (neutral, matches upcoming rail)
+
+## Step states
+
+| State | Circle | Label |
+|---|---|---|
+| **Completed** | Solid `#22C55E`, white Lucide `Check` (`size-[18px]`, `strokeWidth={2.5}`) | `font-semibold text-[#22C55E]` |
+| **Active (in progress)** | `border-2 border-[#22C55E]`, transparent fill, step index `#22C55E`, `text-[14px] font-semibold` | `font-semibold text-[#101010]` |
+| **Upcoming** | Neutral: `border-2 border-[#e0e0e0] bg-white`, step index `text-[#7e7e7e]` (no green/blue tint) | `font-medium text-[#7e7e7e]` |
+
+- Indicators use `size-10` (`40px`), `rounded-full`; completed circle uses `shadow-sm`; active/upcoming rings have no fill tint on upcoming.
+
+## Semantics
+- Outer: `<nav aria-label="Create payment page steps">`
+- Steps: `<ul>` / `<li>`; connectors use `aria-hidden`
+
+## Integration (Payment Pages)
+- Steps: Page Information → Page Builder → Additional Settings (`BuilderStep`: `info` | `builder` | `settings`)
+- Mounted in: `PageInfoForm`, `PageBuilder`, `AdditionalSettings` — pass `currentStep={builderStep}`

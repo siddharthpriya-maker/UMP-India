@@ -49,6 +49,7 @@ Shared floating-label input at `src/app/components/TextField.tsx`. **This is the
 - **Assistive text**: `text-[12px] text-[#101010]`
 - **Prefix**: left-aligned in `bg-[#fafafa]` with `border-r`
 - **Trailing icon**: right-aligned slot (e.g., Eye toggle)
+- **`type="date"`**: native calendar glyph hidden; **`CalenderOutlinedIcon`** from `Icons.tsx` (**24×24px**, `size-[24px]`, `text-[#7e7e7e]` → hover `text-[#101010]`) in a button with `aria-label="Open calendar"`; opens picker via `showPicker()` / `click()`. Override with explicit `trailingIcon` if needed.
 - **Multiline**: textarea mode with `rows` prop
 - **Compact**: `size="compact"` — 44px, `text-[13px]`
 

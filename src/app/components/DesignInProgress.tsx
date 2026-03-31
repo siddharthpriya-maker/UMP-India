@@ -6,7 +6,7 @@ interface DesignInProgressProps {
 
 export function DesignInProgress({ pageName }: DesignInProgressProps) {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[var(--background,#ffffff)] p-8">
+    <div className="flex min-h-full items-center justify-center bg-[var(--background,#ffffff)] p-8">
       <div className="flex flex-col items-center gap-6 max-w-md text-center">
         {/* Icon */}
         <div className="relative">

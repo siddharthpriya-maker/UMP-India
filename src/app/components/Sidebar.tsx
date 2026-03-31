@@ -361,12 +361,12 @@ export function Sidebar() {
   return (
     <div 
       ref={sidebarRef} 
-      className={`bg-[#e7f1f8] h-full min-h-[800px] w-[88px] shrink-0 relative transition-shadow ${
+      className={`bg-[#e7f1f8] relative z-20 flex h-full min-h-0 w-[88px] shrink-0 flex-col transition-shadow ${
         isL2MenuOpen ? "shadow-[0_0_10px_rgba(0,0,0,0.15)]" : ""
       }`}
       onMouseLeave={handleSidebarMouseLeave}
     >
-      <div className="flex flex-col gap-8 py-3 w-[88px] items-center">
+      <div className="flex min-h-0 flex-1 flex-col items-center gap-8 overflow-y-auto py-3 w-[88px]">
         <div className="flex w-full items-center justify-center">
           <PaytmLogo />
         </div>

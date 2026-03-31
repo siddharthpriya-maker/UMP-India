@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { StepWizard } from "./StepWizard";
+import { PageLevelMenu } from "./PageLevelMenu";
 import { TextField } from "../TextField";
 import type { BuilderStep, AdditionalSettingsData } from "./types";
 
@@ -40,20 +41,21 @@ export function AdditionalSettings({ currentStep, onBack, onNext }: AdditionalSe
     }));
 
   return (
-    <div className="flex flex-col min-h-full bg-[#ffffff]">
+    <div className="flex min-h-full min-h-0 flex-col bg-[#ffffff]">
       <StepWizard currentStep={currentStep} />
 
-      <div className="flex-1 flex justify-center px-[32px] pb-[32px]">
-        <div className="w-full max-w-[640px] flex flex-col gap-6">
-          <div className="flex flex-col gap-1">
-            <h2 className="text-[24px] font-semibold text-[#101010]">Additional Settings</h2>
-            <p className="text-[14px] text-[#7e7e7e] leading-[20px]">
-              Configure post-transaction behaviour and notification preferences.
-            </p>
-          </div>
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex-1 px-[32px] pt-[32px] pb-4">
+          <div className="flex w-full max-w-[640px] flex-col gap-6">
+            <div className="flex flex-col gap-1">
+              <h2 className="text-[24px] font-semibold text-[#101010]">Additional Settings</h2>
+              <p className="text-[14px] text-[#7e7e7e] leading-[20px]">
+                Configure post-transaction behaviour and notification preferences.
+              </p>
+            </div>
 
-          {/* Tabs */}
-          <div className="flex gap-[32px] relative">
+            {/* Tabs */}
+            <div className="relative flex gap-[32px]">
             {(
               [
                 { key: "post" as const, label: "Post Transaction" },
@@ -75,12 +77,12 @@ export function AdditionalSettings({ currentStep, onBack, onNext }: AdditionalSe
                 )}
               </button>
             ))}
-            <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#e0e0e0]" />
-          </div>
+              <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#e0e0e0]" />
+            </div>
 
-          {/* Tab content */}
-          {activeTab === "post" && (
-            <div className="flex flex-col gap-5">
+            {/* Tab content */}
+            {activeTab === "post" && (
+              <div className="flex flex-col gap-5">
               <TextField
                 label="Redirect URL"
                 type="url"
@@ -96,11 +98,11 @@ export function AdditionalSettings({ currentStep, onBack, onNext }: AdditionalSe
                 rows={3}
                 assistiveText="Message displayed to users after a successful transaction."
               />
-            </div>
-          )}
+              </div>
+            )}
 
-          {activeTab === "notifications" && (
-            <div className="flex flex-col gap-6">
+            {activeTab === "notifications" && (
+              <div className="flex flex-col gap-6">
               {/* SMS */}
               <div className="flex flex-col gap-4 p-5 border border-[#e0e0e0] rounded-[12px]">
                 <div className="flex items-center justify-between">
@@ -155,25 +157,21 @@ export function AdditionalSettings({ currentStep, onBack, onNext }: AdditionalSe
                   </div>
                 )}
               </div>
-            </div>
-          )}
-
-          {/* Footer */}
-          <div className="flex items-center gap-5 pt-4">
-            <button
-              onClick={onBack}
-              className="flex items-center justify-center border border-[#004299] text-[#004299] hover:bg-[#e7f1f8] hover:border-[#009de5] hover:text-[#009de5] text-[14px] leading-[20px] font-semibold px-4 py-2.5 min-w-[120px] rounded-[8px] transition-colors"
-            >
-              Back to Builder
-            </button>
-            <button
-              onClick={onNext}
-              className="flex items-center justify-center bg-[#21c179] hover:bg-[#1aa866] text-white text-[14px] leading-[20px] font-semibold px-4 py-2.5 min-w-[120px] rounded-[8px] transition-colors flex-1"
-            >
-              Save & Publish
-            </button>
+              </div>
+            )}
           </div>
         </div>
+
+        <PageLevelMenu
+          showClearAll={false}
+          assistiveText="Review settings before publishing your payment page."
+          secondaryLabel="Back to Builder"
+          onSecondary={onBack}
+          primaryLabel="Save & Publish"
+          onPrimary={onNext}
+          primaryEmphasis="success"
+          ariaLabel="Additional settings actions"
+        />
       </div>
     </div>
   );

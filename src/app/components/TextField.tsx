@@ -1,4 +1,5 @@
 import { useState, useRef, useId, useEffect, useCallback } from "react";
+import { CalenderOutlinedIcon } from "./Icons";
 
 interface TextFieldProps {
   label: string;
@@ -71,12 +72,50 @@ export function TextField({
     if (!disabled) inputRef.current?.focus();
   };
 
+  const dateInputChromeHide =
+    type === "date"
+      ? "[&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:bottom-0 [&::-webkit-calendar-picker-indicator]:top-0 [&::-webkit-calendar-picker-indicator]:w-0 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+      : "";
+
   const sharedInputClasses = [
     "w-full bg-transparent outline-none",
     inputTextSize,
     "text-[#101010] placeholder:text-transparent",
     disabled ? "text-[#acacac] cursor-not-allowed" : "",
+    dateInputChromeHide,
   ].join(" ");
+
+  const openDatePicker = () => {
+    const el = inputRef.current as HTMLInputElement | null;
+    if (!el || type !== "date") return;
+    if (typeof el.showPicker === "function") {
+      try {
+        el.showPicker();
+      } catch {
+        el.click();
+      }
+    } else {
+      el.click();
+    }
+  };
+
+  const resolvedTrailing =
+    trailingIcon ??
+    (type === "date" ? (
+      <button
+        type="button"
+        tabIndex={-1}
+        aria-label="Open calendar"
+        disabled={disabled}
+        onClick={(e) => {
+          e.preventDefault();
+          openDatePicker();
+        }}
+        className="flex shrink-0 items-center justify-center rounded-[4px] text-[#7e7e7e] outline-none transition-colors hover:text-[#101010] focus-visible:ring-2 focus-visible:ring-[#004299] focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50"
+      >
+        <CalenderOutlinedIcon className="size-[24px]" />
+      </button>
+    ) : null);
 
   return (
     <div className="flex flex-col gap-1">
@@ -170,9 +209,9 @@ export function TextField({
           )}
         </div>
 
-        {trailingIcon && (
-          <div className="pr-[16px] flex items-center shrink-0 text-[#7e7e7e]">
-            {trailingIcon}
+        {resolvedTrailing && (
+          <div className="flex shrink-0 items-center pr-[16px] text-[#7e7e7e]">
+            {resolvedTrailing}
           </div>
         )}
       </div>

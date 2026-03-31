@@ -99,7 +99,7 @@ export function ComponentPalette({ onDragStart }: ComponentPaletteProps) {
       <div className="px-4 py-3 border-b border-[#e0e0e0]">
         <h3 className="text-[14px] font-semibold text-[#101010]">Components</h3>
       </div>
-      <div className="flex-1 overflow-y-auto px-3 py-2">
+      <div className="flex-1 overflow-y-auto py-2 pl-[32px] pr-3">
         {categories.map((cat) => {
           const items = paletteComponents.filter((c) => c.category === cat.key);
           if (items.length === 0) return null;

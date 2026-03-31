@@ -118,8 +118,15 @@ export function PageBuilder({ currentStep, onBack, onNext }: PageBuilderProps) {
     setSelectedComponentId(null);
   }, []);
 
+  const activeComponentCount = pages[activePageIndex]?.components.length ?? 0;
+  const totalComponentCount = pages.reduce((n, p) => n + p.components.length, 0);
+  const builderAssistiveText =
+    activeComponentCount === 0
+      ? "no components added to the page"
+      : `${activeComponentCount} component${activeComponentCount === 1 ? "" : "s"} added to the page`;
+
   return (
-    <div className="flex flex-col h-screen min-h-0 bg-white">
+    <div className="flex h-full min-h-0 flex-col bg-white">
       <StepWizard currentStep={currentStep} />
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
@@ -150,7 +157,9 @@ export function PageBuilder({ currentStep, onBack, onNext }: PageBuilderProps) {
       </div>
 
       <PageLevelMenu
+        assistiveText={builderAssistiveText}
         onClearAll={handleClearAll}
+        clearAllDisabled={totalComponentCount === 0}
         secondaryLabel="Back to Page Info"
         onSecondary={onBack}
         primaryLabel="Save & Continue"

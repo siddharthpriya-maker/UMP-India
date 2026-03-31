@@ -1,0 +1,46 @@
+---
+description: UMP — PageLevelMenu sticky footer for Payment Pages wizard (back / next, optional Clear all)
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Page Level Menu (`PageLevelMenu`)
+
+**Path:** `src/app/components/payment-pages/PageLevelMenu.tsx`
+
+Sticky bottom bar for **all three** Payment Pages wizard stages: Page Information, Page Builder, and Additional Settings. Left: assistive line + optional **Clear all**; right: **secondary** (outline) + **primary** (filled).
+
+## Container
+- `<footer>` with `aria-label` (prop `ariaLabel`)
+- `sticky bottom-0 z-20 shrink-0 flex items-center justify-between gap-6`
+- `border-t border-[#e0e0e0] bg-[#f5f9fe] px-[32px] py-4`
+- Shadow: `shadow-[0_-2px_12px_rgba(16,16,16,0.06)]`
+
+## Left column
+- Assistive text: `text-[12px] leading-[16px] text-[#101010]` (prop `assistiveText`)
+- **Clear all** link: `text-[14px] font-semibold text-[#004299] hover:underline` — only when `showClearAll` is true and `onClearAll` is provided (Page Builder canvas reset). When `clearAllDisabled` is true: `disabled`, `text-[#acacac] cursor-not-allowed`, no hover underline (e.g. no components on any page).
+
+## Right column (buttons)
+- **Secondary** (Medium emphasis): `min-w-[120px] rounded-[8px] border border-[#004299] px-4 py-2.5 text-[14px] font-semibold text-[#004299]` + hover per `buttons.mdc` outline pattern
+- **Primary** (default / High emphasis): `min-w-[120px] rounded-[8px] bg-[#004299] px-4 py-2.5 text-[14px] font-semibold text-white` + `hover:bg-[#009de5]`
+- **Primary disabled:** `primaryDisabled` — `bg-[#ebebeb] text-[#acacac] opacity-64 cursor-not-allowed`
+- **Primary success** (`primaryEmphasis="success"`): `bg-[#21c179] hover:bg-[#1aa866] text-white` (Additional Settings — Save & Publish)
+
+## Props (behaviour)
+| Prop | Role |
+|---|---|
+| `showClearAll` | `false` on Page Information & Additional Settings; default `true` (Builder) |
+| `onClearAll` | Required when showing Clear all |
+| `clearAllDisabled` | Disables Clear all (nothing to clear) |
+| `secondaryLabel` / `onSecondary` | Previous stage / back |
+| `primaryLabel` / `onPrimary` | Next / save / publish |
+| `primaryDisabled` | e.g. Page Information when required fields empty |
+| `primaryEmphasis` | `"default"` \| `"success"` |
+
+## Parent layout
+Wizard screens should use a **column flex** with `min-h-full min-h-0`, scrollable main block `flex-1`, then `PageLevelMenu` so the bar stays at the bottom of the scroll viewport (`sticky`).
+
+## Copy reference (Payment Pages)
+- **Page Information:** `showClearAll={false}`, Cancel → list, Continue to Page Builder (primary disabled when invalid)
+- **Page Builder:** `assistiveText` = component count on the **active** page (`"N component(s) added to the page"`), or `"no components added to the page"` when empty; `clearAllDisabled` when **no** components exist on **any** page (matches global Clear all); Clear all + Back to Page Info + Save & Continue
+- **Additional Settings:** `showClearAll={false}`, `primaryEmphasis="success"`, Back to Builder + Save & Publish

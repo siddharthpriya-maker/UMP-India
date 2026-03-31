@@ -1,10 +1,12 @@
 ---
-description: UMP Design System - Button_v2 component with emphasis, size, icon, and state variants
-globs: **/*.tsx
+description: UMP Button_v2 — emphasis, size, icon, states. Use when adding or changing buttons/CTAs; @-mention this rule if the active file is not matched below.
+globs: src/app/components/Button.tsx
 alwaysApply: false
 ---
 
 # Buttons (Button_v2)
+
+**Scope:** This rule is not tied to all TSX files—only auto-includes when `Button.tsx` is in context. For `<button>` / CTA work in other files (e.g. `PageLevelMenu`, pages), attach **`@buttons`** or this rule in chat.
 
 All buttons: `rounded-[8px] font-semibold transition-colors`, centered text+icon layout.
 

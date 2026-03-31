@@ -21,16 +21,19 @@ Module: `/payment-pages` and create-page wizard. Defines page shell, steps, and 
 - Icon: `size-10 rounded-[8px] bg-[#e0f5fd]`
 
 ## Step Wizard
-- 3 steps: Page Information → Page Builder → Additional Settings
-- Active: `bg-[#004299] text-white` circle
-- Completed: `bg-[#21c179]` with check
-- Upcoming: `bg-[#e0e0e0]`
-- Connected by `h-[2px]` lines (green if completed)
+- Component spec and tokens: **`.cursor/rules/components/step-wizard.mdc`**
+- Used on all three wizard screens: `PageInfoForm`, `PageBuilder`, `AdditionalSettings`
 
-## Step 1: Page Information
-- Centered form `max-w-[640px]`
-- All inputs use `TextField` (floating-label, 56px, `rounded-[4px]`)
-- Fields: Form Name, URL Path (prefix), HTML Title, Support Contact/Email, Freeze Date
+## Wizard footer (`PageLevelMenu`)
+- Shared sticky footer on **Step 1–3** — see **`.cursor/rules/components/page-level-menu.mdc`**
+
+## Step 1: Page Information (`PageInfoForm.tsx`)
+- **Spacing:** `32px` between `StepWizard` and the “Page Information” block (`pt-[32px]` on the content wrapper); content **left-aligned** in the frame (`justify-start`, same `px-[32px]` as the wizard)
+- **No card** around fields: **two-column grid** is `w-full` edge-to-edge within horizontal padding (`grid-cols-1 md:grid-cols-2`, `gap-x-8 gap-y-5`)
+- Row pairing: Form Name | HTML Title; **URL Path** full width (`md:col-span-2`); Support Contact | Support Email; Freeze Date (single cell in last row)
+- Header: title + single subtitle line (`text-[#7e7e7e]`)
+- All inputs use `TextField` (floating-label, 56px, `rounded-[4px]`); wrap each field in `min-w-0` for grid overflow
+- Actions: **`PageLevelMenu`** — Cancel + Continue to Page Builder (`primaryDisabled` until required fields valid); no Clear all
 - Cover Image has moved to Step 2
 
 ## Step 2: Page Builder
@@ -40,11 +43,11 @@ Module: `/payment-pages` and create-page wizard. Defines page shell, steps, and 
 - **Canvas**: `bg-[#fafafa]`, drop zone `border-[#004299] bg-[#f5f9fe]`, selected `border-[#004299]`
 - Input previews: `h-[56px] border border-[#e0e0e0] rounded-[4px]` floating-label style
 - **Properties**: Label, Placeholder, Required/Show toggles, Options list, Validation
-- **Bottom bar**: `PageLevelMenu` (`src/app/components/payment-pages/PageLevelMenu.tsx`) — sticky footer `bg-[#f5f9fe]`, `px-[32px]`, assistive line + “Clear all” (left), Medium + High emphasis buttons (right)
+- **Bottom bar**: `PageLevelMenu` — includes **Clear all** (canvas) + Back to Page Info + Save & Continue; see `components/page-level-menu.mdc`
 - HTML5 Drag and Drop (no external dependency)
 
 ## Step 3: Additional Settings
 - Primary tabs: Post Transaction | Notifications
 - Post Transaction: Redirect URL, Success Message
 - Notifications: SMS toggle + text, Email toggle + subject + body
-- "Save & Publish": `bg-[#21c179] hover:bg-[#1aa866]`
+- **Footer**: `PageLevelMenu` with `primaryEmphasis="success"` — Back to Builder + Save & Publish (`bg-[#21c179]`); no Clear all
