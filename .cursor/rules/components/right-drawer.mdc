@@ -9,7 +9,9 @@ alwaysApply: false
 Shared slide-in drawer at `src/app/components/RightDrawer.tsx`.
 
 ## Shell (`RightDrawer`)
-- Slides from right edge, full viewport height
+- **Portaled into `.app-product-frame`** (the 16:9 UMP panel) via `createPortal` — overlay and drawer sit **inside** the product frame, not the full browser viewport (letterboxing stays visible outside gray bars).
+- **Positioning:** `.app-product-frame` has `position: relative` (`theme.css`); shell uses `absolute inset-0 z-50` when portaled. **Fallback:** if the frame node is missing, `fixed inset-0` (same visual, full viewport).
+- Full **panel** height (sidebar + header + main), slides from the **right edge of the frame**
 - Default width: `520px` (configurable via `width` prop)
 - Overlay: `bg-[#101010]/50`, click to close
 - Shadow: `shadow-[-4px_0_24px_rgba(0,0,0,0.08)]`

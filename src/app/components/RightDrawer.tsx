@@ -1,5 +1,11 @@
 import { useEffect, useCallback, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
+
+function getAppProductFrame(): HTMLElement | null {
+  if (typeof document === "undefined") return null;
+  return document.querySelector(".app-product-frame");
+}
 
 interface RightDrawerProps {
   open: boolean;
@@ -33,9 +39,12 @@ export function RightDrawer({
 
   if (!open) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex justify-end">
-      {/* Overlay */}
+  const frame = getAppProductFrame();
+  const outerPositionClass = "inset-0 z-50 flex justify-end";
+
+  const shell = (
+    <div className={frame ? `absolute ${outerPositionClass}` : `fixed ${outerPositionClass}`}>
+      {/* Overlay — dims full UMP panel (16:9 frame), not the letterbox */}
       <div
         className="absolute inset-0 bg-[#101010]/50 transition-opacity"
         onClick={onClose}
@@ -49,6 +58,12 @@ export function RightDrawer({
       </div>
     </div>
   );
+
+  if (frame) {
+    return createPortal(shell, frame);
+  }
+
+  return shell;
 }
 
 /* ── Header ────────────────────────────────────────────────── */
