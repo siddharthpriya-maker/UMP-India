@@ -58,9 +58,10 @@ export function StepWizard({ currentStep }: StepWizardProps) {
   return (
     <nav
       aria-label="Create payment page steps"
-      className="w-full shrink-0 bg-[#fafafa] px-[32px] py-5"
+      className="w-full shrink-0 px-[32px] pb-5 pt-0"
     >
-      <ul className="mx-0 flex w-full list-none flex-wrap items-center justify-start gap-y-4 p-0">
+      <div className="w-full rounded-[12px] border border-[#e0e0e0] bg-white px-6 py-5 shadow-[0_1px_3px_rgba(16,16,16,0.06)] sm:px-8">
+        <ul className="flex w-full list-none flex-wrap items-center justify-center gap-y-4 p-0">
         {steps.map((step, idx) => {
           const isCompleted = idx < currentIdx;
           const isActive = idx === currentIdx;
@@ -94,7 +95,8 @@ export function StepWizard({ currentStep }: StepWizardProps) {
             </li>
           );
         })}
-      </ul>
+        </ul>
+      </div>
     </nav>
   );
 }

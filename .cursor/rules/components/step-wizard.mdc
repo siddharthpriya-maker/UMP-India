@@ -11,10 +11,9 @@ alwaysApply: false
 Horizontal step indicator for the Payment Pages creation flow (and reusable for other 3-step wizards using `BuilderStep`).
 
 ## Container
-- Full width, `shrink-0`
-- `bg-[#fafafa]` (no bottom border)
-- Padding: `px-[32px] py-5` (aligns with page content gutters)
-- Inner row: `w-full mx-0`, `flex flex-wrap items-center justify-start`, `list-none` on `<ul>` (left-aligned; same content width as page body)
+- Outer `<nav>`: full width, `shrink-0`, **`px-[32px] pb-5 pt-0`** — **32px** horizontal gutter; **no top padding** (card sits flush under header / page top); **`pb-5`** before content below
+- **Card** wrapper: `w-full`, `rounded-[12px]`, `border border-[#e0e0e0]`, `bg-white`, inner `px-6 py-5 sm:px-8` (padding inside the card so steps don’t touch the border), light shadow `shadow-[0_1px_3px_rgba(16,16,16,0.06)]`
+- Inner row: `<ul>` — `flex flex-wrap items-center justify-center`, `list-none` (steps **center-aligned** in the card)
 
 ## Layout
 - Each step: **indicator left**, **label right** (`gap-3`)

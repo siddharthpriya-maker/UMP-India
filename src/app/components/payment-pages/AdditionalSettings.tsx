@@ -45,7 +45,7 @@ export function AdditionalSettings({ currentStep, onBack, onNext }: AdditionalSe
       <StepWizard currentStep={currentStep} />
 
       <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex-1 px-[32px] pt-[32px] pb-4">
+        <div className="flex-1 px-[32px] pt-0 pb-4">
           <div className="flex w-full max-w-[640px] flex-col gap-6">
             <div className="flex flex-col gap-1">
               <h2 className="text-[24px] font-semibold text-[#101010]">Additional Settings</h2>

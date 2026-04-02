@@ -32,7 +32,7 @@ export function PageInfoForm({ currentStep, onBack, onNext }: PageInfoFormProps)
       <StepWizard currentStep={currentStep} />
 
       <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex-1 px-[32px] pt-[32px] pb-4">
+        <div className="flex-1 px-[32px] pt-0 pb-4">
           <div className="flex w-full min-w-0 flex-col gap-6">
             <div className="flex flex-col gap-1">
               <h2 className="text-[24px] font-semibold text-[#101010]">Page Information</h2>
@@ -41,7 +41,7 @@ export function PageInfoForm({ currentStep, onBack, onNext }: PageInfoFormProps)
               </p>
             </div>
 
-            <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 md:gap-x-8 md:gap-y-5">
+            <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 md:gap-x-6 md:gap-y-5">
               <div className="min-w-0">
                 <TextField
                   label="Form Name"

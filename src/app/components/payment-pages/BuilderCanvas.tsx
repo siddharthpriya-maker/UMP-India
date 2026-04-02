@@ -1,5 +1,14 @@
-import { useState } from "react";
-import { Plus, Trash2, GripVertical, Palette, Upload, X } from "lucide-react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import {
+  Plus,
+  Trash2,
+  GripVertical,
+  Palette,
+  Upload,
+  X,
+  ZoomIn,
+  ZoomOut,
+} from "lucide-react";
 import type { BuilderComponent, BuilderPage, PaletteComponent } from "./types";
 
 interface BuilderCanvasProps {
@@ -31,6 +40,30 @@ export function BuilderCanvas({
 }: BuilderCanvasProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [zoom, setZoom] = useState(1);
+  const canvasScrollRef = useRef<HTMLDivElement>(null);
+
+  const MIN_ZOOM = 0.5;
+  const MAX_ZOOM = 2;
+
+  const clampZoom = useCallback((z: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z)), []);
+
+  const handleWheelZoom = useCallback(
+    (e: WheelEvent) => {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      const factor = Math.exp(e.deltaY * 0.01);
+      setZoom((prev) => clampZoom(prev / factor));
+    },
+    [clampZoom]
+  );
+
+  useEffect(() => {
+    const el = canvasScrollRef.current;
+    if (!el) return;
+    el.addEventListener("wheel", handleWheelZoom, { passive: false });
+    return () => el.removeEventListener("wheel", handleWheelZoom);
+  }, [handleWheelZoom]);
 
   const activePage = pages[activePageIndex];
   const sortedComponents = [...(activePage?.components || [])].sort(
@@ -92,19 +125,58 @@ export function BuilderCanvas({
             Add Page
           </button>
         </div>
-        <button
-          onClick={onOpenCustomization}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-[8px] text-[13px] text-[#004299] border border-[#004299] hover:bg-[#e7f1f8] transition-colors"
-        >
-          <Palette className="size-3.5" />
-          Customise
-        </button>
+        <div className="flex items-center gap-2">
+          <div
+            className="flex items-center gap-1 rounded-[8px] border border-[#e0e0e0] bg-[#fafafa] px-1 py-0.5"
+            title="Pinch on trackpad or ⌃ + scroll to zoom"
+          >
+            <button
+              type="button"
+              onClick={() => setZoom((z) => clampZoom(z - 0.1))}
+              disabled={zoom <= MIN_ZOOM}
+              className="flex size-8 items-center justify-center rounded-[6px] text-[#004299] hover:bg-white disabled:pointer-events-none disabled:opacity-40"
+              aria-label="Zoom out"
+            >
+              <ZoomOut className="size-4" />
+            </button>
+            <span className="min-w-[3rem] text-center text-[12px] font-semibold tabular-nums text-[#101010]">
+              {Math.round(zoom * 100)}%
+            </span>
+            <button
+              type="button"
+              onClick={() => setZoom((z) => clampZoom(z + 0.1))}
+              disabled={zoom >= MAX_ZOOM}
+              className="flex size-8 items-center justify-center rounded-[6px] text-[#004299] hover:bg-white disabled:pointer-events-none disabled:opacity-40"
+              aria-label="Zoom in"
+            >
+              <ZoomIn className="size-4" />
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={() => setZoom(1)}
+            className="text-[12px] font-semibold text-[#004299] hover:underline px-1"
+          >
+            Reset
+          </button>
+          <button
+            onClick={onOpenCustomization}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-[8px] text-[13px] text-[#004299] border border-[#004299] hover:bg-[#e7f1f8] transition-colors"
+          >
+            <Palette className="size-3.5" />
+            Customise
+          </button>
+        </div>
       </div>
 
-      {/* Canvas area */}
-      <div className="flex-1 overflow-y-auto p-6">
+      {/* Canvas area — pinch / ⌃+scroll zoom; overflow both axes when zoomed */}
+      <div ref={canvasScrollRef} className="flex-1 overflow-auto p-6">
         <div
-          className={`max-w-[600px] mx-auto min-h-[500px] rounded-[12px] border-2 transition-colors p-6 flex flex-col gap-3 ${
+          className="mx-auto w-full max-w-[600px] origin-top"
+          style={{ zoom } as React.CSSProperties}
+        >
+        <div
+          className={`min-h-[500px] rounded-[12px] border-2 transition-colors p-6 flex flex-col gap-3 ${
             isDragOver
               ? "border-[#004299] bg-[#f5f9fe]"
               : "border-dashed border-[#e0e0e0] bg-white"
@@ -167,6 +239,7 @@ export function BuilderCanvas({
               <p className="text-[14px] text-[#004299] font-semibold">Drop component here</p>
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>
