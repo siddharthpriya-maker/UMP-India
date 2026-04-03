@@ -8,9 +8,9 @@ import {
   Fingerprint, FileCheck, Building,
   MapPin, Globe, Map, Navigation,
   Phone, ShoppingCart, Package, Upload, Camera,
-  ChevronDown,
+  ChevronDown, GripVertical,
 } from "lucide-react";
-import type { ComponentCategory, PaletteComponent } from "./types";
+import type { BuilderComponent, ComponentCategory, PaletteComponent } from "./types";
 
 const categories: { key: ComponentCategory; label: string }[] = [
   { key: "display", label: "Display Content" },
@@ -84,65 +84,157 @@ export const paletteComponents: PaletteComponent[] = [
   { type: "photo_capture", label: "Photo Capture", category: "other", icon: "photo_capture", defaultProperties: { label: "Capture Photo" } },
 ];
 
+type PanelView = "all" | "used";
+
 interface ComponentPaletteProps {
   onDragStart: (component: PaletteComponent) => void;
+  usedComponents: BuilderComponent[];
 }
 
-export function ComponentPalette({ onDragStart }: ComponentPaletteProps) {
+export function ComponentPalette({ onDragStart, usedComponents }: ComponentPaletteProps) {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [view, setView] = useState<PanelView>("all");
 
   const toggleCategory = (key: string) =>
     setCollapsed((prev) => ({ ...prev, [key]: !prev[key] }));
 
   return (
     <div className="w-[280px] border-r border-[#e0e0e0] bg-white flex flex-col overflow-hidden shrink-0">
-      <div className="px-4 py-3 border-b border-[#e0e0e0]">
-        <h3 className="text-[14px] font-semibold text-[#101010]">Components</h3>
+      {/* Toggle: All Components / Used Components */}
+      <div className="flex shrink-0 border-b border-[#e0e0e0]">
+        <button
+          type="button"
+          onClick={() => setView("all")}
+          className={[
+            "flex-1 py-2.5 text-center text-[13px] font-semibold transition-colors",
+            view === "all"
+              ? "text-[#004299] border-b-2 border-[#004299]"
+              : "text-[#7e7e7e] hover:text-[#101010]",
+          ].join(" ")}
+        >
+          All Components
+        </button>
+        <button
+          type="button"
+          onClick={() => setView("used")}
+          className={[
+            "flex-1 py-2.5 text-center text-[13px] font-semibold transition-colors",
+            view === "used"
+              ? "text-[#004299] border-b-2 border-[#004299]"
+              : "text-[#7e7e7e] hover:text-[#101010]",
+          ].join(" ")}
+        >
+          Used ({usedComponents.length})
+        </button>
       </div>
-      <div className="flex-1 overflow-y-auto py-2 pl-[32px] pr-3">
-        {categories.map((cat) => {
-          const items = paletteComponents.filter((c) => c.category === cat.key);
-          if (items.length === 0) return null;
-          const isCollapsed = collapsed[cat.key];
 
-          return (
-            <div key={cat.key} className="mb-2">
-              <button
-                onClick={() => toggleCategory(cat.key)}
-                className="flex items-center justify-between w-full py-2 px-1"
-              >
-                <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold">
-                  {cat.label}
-                </span>
-                <ChevronDown
-                  className={`size-4 text-[#7e7e7e] transition-transform ${isCollapsed ? "-rotate-90" : ""}`}
-                />
-              </button>
-              {!isCollapsed && (
-                <div className="flex flex-col gap-0.5">
-                  {items.map((comp) => {
-                    const Icon = iconMap[comp.icon] || Type;
-                    return (
-                      <div
-                        key={comp.type}
-                        draggable
-                        onDragStart={(e) => {
-                          e.dataTransfer.setData("component", JSON.stringify(comp));
-                          onDragStart(comp);
-                        }}
-                        className="flex items-center gap-3 p-2.5 rounded-[8px] hover:bg-[#f5f9fe] cursor-grab active:cursor-grabbing transition-colors"
-                      >
-                        <Icon className="size-4 text-[#7e7e7e] shrink-0" />
-                        <span className="text-[13px] text-[#101010]">{comp.label}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
+      {/* Scrollable list */}
+      <div className="flex-1 overflow-y-auto py-2 pl-[32px] pr-3">
+        {view === "all" ? (
+          <AllComponentsList
+            collapsed={collapsed}
+            toggleCategory={toggleCategory}
+            onDragStart={onDragStart}
+          />
+        ) : (
+          <UsedComponentsList components={usedComponents} />
+        )}
       </div>
+    </div>
+  );
+}
+
+function AllComponentsList({
+  collapsed,
+  toggleCategory,
+  onDragStart,
+}: {
+  collapsed: Record<string, boolean>;
+  toggleCategory: (key: string) => void;
+  onDragStart: (component: PaletteComponent) => void;
+}) {
+  return (
+    <>
+      {categories.map((cat) => {
+        const items = paletteComponents.filter((c) => c.category === cat.key);
+        if (items.length === 0) return null;
+        const isCollapsed = collapsed[cat.key];
+
+        return (
+          <div key={cat.key} className="mb-2">
+            <button
+              onClick={() => toggleCategory(cat.key)}
+              className="flex items-center justify-between w-full py-2 px-1"
+            >
+              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold">
+                {cat.label}
+              </span>
+              <ChevronDown
+                className={`size-4 text-[#7e7e7e] transition-transform ${isCollapsed ? "-rotate-90" : ""}`}
+              />
+            </button>
+            {!isCollapsed && (
+              <div className="flex flex-col gap-0.5">
+                {items.map((comp) => {
+                  const Icon = iconMap[comp.icon] || Type;
+                  return (
+                    <div
+                      key={comp.type}
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData("component", JSON.stringify(comp));
+                        onDragStart(comp);
+                      }}
+                      className="flex items-center gap-3 p-2.5 rounded-[8px] hover:bg-[#f5f9fe] cursor-grab active:cursor-grabbing transition-colors"
+                    >
+                      <Icon className="size-4 text-[#7e7e7e] shrink-0" />
+                      <span className="text-[13px] text-[#101010]">{comp.label}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+function UsedComponentsList({ components }: { components: BuilderComponent[] }) {
+  const sorted = [...components].sort((a, b) => a.order - b.order);
+
+  if (sorted.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <p className="text-[13px] text-[#7e7e7e]">
+          No components added yet.<br />
+          Drag from "All Components" onto the canvas.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-1">
+      {sorted.map((comp, idx) => {
+        const Icon = iconMap[comp.type] || Type;
+        return (
+          <div
+            key={comp.id}
+            className="flex items-center gap-3 p-2.5 rounded-[8px] hover:bg-[#f5f9fe] transition-colors"
+          >
+            <GripVertical className="size-3.5 text-[#e0e0e0] shrink-0" />
+            <Icon className="size-4 text-[#7e7e7e] shrink-0" />
+            <div className="flex min-w-0 flex-1 flex-col">
+              <span className="truncate text-[13px] text-[#101010]">
+                {(comp.properties.label as string) || comp.label}
+              </span>
+              <span className="text-[11px] text-[#7e7e7e]">#{idx + 1}</span>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

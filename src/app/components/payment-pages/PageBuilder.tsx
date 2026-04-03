@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { StepWizard } from "./StepWizard";
+import { PageTabsBar } from "./PageTabsBar";
 import { ComponentPalette } from "./ComponentPalette";
 import { BuilderCanvas } from "./BuilderCanvas";
 import { PropertyPanel } from "./PropertyPanel";
@@ -23,11 +24,10 @@ export function PageBuilder({ currentStep, onBack, onNext }: PageBuilderProps) {
   ]);
   const [activePageIndex, setActivePageIndex] = useState(0);
   const [selectedComponentId, setSelectedComponentId] = useState<string | null>(null);
-  const [showCustomization, setShowCustomization] = useState(false);
+  const [previewMode, setPreviewMode] = useState<"web" | "mobile">("web");
 
-  const selectedComponent = pages[activePageIndex]?.components.find(
-    (c) => c.id === selectedComponentId
-  ) || null;
+  const selectedComponent =
+    pages[activePageIndex]?.components.find((c) => c.id === selectedComponentId) || null;
 
   const handleDropComponent = useCallback(
     (paletteComp: PaletteComponent) => {
@@ -42,9 +42,7 @@ export function PageBuilder({ currentStep, onBack, onNext }: PageBuilderProps) {
       };
       setPages((prev) =>
         prev.map((p, i) =>
-          i === activePageIndex
-            ? { ...p, components: [...p.components, newComp] }
-            : p
+          i === activePageIndex ? { ...p, components: [...p.components, newComp] } : p
         )
       );
       setSelectedComponentId(newComp.id);
@@ -113,6 +111,27 @@ export function PageBuilder({ currentStep, onBack, onNext }: PageBuilderProps) {
     setSelectedComponentId(null);
   };
 
+  const handleDeletePage = useCallback(
+    (idx: number) => {
+      if (pages.length <= 1) return;
+      setPages((prev) => {
+        const next = prev.filter((_, i) => i !== idx);
+        return next.map((p, i) => ({ ...p, index: i }));
+      });
+      if (activePageIndex >= pages.length - 1) {
+        setActivePageIndex(Math.max(0, pages.length - 2));
+      } else if (idx < activePageIndex) {
+        setActivePageIndex((i) => i - 1);
+      }
+      setSelectedComponentId(null);
+    },
+    [activePageIndex, pages.length]
+  );
+
+  const handleRenamePage = useCallback((idx: number, title: string) => {
+    setPages((prev) => prev.map((p, i) => (i === idx ? { ...p, title } : p)));
+  }, []);
+
   const handleClearAll = useCallback(() => {
     setPages((prev) => prev.map((p) => ({ ...p, components: [] })));
     setSelectedComponentId(null);
@@ -125,35 +144,59 @@ export function PageBuilder({ currentStep, onBack, onNext }: PageBuilderProps) {
       ? "no components added to the page"
       : `${activeComponentCount} component${activeComponentCount === 1 ? "" : "s"} added to the page`;
 
+  const usedComponents = pages[activePageIndex]?.components ?? [];
+
   return (
     <div className="flex h-full min-h-0 flex-col bg-white">
+      {/* Frame 1: Step Wizard */}
       <StepWizard currentStep={currentStep} />
 
-      <div className="flex min-h-0 flex-1 overflow-hidden">
-        <ComponentPalette onDragStart={() => {}} />
-
-        <BuilderCanvas
+      {/* Frame 2: Builder workspace */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        {/* Browser-style page tabs */}
+        <PageTabsBar
           pages={pages}
           activePageIndex={activePageIndex}
-          selectedComponentId={selectedComponentId}
-          onSelectComponent={setSelectedComponentId}
-          onAddPage={handleAddPage}
           onSwitchPage={(idx) => {
             setActivePageIndex(idx);
             setSelectedComponentId(null);
           }}
-          onDropComponent={handleDropComponent}
-          onDeleteComponent={handleDeleteComponent}
-          onReorderComponent={handleReorderComponent}
-          onOpenCustomization={() => setShowCustomization(!showCustomization)}
-          onUpdateProperty={handleUpdateProperty}
+          onAddPage={handleAddPage}
+          onDeletePage={handleDeletePage}
+          onRenamePage={handleRenamePage}
         />
 
-        <PropertyPanel
-          component={selectedComponent}
-          onClose={() => setSelectedComponentId(null)}
-          onUpdateProperty={handleUpdateProperty}
-        />
+        {/* Three-panel layout */}
+        <div className="flex min-h-0 flex-1 overflow-hidden">
+          {/* Left: component menu */}
+          <ComponentPalette
+            onDragStart={() => {}}
+            usedComponents={usedComponents}
+          />
+
+          {/* Center: canvas */}
+          <BuilderCanvas
+            sortedComponents={[...(pages[activePageIndex]?.components || [])].sort(
+              (a, b) => a.order - b.order
+            )}
+            selectedComponentId={selectedComponentId}
+            onSelectComponent={setSelectedComponentId}
+            onDropComponent={handleDropComponent}
+            onDeleteComponent={handleDeleteComponent}
+            onReorderComponent={handleReorderComponent}
+            onUpdateProperty={handleUpdateProperty}
+            previewMode={previewMode}
+          />
+
+          {/* Right: customization + preview + properties */}
+          <PropertyPanel
+            component={selectedComponent}
+            onClose={() => setSelectedComponentId(null)}
+            onUpdateProperty={handleUpdateProperty}
+            previewMode={previewMode}
+            onPreviewModeChange={setPreviewMode}
+          />
+        </div>
       </div>
 
       <PageLevelMenu

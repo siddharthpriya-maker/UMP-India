@@ -1,4 +1,4 @@
-import { X, Plus, Trash2 } from "lucide-react";
+import { X, Plus, Trash2, Monitor, Smartphone } from "lucide-react";
 import { TextField } from "../TextField";
 import type { BuilderComponent } from "./types";
 
@@ -6,19 +6,84 @@ interface PropertyPanelProps {
   component: BuilderComponent | null;
   onClose: () => void;
   onUpdateProperty: (componentId: string, key: string, value: unknown) => void;
+  previewMode: "web" | "mobile";
+  onPreviewModeChange: (mode: "web" | "mobile") => void;
 }
 
-export function PropertyPanel({ component, onClose, onUpdateProperty }: PropertyPanelProps) {
-  if (!component) {
-    return (
-      <div className="w-[320px] border-l border-[#e0e0e0] bg-white flex flex-col items-center justify-center p-6 shrink-0">
-        <p className="text-[14px] text-[#7e7e7e] text-center">
-          Select a component on the canvas to edit its properties.
-        </p>
+export function PropertyPanel({
+  component,
+  onClose,
+  onUpdateProperty,
+  previewMode,
+  onPreviewModeChange,
+}: PropertyPanelProps) {
+  return (
+    <div className="w-[320px] border-l border-[#e0e0e0] bg-white flex flex-col overflow-hidden shrink-0">
+      {/* Preview mode toggle */}
+      <div className="flex shrink-0 items-center justify-between border-b border-[#e0e0e0] px-4 py-2.5">
+        <span className="text-[12px] font-semibold uppercase tracking-[0.6px] text-[#7e7e7e]">
+          Preview
+        </span>
+        <div className="flex items-center rounded-[8px] border border-[#e0e0e0] p-0.5">
+          <button
+            type="button"
+            onClick={() => onPreviewModeChange("web")}
+            className={[
+              "flex items-center gap-1.5 rounded-[6px] px-2.5 py-1 text-[12px] font-semibold transition-colors",
+              previewMode === "web"
+                ? "bg-[#004299] text-white"
+                : "text-[#7e7e7e] hover:text-[#101010]",
+            ].join(" ")}
+          >
+            <Monitor className="size-3.5" />
+            Web
+          </button>
+          <button
+            type="button"
+            onClick={() => onPreviewModeChange("mobile")}
+            className={[
+              "flex items-center gap-1.5 rounded-[6px] px-2.5 py-1 text-[12px] font-semibold transition-colors",
+              previewMode === "mobile"
+                ? "bg-[#004299] text-white"
+                : "text-[#7e7e7e] hover:text-[#101010]",
+            ].join(" ")}
+          >
+            <Smartphone className="size-3.5" />
+            Mobile
+          </button>
+        </div>
       </div>
-    );
-  }
 
+      {/* Component properties or empty state */}
+      {component ? (
+        <ComponentProperties
+          component={component}
+          onClose={onClose}
+          onUpdateProperty={onUpdateProperty}
+        />
+      ) : (
+        <div className="flex-1 flex flex-col">
+          {/* Customization hint */}
+          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+            <p className="text-[14px] text-[#7e7e7e]">
+              Select a component on the canvas to edit its properties and rules.
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ComponentProperties({
+  component,
+  onClose,
+  onUpdateProperty,
+}: {
+  component: BuilderComponent;
+  onClose: () => void;
+  onUpdateProperty: (componentId: string, key: string, value: unknown) => void;
+}) {
   const update = (key: string, value: unknown) =>
     onUpdateProperty(component.id, key, value);
 
@@ -26,9 +91,9 @@ export function PropertyPanel({ component, onClose, onUpdateProperty }: Property
   const options = (component.properties.options as string[]) || [];
 
   return (
-    <div className="w-[320px] border-l border-[#e0e0e0] bg-white flex flex-col overflow-hidden shrink-0">
+    <>
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-[#e0e0e0]">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[#e0e0e0] shrink-0">
         <h3 className="text-[14px] font-semibold text-[#101010]">Properties</h3>
         <button
           onClick={onClose}
@@ -65,7 +130,7 @@ export function PropertyPanel({ component, onClose, onUpdateProperty }: Property
           />
         )}
 
-        {/* Required - keep as select since it has predefined options */}
+        {/* Required */}
         <SelectField
           label="Require this field"
           value={(component.properties.required as string) || "always"}
@@ -77,7 +142,7 @@ export function PropertyPanel({ component, onClose, onUpdateProperty }: Property
           ]}
         />
 
-        {/* Show field - keep as select */}
+        {/* Show field */}
         <SelectField
           label="Show this field"
           value={(component.properties.showField as string) || "always"}
@@ -89,7 +154,7 @@ export function PropertyPanel({ component, onClose, onUpdateProperty }: Property
           ]}
         />
 
-        {/* Toggle properties */}
+        {/* Toggles */}
         <div className="flex flex-col gap-3">
           <ToggleProperty
             label="Disable Field"
@@ -154,10 +219,10 @@ export function PropertyPanel({ component, onClose, onUpdateProperty }: Property
           </div>
         )}
 
-        {/* Validation */}
+        {/* Rules / Validation */}
         <div className="border-t border-[#e0e0e0] pt-4">
           <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold">
-            Validation
+            Rules &amp; Validation
           </span>
           <div className="flex flex-col gap-3 mt-3">
             {component.properties.minLength !== undefined && (
@@ -188,7 +253,7 @@ export function PropertyPanel({ component, onClose, onUpdateProperty }: Property
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

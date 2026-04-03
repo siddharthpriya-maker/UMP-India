@@ -3,40 +3,32 @@ import {
   Plus,
   Trash2,
   GripVertical,
-  Palette,
   Upload,
   X,
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
-import type { BuilderComponent, BuilderPage, PaletteComponent } from "./types";
+import type { BuilderComponent, PaletteComponent } from "./types";
 
 interface BuilderCanvasProps {
-  pages: BuilderPage[];
-  activePageIndex: number;
+  sortedComponents: BuilderComponent[];
   selectedComponentId: string | null;
   onSelectComponent: (id: string | null) => void;
-  onAddPage: () => void;
-  onSwitchPage: (index: number) => void;
   onDropComponent: (component: PaletteComponent) => void;
   onDeleteComponent: (id: string) => void;
   onReorderComponent: (id: string, newOrder: number) => void;
-  onOpenCustomization: () => void;
   onUpdateProperty?: (componentId: string, key: string, value: unknown) => void;
+  previewMode: "web" | "mobile";
 }
 
 export function BuilderCanvas({
-  pages,
-  activePageIndex,
+  sortedComponents,
   selectedComponentId,
   onSelectComponent,
-  onAddPage,
-  onSwitchPage,
   onDropComponent,
   onDeleteComponent,
-  onReorderComponent,
-  onOpenCustomization,
   onUpdateProperty,
+  previewMode,
 }: BuilderCanvasProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -46,7 +38,10 @@ export function BuilderCanvas({
   const MIN_ZOOM = 0.5;
   const MAX_ZOOM = 2;
 
-  const clampZoom = useCallback((z: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z)), []);
+  const clampZoom = useCallback(
+    (z: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z)),
+    []
+  );
 
   const handleWheelZoom = useCallback(
     (e: WheelEvent) => {
@@ -64,11 +59,6 @@ export function BuilderCanvas({
     el.addEventListener("wheel", handleWheelZoom, { passive: false });
     return () => el.removeEventListener("wheel", handleWheelZoom);
   }, [handleWheelZoom]);
-
-  const activePage = pages[activePageIndex];
-  const sortedComponents = [...(activePage?.components || [])].sort(
-    (a, b) => a.order - b.order
-  );
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -99,147 +89,117 @@ export function BuilderCanvas({
     setDragOverIndex(index);
   };
 
+  const canvasMaxWidth = previewMode === "mobile" ? "max-w-[375px]" : "max-w-[600px]";
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-[#fafafa]">
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-[#e0e0e0]">
-        <div className="flex items-center gap-2">
-          {pages.map((page, idx) => (
-            <button
-              key={idx}
-              onClick={() => onSwitchPage(idx)}
-              className={`px-3 py-1.5 rounded-[8px] text-[13px] font-semibold transition-colors ${
-                idx === activePageIndex
-                  ? "bg-[#004299] text-white"
-                  : "bg-[#f5f9fe] text-[#101010] hover:bg-[#e0e0e0]"
-              }`}
-            >
-              {page.title}
-            </button>
-          ))}
-          <button
-            onClick={onAddPage}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-[8px] text-[13px] text-[#004299] hover:bg-[#f5f9fe] transition-colors"
-          >
-            <Plus className="size-3.5" />
-            Add Page
-          </button>
-        </div>
-        <div className="flex items-center gap-2">
-          <div
-            className="flex items-center gap-1 rounded-[8px] border border-[#e0e0e0] bg-[#fafafa] px-1 py-0.5"
-            title="Pinch on trackpad or ⌃ + scroll to zoom"
-          >
-            <button
-              type="button"
-              onClick={() => setZoom((z) => clampZoom(z - 0.1))}
-              disabled={zoom <= MIN_ZOOM}
-              className="flex size-8 items-center justify-center rounded-[6px] text-[#004299] hover:bg-white disabled:pointer-events-none disabled:opacity-40"
-              aria-label="Zoom out"
-            >
-              <ZoomOut className="size-4" />
-            </button>
-            <span className="min-w-[3rem] text-center text-[12px] font-semibold tabular-nums text-[#101010]">
-              {Math.round(zoom * 100)}%
-            </span>
-            <button
-              type="button"
-              onClick={() => setZoom((z) => clampZoom(z + 0.1))}
-              disabled={zoom >= MAX_ZOOM}
-              className="flex size-8 items-center justify-center rounded-[6px] text-[#004299] hover:bg-white disabled:pointer-events-none disabled:opacity-40"
-              aria-label="Zoom in"
-            >
-              <ZoomIn className="size-4" />
-            </button>
-          </div>
+      {/* Zoom toolbar */}
+      <div className="flex shrink-0 items-center justify-center gap-2 border-b border-[#e0e0e0] bg-white px-4 py-2">
+        <div
+          className="flex items-center gap-1 rounded-[8px] border border-[#e0e0e0] bg-[#fafafa] px-1 py-0.5"
+          title="Pinch on trackpad or ⌃ + scroll to zoom"
+        >
           <button
             type="button"
-            onClick={() => setZoom(1)}
-            className="text-[12px] font-semibold text-[#004299] hover:underline px-1"
+            onClick={() => setZoom((z) => clampZoom(z - 0.1))}
+            disabled={zoom <= MIN_ZOOM}
+            className="flex size-7 items-center justify-center rounded-[6px] text-[#004299] hover:bg-white disabled:pointer-events-none disabled:opacity-40"
+            aria-label="Zoom out"
           >
-            Reset
+            <ZoomOut className="size-3.5" />
           </button>
+          <span className="min-w-[3rem] text-center text-[12px] font-semibold tabular-nums text-[#101010]">
+            {Math.round(zoom * 100)}%
+          </span>
           <button
-            onClick={onOpenCustomization}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-[8px] text-[13px] text-[#004299] border border-[#004299] hover:bg-[#e7f1f8] transition-colors"
+            type="button"
+            onClick={() => setZoom((z) => clampZoom(z + 0.1))}
+            disabled={zoom >= MAX_ZOOM}
+            className="flex size-7 items-center justify-center rounded-[6px] text-[#004299] hover:bg-white disabled:pointer-events-none disabled:opacity-40"
+            aria-label="Zoom in"
           >
-            <Palette className="size-3.5" />
-            Customise
+            <ZoomIn className="size-3.5" />
           </button>
         </div>
+        <button
+          type="button"
+          onClick={() => setZoom(1)}
+          className="text-[12px] font-semibold text-[#004299] hover:underline px-1"
+        >
+          Reset
+        </button>
       </div>
 
-      {/* Canvas area — pinch / ⌃+scroll zoom; overflow both axes when zoomed */}
+      {/* Canvas scroll area */}
       <div ref={canvasScrollRef} className="flex-1 overflow-auto p-6">
         <div
-          className="mx-auto w-full max-w-[600px] origin-top"
+          className={`mx-auto w-full ${canvasMaxWidth} origin-top transition-[max-width] duration-200`}
           style={{ zoom } as React.CSSProperties}
         >
-        <div
-          className={`min-h-[500px] rounded-[12px] border-2 transition-colors p-6 flex flex-col gap-3 ${
-            isDragOver
-              ? "border-[#004299] bg-[#f5f9fe]"
-              : "border-dashed border-[#e0e0e0] bg-white"
-          }`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          onClick={() => onSelectComponent(null)}
-        >
-          {/* Form header preview */}
-          <div className="flex flex-col gap-2 pb-4 border-b border-[#e0e0e0]">
-            <div className="w-[80px] h-[28px] bg-[#e0e0e0] rounded-[4px]" />
-            <div className="w-[200px] h-[20px] bg-[#e0e0e0] rounded-[4px]" />
-          </div>
+          <div
+            className={`min-h-[500px] rounded-[12px] border-2 transition-colors p-6 flex flex-col gap-3 ${
+              isDragOver
+                ? "border-[#004299] bg-[#f5f9fe]"
+                : "border-dashed border-[#e0e0e0] bg-white"
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={() => onSelectComponent(null)}
+          >
+            {/* Form header preview */}
+            <div className="flex flex-col gap-2 pb-4 border-b border-[#e0e0e0]">
+              <div className="w-[80px] h-[28px] bg-[#e0e0e0] rounded-[4px]" />
+              <div className="w-[200px] h-[20px] bg-[#e0e0e0] rounded-[4px]" />
+            </div>
 
-          {/* Components */}
-          {sortedComponents.map((comp, idx) => (
-            <div
-              key={comp.id}
-              onClick={(e) => {
-                e.stopPropagation();
-                onSelectComponent(comp.id);
-              }}
-              onDragOver={(e) => handleComponentDragOver(e, idx)}
-              className={`group relative flex items-start gap-2 p-3 rounded-[8px] border transition-colors ${
-                selectedComponentId === comp.id
-                  ? "border-[#004299] bg-[#f5f9fe]"
-                  : "border-transparent hover:border-[#e0e0e0] hover:bg-[#fafafa]"
-              } ${dragOverIndex === idx ? "border-t-2 border-t-[#004299]" : ""}`}
-            >
-              <GripVertical className="size-4 text-[#e0e0e0] mt-1 shrink-0 opacity-0 group-hover:opacity-100 cursor-grab transition-opacity" />
-              <div className="flex-1">
-                <ComponentPreview component={comp} onUpdateProperty={onUpdateProperty} />
-              </div>
-              <button
+            {sortedComponents.map((comp, idx) => (
+              <div
+                key={comp.id}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onDeleteComponent(comp.id);
+                  onSelectComponent(comp.id);
                 }}
-                className="size-6 flex items-center justify-center rounded-[4px] text-[#fd5154] opacity-0 group-hover:opacity-100 hover:bg-[#ffebef] transition-all shrink-0"
+                onDragOver={(e) => handleComponentDragOver(e, idx)}
+                className={`group relative flex items-start gap-2 p-3 rounded-[8px] border transition-colors ${
+                  selectedComponentId === comp.id
+                    ? "border-[#004299] bg-[#f5f9fe]"
+                    : "border-transparent hover:border-[#e0e0e0] hover:bg-[#fafafa]"
+                } ${dragOverIndex === idx ? "border-t-2 border-t-[#004299]" : ""}`}
               >
-                <Trash2 className="size-3.5" />
-              </button>
-            </div>
-          ))}
-
-          {sortedComponents.length === 0 && !isDragOver && (
-            <div className="flex-1 flex flex-col items-center justify-center gap-3 py-16 text-center">
-              <div className="size-12 rounded-full bg-[#f5f9fe] flex items-center justify-center">
-                <Plus className="size-6 text-[#7e7e7e]" />
+                <GripVertical className="size-4 text-[#e0e0e0] mt-1 shrink-0 opacity-0 group-hover:opacity-100 cursor-grab transition-opacity" />
+                <div className="flex-1">
+                  <ComponentPreview component={comp} onUpdateProperty={onUpdateProperty} />
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDeleteComponent(comp.id);
+                  }}
+                  className="size-6 flex items-center justify-center rounded-[4px] text-[#fd5154] opacity-0 group-hover:opacity-100 hover:bg-[#ffebef] transition-all shrink-0"
+                >
+                  <Trash2 className="size-3.5" />
+                </button>
               </div>
-              <p className="text-[14px] text-[#7e7e7e]">
-                Drag components from the left panel to start building your page.
-              </p>
-            </div>
-          )}
+            ))}
 
-          {isDragOver && sortedComponents.length === 0 && (
-            <div className="flex-1 flex items-center justify-center py-16">
-              <p className="text-[14px] text-[#004299] font-semibold">Drop component here</p>
-            </div>
-          )}
-        </div>
+            {sortedComponents.length === 0 && !isDragOver && (
+              <div className="flex-1 flex flex-col items-center justify-center gap-3 py-16 text-center">
+                <div className="size-12 rounded-full bg-[#f5f9fe] flex items-center justify-center">
+                  <Plus className="size-6 text-[#7e7e7e]" />
+                </div>
+                <p className="text-[14px] text-[#7e7e7e]">
+                  Drag components from the left panel to start building your page.
+                </p>
+              </div>
+            )}
+
+            {isDragOver && sortedComponents.length === 0 && (
+              <div className="flex-1 flex items-center justify-center py-16">
+                <p className="text-[14px] text-[#004299] font-semibold">Drop component here</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

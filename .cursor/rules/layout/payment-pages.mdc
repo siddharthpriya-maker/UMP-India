@@ -37,14 +37,38 @@ Module: `/payment-pages` and create-page wizard. Defines page shell, steps, and 
 - Cover Image has moved to Step 2
 
 ## Step 2: Page Builder
-- Three-panel: Palette `w-[280px]` | Canvas `flex-1` | Properties `w-[320px]`
-- **Palette**: categorised draggable components (Display, Layout, Input, Choices, Date, Pricing, Verification, Address, eCommerce, Other)
-- **Display** includes Cover Image (drag-and-drop upload, PNG/JPG up to 5MB)
-- **Canvas**: `bg-[#fafafa]`; **zoom** on the page preview (`zoom` 50%–200%), **trackpad pinch** / **⌃+scroll** (`wheel` + `ctrlKey`, non-passive), toolbar **− / +** and **Reset**; scroll area `overflow-auto`; drop zone `border-[#004299] bg-[#f5f9fe]`, selected `border-[#004299]`
-- Input previews: `h-[56px] border border-[#e0e0e0] rounded-[4px]` floating-label style
-- **Properties**: Label, Placeholder, Required/Show toggles, Options list, Validation
-- **Bottom bar**: `PageLevelMenu` — includes **Clear all** (canvas) + Back to Page Info + Save & Continue; see `components/page-level-menu.mdc`
-- HTML5 Drag and Drop (no external dependency)
+
+### Two frames
+1. **Frame 1 — StepWizard**: identical to other steps (no changes).
+2. **Frame 2 — Builder workspace**: fills remaining height; divided into **page tabs bar** + **three-panel** layout.
+
+### Browser-style page tabs (`PageTabsBar.tsx`)
+- End-to-end `border-b border-[#e0e0e0] bg-[#fafafa]`, sits above the three panels
+- Each tab: `rounded-t-[8px]`, active tab `bg-white border-x border-t -mb-px` (overlaps bottom border); inactive transparent, hover `bg-[#f0f0f0]`
+- **Delete**: `X` icon per tab (hidden until hover), disabled when only 1 page
+- **Rename**: double-click tab title to edit inline
+- **Add Page**: `Plus` icon + "Add Page" text, right of tabs
+
+### Three-panel layout
+- **Left — Component Palette** (`ComponentPalette.tsx`, `w-[280px]`):
+  - Toggle bar: **All Components** | **Used (N)** — underline active `border-b-2 border-[#004299]`
+  - **All Components**: categorised draggable components (Display, Layout, Input, Choices, Date, Pricing, Verification, Address, eCommerce, Other)
+  - **Used**: ordered list of components on active page (with grip icon + label + order #); empty state "No components added yet"
+  - Drag from All onto canvas (HTML5 Drag and Drop, no external dependency)
+
+- **Center — Canvas** (`BuilderCanvas.tsx`, `flex-1`):
+  - `bg-[#fafafa]`, zoom toolbar (pinch / ⌃+scroll, **−/+** buttons, **Reset**; 50%–200%)
+  - Canvas width adapts to **preview mode**: `max-w-[600px]` (web) or `max-w-[375px]` (mobile)
+  - Drop zone `border-[#004299] bg-[#f5f9fe]`, selected `border-[#004299]`
+  - Input previews: `h-[56px] border border-[#e0e0e0] rounded-[4px]` floating-label style
+  - Cover Image (drag-and-drop upload, PNG/JPG up to 5MB)
+
+- **Right — Property Panel** (`PropertyPanel.tsx`, `w-[320px]`):
+  - **Preview toggle**: Web (Monitor icon) / Mobile (Smartphone icon) — pill switch, active `bg-[#004299] text-white`; controls canvas `max-w` above
+  - **Component properties**: shown when component selected — type badge, Label, Placeholder, Required, Show, Toggles (Disable/Help/Analytics/Multi), Options list (dropdown/radio/checkbox), **Rules & Validation** (min/max length, regex)
+  - **Empty state**: "Select a component on the canvas to edit its properties and rules."
+
+- **Bottom bar**: `PageLevelMenu` — Clear all (disabled when nothing to clear) + Back to Page Info + Save & Continue; see `components/page-level-menu.mdc`
 
 ## Step 3: Additional Settings
 - Primary tabs: Post Transaction | Notifications
