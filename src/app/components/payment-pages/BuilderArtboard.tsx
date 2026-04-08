@@ -24,7 +24,7 @@ export function BuilderArtboard({
   return (
     <div
       className={`mx-auto w-full ${artboardWidth} transition-[max-width] duration-300`}
-      onClick={() => onSelectSection(null)}
+      onClick={(e) => { e.stopPropagation(); onSelectSection(null); }}
     >
       {/* Artboard card */}
       <div className="overflow-hidden rounded-[20px] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04)]">

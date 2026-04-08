@@ -33,20 +33,40 @@ export const SECTION_META: Record<SectionId, { label: string; description: strin
 
 /* ─── Branding ─────────────────────────────────────────────────────────────── */
 
+export type CoverType = "image" | "video";
+
 export interface BrandingData {
   logo: string;
   businessName: string;
   coverImage: string;
+  coverType: CoverType;
+  coverVideoUrl: string;
   description: string;
   videoUrl: string;
+  businessEmail: string;
+  businessPhone: string;
+  coverEnabled: boolean;
+  logoEnabled: boolean;
+  descriptionEnabled: boolean;
+  businessDetailsEnabled: boolean;
+  videoEnabled: boolean;
 }
 
 export const DEFAULT_BRANDING: BrandingData = {
   logo: "",
   businessName: "",
   coverImage: "",
+  coverType: "image",
+  coverVideoUrl: "",
   description: "",
   videoUrl: "",
+  businessEmail: "",
+  businessPhone: "",
+  coverEnabled: true,
+  logoEnabled: true,
+  descriptionEnabled: true,
+  businessDetailsEnabled: false,
+  videoEnabled: false,
 };
 
 /* ─── Product / Items ──────────────────────────────────────────────────────── */
@@ -73,6 +93,10 @@ export interface ProductData {
   donationGoal: number;
   donationCurrent: number;
   currency: string;
+  itemCardEnabled: boolean;
+  pricingPlanEnabled: boolean;
+  donationAmountEnabled: boolean;
+  donationGoalEnabled: boolean;
 }
 
 export const DEFAULT_PRODUCT: ProductData = {
@@ -93,6 +117,10 @@ export const DEFAULT_PRODUCT: ProductData = {
   donationGoal: 0,
   donationCurrent: 0,
   currency: "INR",
+  itemCardEnabled: true,
+  pricingPlanEnabled: false,
+  donationAmountEnabled: false,
+  donationGoalEnabled: false,
 };
 
 /* ─── Customer Details ─────────────────────────────────────────────────────── */
@@ -189,6 +217,19 @@ export function isPageValid(state: StructuredPageState): boolean {
   return SECTION_ORDER.every((s) => isSectionComplete(s, state));
 }
 
+/* ─── Category-based product defaults ──────────────────────────────────────── */
+
+export function getProductDefaultsForCategory(category: string): Pick<ProductData, "itemCardEnabled" | "pricingPlanEnabled" | "donationAmountEnabled" | "donationGoalEnabled"> {
+  switch (category) {
+    case "Donations":
+      return { itemCardEnabled: false, pricingPlanEnabled: false, donationAmountEnabled: true, donationGoalEnabled: true };
+    case "Subscriptions":
+      return { itemCardEnabled: false, pricingPlanEnabled: true, donationAmountEnabled: false, donationGoalEnabled: false };
+    default:
+      return { itemCardEnabled: true, pricingPlanEnabled: false, donationAmountEnabled: false, donationGoalEnabled: false };
+  }
+}
+
 /* ─── Section component library definitions ────────────────────────────────── */
 
 export interface SectionComponentDef {
@@ -203,8 +244,9 @@ export const SECTION_COMPONENTS: SectionComponentDef[] = [
   // Branding
   { id: "logo", label: "Logo", icon: "image", section: "branding", description: "Upload your brand logo" },
   { id: "business_name", label: "Business Name", icon: "type", section: "branding", description: "Your business or merchant name" },
-  { id: "cover_image", label: "Cover Image", icon: "image", section: "branding", description: "Hero banner image" },
+  { id: "cover_image", label: "Cover", icon: "image", section: "branding", description: "Hero banner image" },
   { id: "brand_description", label: "Description", icon: "align-left", section: "branding", description: "Short brand or page description" },
+  { id: "business_details", label: "Business Details", icon: "contact-round", section: "branding", description: "Email and phone number" },
   { id: "brand_video", label: "Embed Video", icon: "video", section: "branding", description: "Optional video embed" },
   // Product
   { id: "item_card", label: "Item Card", icon: "package", section: "product", description: "Add a product or service item" },

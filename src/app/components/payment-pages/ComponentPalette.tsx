@@ -43,7 +43,7 @@ const iconMap: Record<string, typeof Type> = {
 };
 
 export const paletteComponents: PaletteComponent[] = [
-  { type: "cover_image", label: "Cover Image", category: "display", icon: "cover_image", defaultProperties: { src: "", alt: "Cover image" } },
+  { type: "cover_image", label: "Cover", category: "display", icon: "cover_image", defaultProperties: { src: "", alt: "Cover image" } },
   { type: "image", label: "Image", category: "display", icon: "image", defaultProperties: { src: "", alt: "" } },
   { type: "video", label: "Embed Video", category: "display", icon: "video", defaultProperties: { url: "" } },
   { type: "html_notes", label: "HTML Notes", category: "display", icon: "html_notes", defaultProperties: { content: "" } },

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { StepWizard } from "./StepWizard";
 import { PageLevelMenu } from "./PageLevelMenu";
 import { TextField } from "../TextField";
@@ -8,6 +7,8 @@ interface PageInfoFormProps {
   currentStep: BuilderStep;
   onBack: () => void;
   onNext: () => void;
+  pageInfo: PageInfo;
+  onPageInfoChange: (info: PageInfo) => void;
 }
 
 const PAGE_CATEGORIES = [
@@ -20,20 +21,11 @@ const PAGE_CATEGORIES = [
   "Other",
 ];
 
-const emptyPageInfo: PageInfo = {
-  pageName: "",
-  pageCategory: "",
-  businessEmail: "",
-  businessPhone: "",
-  expiryDate: "",
-  browserTabTitle: "",
-};
-
-export function PageInfoForm({ currentStep, onBack, onNext }: PageInfoFormProps) {
-  const [form, setForm] = useState(emptyPageInfo);
+export function PageInfoForm({ currentStep, onBack, onNext, pageInfo, onPageInfoChange }: PageInfoFormProps) {
+  const form = pageInfo;
 
   const update = (field: keyof PageInfo, value: string) =>
-    setForm((prev) => ({ ...prev, [field]: value }));
+    onPageInfoChange({ ...form, [field]: value });
 
   const isValid =
     form.pageName.trim() &&

@@ -22,6 +22,7 @@ import {
   SECTION_ORDER,
   isSectionComplete,
   isPageValid,
+  getProductDefaultsForCategory,
 } from "./builder-types";
 import type { BuilderStep } from "./types";
 
@@ -29,15 +30,33 @@ interface PageBuilderProps {
   currentStep: BuilderStep;
   onBack: () => void;
   onNext: () => void;
+  pageName?: string;
+  pageCategory?: string;
+  businessEmail?: string;
+  businessPhone?: string;
 }
 
-export function PageBuilder({ currentStep, onBack, onNext }: PageBuilderProps) {
-  const [pageState, setPageState] = useState<StructuredPageState>(DEFAULT_PAGE_STATE);
+export function PageBuilder({ currentStep, onBack, onNext, pageName, pageCategory, businessEmail, businessPhone }: PageBuilderProps) {
+  const [pageState, setPageState] = useState<StructuredPageState>(() => {
+    const state = { ...DEFAULT_PAGE_STATE };
+    if (pageCategory) {
+      const productDefaults = getProductDefaultsForCategory(pageCategory);
+      state.product = { ...state.product, ...productDefaults };
+    }
+    if (businessEmail || businessPhone) {
+      state.branding = {
+        ...state.branding,
+        businessEmail: businessEmail || "",
+        businessPhone: businessPhone || "",
+      };
+    }
+    return state;
+  });
   const [selectedSection, setSelectedSection] = useState<SectionId | null>(null);
   const [previewMode, setPreviewMode] = useState<DevicePreview>("desktop");
   const [showGuide, setShowGuide] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [pageTitle, setPageTitle] = useState("Untitled Payment Page");
+  const [pageTitle, setPageTitle] = useState(pageName || "Untitled Payment Page");
 
   const autosaveTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -148,7 +167,6 @@ export function PageBuilder({ currentStep, onBack, onNext }: PageBuilderProps) {
           onSaveDraft={handleSaveDraft}
           onContinue={handleContinue}
           onPreview={() => {}}
-          onFitToScreen={() => {}}
           continueDisabled={!valid}
           isSaving={isSaving}
         />
@@ -160,6 +178,20 @@ export function PageBuilder({ currentStep, onBack, onNext }: PageBuilderProps) {
             selectedSection={selectedSection}
             onSelectSection={setSelectedSection}
             onAddComponent={handleAddComponent}
+            brandingData={pageState.branding}
+            onBrandingToggle={(field, value) => {
+              setPageState((prev) => ({
+                ...prev,
+                branding: { ...prev.branding, [field]: value },
+              }));
+            }}
+            productData={pageState.product}
+            onProductToggle={(field, value) => {
+              setPageState((prev) => ({
+                ...prev,
+                product: { ...prev.product, [field]: value },
+              }));
+            }}
           />
 
           {/* Center: dotted canvas with artboard */}

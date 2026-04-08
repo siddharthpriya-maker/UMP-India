@@ -25,28 +25,58 @@ export function BuilderCanvas({
   const [zoom, setZoom] = useState(0.85);
   const [isPanning, setIsPanning] = useState(false);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const [spaceHeld, setSpaceHeld] = useState(false);
   const panStart = useRef({ x: 0, y: 0 });
   const canvasRef = useRef<HTMLDivElement>(null);
 
   const clampZoom = useCallback((z: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z)), []);
 
-  /* Wheel zoom (ctrl/meta + scroll or trackpad pinch) */
+  /* Wheel: Ctrl/Meta + scroll = zoom; plain scroll = pan */
   useEffect(() => {
     const el = canvasRef.current;
     if (!el) return;
     const handler = (e: WheelEvent) => {
-      if (!e.ctrlKey && !e.metaKey) return;
-      e.preventDefault();
-      const factor = Math.exp(e.deltaY * -0.008);
-      setZoom((prev) => clampZoom(prev * factor));
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        const factor = Math.exp(e.deltaY * -0.008);
+        setZoom((prev) => clampZoom(prev * factor));
+      } else {
+        e.preventDefault();
+        setPanOffset((prev) => ({
+          x: prev.x - e.deltaX,
+          y: prev.y - e.deltaY,
+        }));
+      }
     };
     el.addEventListener("wheel", handler, { passive: false });
     return () => el.removeEventListener("wheel", handler);
   }, [clampZoom]);
 
-  /* Middle-click or space+drag to pan */
+  /* Space key for pan mode */
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === "Space" && !e.repeat && !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) {
+        e.preventDefault();
+        setSpaceHeld(true);
+      }
+    };
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.code === "Space") {
+        setSpaceHeld(false);
+        setIsPanning(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
+
+  /* Mouse down: middle-click, Alt+drag, or Space+drag to pan */
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button === 1 || (e.button === 0 && e.altKey)) {
+    if (e.button === 1 || (e.button === 0 && e.altKey) || (e.button === 0 && spaceHeld)) {
       e.preventDefault();
       setIsPanning(true);
       panStart.current = { x: e.clientX - panOffset.x, y: e.clientY - panOffset.y };
@@ -72,7 +102,11 @@ export function BuilderCanvas({
     onFitToScreen();
   };
 
-  const handleResetPan = () => setPanOffset({ x: 0, y: 0 });
+  const cursorStyle = isPanning
+    ? "grabbing"
+    : spaceHeld
+      ? "grab"
+      : "default";
 
   return (
     <div className="relative flex flex-1 flex-col overflow-hidden">
@@ -81,12 +115,13 @@ export function BuilderCanvas({
         ref={canvasRef}
         className="flex-1 overflow-hidden"
         style={{
-          cursor: isPanning ? "grabbing" : "default",
+          cursor: cursorStyle,
           backgroundImage: `radial-gradient(circle, #d4d4d4 1px, transparent 1px)`,
           backgroundSize: `${20 * zoom}px ${20 * zoom}px`,
           backgroundPosition: `${panOffset.x}px ${panOffset.y}px`,
           backgroundColor: "#fafafa",
         }}
+        onClick={() => onSelectSection(null)}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}

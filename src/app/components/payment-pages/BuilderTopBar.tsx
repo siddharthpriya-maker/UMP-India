@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, Save, ChevronRight, Monitor, Smartphone, Maximize } from "lucide-react";
+import { Eye, Save, ChevronRight, Monitor, Smartphone } from "lucide-react";
 import type { DevicePreview } from "./builder-types";
 
 interface BuilderTopBarProps {
@@ -10,7 +10,6 @@ interface BuilderTopBarProps {
   onSaveDraft: () => void;
   onContinue: () => void;
   onPreview: () => void;
-  onFitToScreen: () => void;
   continueDisabled: boolean;
   isSaving: boolean;
 }
@@ -23,7 +22,6 @@ export function BuilderTopBar({
   onSaveDraft,
   onContinue,
   onPreview,
-  onFitToScreen,
   continueDisabled,
   isSaving,
 }: BuilderTopBarProps) {
@@ -95,14 +93,6 @@ export function BuilderTopBar({
             Mobile
           </button>
         </div>
-        <button
-          type="button"
-          onClick={onFitToScreen}
-          className="flex items-center gap-1 rounded-[6px] px-2 py-1.5 text-[12px] font-semibold text-[#7e7e7e] transition-colors hover:bg-[#f5f9fe] hover:text-[#101010]"
-          title="Fit to screen"
-        >
-          <Maximize className="size-3.5" />
-        </button>
       </div>
 
       {/* Right: actions */}

@@ -18,6 +18,7 @@ import type {
   PricingType,
   FieldType,
   DevicePreview,
+  CoverType,
 } from "./builder-types";
 import { SECTION_META } from "./builder-types";
 
@@ -152,41 +153,113 @@ function BrandingProperties({
 
   return (
     <div className="flex flex-col gap-5 p-4">
-      <FileUploadField
-        label="Logo"
-        value={data.logo}
-        onChange={(v) => patch({ logo: v })}
-        accept="image/*"
-        hint="Square PNG or SVG recommended"
-      />
+      {/* Logo — only when enabled */}
+      {data.logoEnabled && (
+        <FileUploadField
+          label="Logo"
+          value={data.logo}
+          onChange={(v) => patch({ logo: v })}
+          accept="image/*"
+          hint="Square PNG or SVG recommended"
+        />
+      )}
+
+      {/* Business Name — always shown */}
       <TextField
         label="Business Name"
         value={data.businessName}
         onChange={(v) => patch({ businessName: v })}
         size="compact"
       />
-      <FileUploadField
-        label="Cover Image"
-        value={data.coverImage}
-        onChange={(v) => patch({ coverImage: v })}
-        accept="image/*"
-        hint="1200×400 recommended"
-      />
-      <TextField
-        label="Description"
-        value={data.description}
-        onChange={(v) => patch({ description: v })}
-        multiline
-        rows={3}
-        size="compact"
-      />
-      <TextField
-        label="Video URL"
-        value={data.videoUrl}
-        onChange={(v) => patch({ videoUrl: v })}
-        size="compact"
-        assistiveText="YouTube or Vimeo link"
-      />
+
+      {/* Cover — only when enabled */}
+      {data.coverEnabled && (
+        <>
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[12px] font-semibold text-[#7e7e7e]">Cover Type</span>
+            <div className="flex gap-1.5">
+              {(["image", "video"] as CoverType[]).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => patch({ coverType: t })}
+                  className={[
+                    "flex-1 rounded-[8px] border py-1.5 text-[11px] font-semibold capitalize transition-colors",
+                    data.coverType === t
+                      ? "border-[#004299] bg-[#f5f9fe] text-[#004299]"
+                      : "border-[#e0e0e0] text-[#7e7e7e] hover:border-[#ccc]",
+                  ].join(" ")}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+          {data.coverType === "image" ? (
+            <FileUploadField
+              label="Cover Image"
+              value={data.coverImage}
+              onChange={(v) => patch({ coverImage: v })}
+              accept="image/*"
+              hint="1200×400 recommended"
+            />
+          ) : (
+            <TextField
+              label="Cover Video URL"
+              value={data.coverVideoUrl}
+              onChange={(v) => patch({ coverVideoUrl: v })}
+              size="compact"
+              assistiveText="YouTube or Vimeo link"
+            />
+          )}
+        </>
+      )}
+
+      {/* Description — only when enabled */}
+      {data.descriptionEnabled && (
+        <TextField
+          label="Description"
+          value={data.description}
+          onChange={(v) => patch({ description: v })}
+          multiline
+          rows={3}
+          size="compact"
+        />
+      )}
+
+      {/* Business Details — only when enabled */}
+      {data.businessDetailsEnabled && (
+        <>
+          <div className="flex flex-col gap-1">
+            <span className="text-[12px] font-semibold text-[#7e7e7e]">Business Details</span>
+            <span className="text-[10px] text-[#ccc]">Shown on the payment page</span>
+          </div>
+          <TextField
+            label="Business Email"
+            value={data.businessEmail}
+            onChange={(v) => patch({ businessEmail: v })}
+            type="email"
+            size="compact"
+          />
+          <TextField
+            label="Business Phone"
+            value={data.businessPhone}
+            onChange={(v) => patch({ businessPhone: v })}
+            size="compact"
+          />
+        </>
+      )}
+
+      {/* Embed Video — only when enabled */}
+      {data.videoEnabled && (
+        <TextField
+          label="Embed Video URL"
+          value={data.videoUrl}
+          onChange={(v) => patch({ videoUrl: v })}
+          size="compact"
+          assistiveText="YouTube or Vimeo link"
+        />
+      )}
     </div>
   );
 }

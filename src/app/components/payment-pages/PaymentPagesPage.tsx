@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Plus, ChevronDown, MoreVertical, Search } from "lucide-react";
-import type { PaymentPage, PageStatus, BuilderStep } from "./types";
+import type { PaymentPage, PageStatus, BuilderStep, PageInfo } from "./types";
 import { CreatePageEntry } from "./CreatePageEntry";
 import { PageInfoForm } from "./PageInfoForm";
 import { PageBuilder } from "./PageBuilder";
@@ -88,6 +88,14 @@ const statusConfig: Record<PageStatus, { label: string; textClass: string; bgCla
 export function PaymentPagesPage() {
   const [showCreatePopup, setShowCreatePopup] = useState(false);
   const [builderStep, setBuilderStep] = useState<BuilderStep | null>(null);
+  const [pageInfo, setPageInfo] = useState<PageInfo>({
+    pageName: "",
+    pageCategory: "",
+    businessEmail: "",
+    businessPhone: "",
+    expiryDate: "",
+    browserTabTitle: "",
+  });
   const [statusFilter, setStatusFilter] = useState("All");
   const [dateFilter, setDateFilter] = useState("All Time");
   const [isStatusOpen, setIsStatusOpen] = useState(false);
@@ -141,10 +149,10 @@ export function PaymentPagesPage() {
   };
 
   if (builderStep === "info") {
-    return <PageInfoForm currentStep={builderStep} onBack={handleBuilderBack} onNext={handleBuilderNext} />;
+    return <PageInfoForm currentStep={builderStep} onBack={handleBuilderBack} onNext={handleBuilderNext} pageInfo={pageInfo} onPageInfoChange={setPageInfo} />;
   }
   if (builderStep === "builder") {
-    return <PageBuilder currentStep={builderStep} onBack={handleBuilderBack} onNext={handleBuilderNext} />;
+    return <PageBuilder currentStep={builderStep} onBack={handleBuilderBack} onNext={handleBuilderNext} pageName={pageInfo.pageName} pageCategory={pageInfo.pageCategory} businessEmail={pageInfo.businessEmail} businessPhone={pageInfo.businessPhone} />;
   }
   if (builderStep === "settings") {
     return <AdditionalSettings currentStep={builderStep} onBack={handleBuilderBack} onNext={handleBuilderNext} />;
