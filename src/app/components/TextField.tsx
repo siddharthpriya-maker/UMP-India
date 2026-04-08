@@ -220,7 +220,7 @@ export function TextField({
         <p className="text-[12px] leading-[16px] text-[#fd5154]">{error}</p>
       )}
       {!error && assistiveText && (
-        <p className="text-[12px] leading-[16px] text-[#101010]">{assistiveText}</p>
+        <p className="text-[12px] leading-[16px] text-[#acacac]">{assistiveText}</p>
       )}
     </div>
   );

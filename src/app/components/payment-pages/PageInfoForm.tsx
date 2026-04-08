@@ -10,22 +10,37 @@ interface PageInfoFormProps {
   onNext: () => void;
 }
 
-const emptyPageInfo: Omit<PageInfo, "coverImage"> = {
-  formName: "",
-  urlPath: "",
-  htmlTitle: "",
-  supportContact: "",
-  supportEmail: "",
-  freezeDate: "",
+const PAGE_CATEGORIES = [
+  "Education",
+  "Donations",
+  "Events",
+  "eCommerce",
+  "Services",
+  "Subscriptions",
+  "Other",
+];
+
+const emptyPageInfo: PageInfo = {
+  pageName: "",
+  pageCategory: "",
+  businessEmail: "",
+  businessPhone: "",
+  expiryDate: "",
+  browserTabTitle: "",
 };
 
 export function PageInfoForm({ currentStep, onBack, onNext }: PageInfoFormProps) {
   const [form, setForm] = useState(emptyPageInfo);
 
-  const update = (field: keyof typeof form, value: string) =>
+  const update = (field: keyof PageInfo, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
-  const isValid = form.formName.trim() && form.urlPath.trim() && form.htmlTitle.trim();
+  const isValid =
+    form.pageName.trim() &&
+    form.pageCategory.trim() &&
+    form.businessEmail.trim() &&
+    form.businessPhone.trim() &&
+    form.browserTabTitle.trim();
 
   return (
     <div className="flex min-h-full min-h-0 flex-col bg-[#ffffff]">
@@ -44,52 +59,54 @@ export function PageInfoForm({ currentStep, onBack, onNext }: PageInfoFormProps)
             <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 md:gap-x-6 md:gap-y-5">
               <div className="min-w-0">
                 <TextField
-                  label="Form Name"
+                  label="Payment Page Name"
                   required
-                  value={form.formName}
-                  onChange={(v) => update("formName", v)}
+                  value={form.pageName}
+                  onChange={(v) => update("pageName", v)}
                   assistiveText="e.g. Spring Semester Fees 2026"
                 />
               </div>
               <div className="min-w-0">
-                <TextField
-                  label="HTML Title"
-                  required
-                  value={form.htmlTitle}
-                  onChange={(v) => update("htmlTitle", v)}
-                  assistiveText="Title displayed in browser tab"
-                />
-              </div>
-              <div className="min-w-0 md:col-span-2">
-                <TextField
-                  label="URL Path"
-                  required
-                  value={form.urlPath}
-                  onChange={(v) => update("urlPath", v)}
-                  prefix="paytm.com/"
+                <CategorySelect
+                  value={form.pageCategory}
+                  onChange={(v) => update("pageCategory", v)}
                 />
               </div>
               <div className="min-w-0">
                 <TextField
-                  label="Support Contact"
-                  value={form.supportContact}
-                  onChange={(v) => update("supportContact", v)}
-                />
-              </div>
-              <div className="min-w-0">
-                <TextField
-                  label="Support Email"
+                  label="Business Email"
+                  required
                   type="email"
-                  value={form.supportEmail}
-                  onChange={(v) => update("supportEmail", v)}
+                  value={form.businessEmail}
+                  onChange={(v) => update("businessEmail", v)}
+                  assistiveText="Displayed on the payment page"
                 />
               </div>
               <div className="min-w-0">
                 <TextField
-                  label="Freeze Date"
+                  label="Business Phone Number"
+                  required
+                  value={form.businessPhone}
+                  onChange={(v) => update("businessPhone", v)}
+                  assistiveText="Contact number for customer queries"
+                />
+              </div>
+              <div className="min-w-0">
+                <TextField
+                  label="Payment Page Expiry Date"
                   type="date"
-                  value={form.freezeDate}
-                  onChange={(v) => update("freezeDate", v)}
+                  value={form.expiryDate}
+                  onChange={(v) => update("expiryDate", v)}
+                  assistiveText="Leave empty for no expiry"
+                />
+              </div>
+              <div className="min-w-0">
+                <TextField
+                  label="Browser Tab Display Name"
+                  required
+                  value={form.browserTabTitle}
+                  onChange={(v) => update("browserTabTitle", v)}
+                  assistiveText="Title shown in the browser tab"
                 />
               </div>
             </div>
@@ -98,7 +115,7 @@ export function PageInfoForm({ currentStep, onBack, onNext }: PageInfoFormProps)
 
         <PageLevelMenu
           showClearAll={false}
-          assistiveText="Check required fields before continuing to the builder."
+          assistiveText="Fill all required fields to continue."
           secondaryLabel="Cancel"
           onSecondary={onBack}
           primaryLabel="Continue to Page Builder"
@@ -107,6 +124,59 @@ export function PageInfoForm({ currentStep, onBack, onNext }: PageInfoFormProps)
           ariaLabel="Page information actions"
         />
       </div>
+    </div>
+  );
+}
+
+function CategorySelect({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <div
+        className={[
+          "relative flex h-[56px] items-center rounded-[4px] border transition-colors",
+          value
+            ? "border-[#e0e0e0] hover:border-[#004299]"
+            : "border-[#e0e0e0] hover:border-[#004299]",
+        ].join(" ")}
+      >
+        <div className="relative flex-1 h-full px-[16px]">
+          <label
+            className={[
+              "absolute left-[16px] right-[16px] transition-all duration-150 pointer-events-none select-none truncate",
+              value
+                ? "top-[8px] text-[12px] font-normal leading-[16px] text-[#7e7e7e]"
+                : "top-1/2 -translate-y-1/2 text-[14px] font-semibold text-[#7e7e7e]",
+            ].join(" ")}
+          >
+            Payment Page Category<span className="text-[#fd5154] ml-0.5">*</span>
+          </label>
+          <select
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className={[
+              "w-full h-full bg-transparent outline-none text-[14px] text-[#101010] appearance-none cursor-pointer",
+              value ? "pt-[24px] pb-[8px]" : "",
+            ].join(" ")}
+          >
+            <option value="" disabled hidden />
+            {PAGE_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+        </div>
+        <div className="pr-[16px] pointer-events-none">
+          <svg className="size-4 text-[#7e7e7e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </div>
+      <p className="text-[12px] leading-[16px] text-[#acacac]">Select the type of payment page</p>
     </div>
   );
 }

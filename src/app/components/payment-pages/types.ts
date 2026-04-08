@@ -62,13 +62,12 @@ export interface BuilderPage {
 }
 
 export interface PageInfo {
-  formName: string;
-  urlPath: string;
-  htmlTitle: string;
-  supportContact: string;
-  supportEmail: string;
-  freezeDate: string;
-  coverImage: string | null;
+  pageName: string;
+  pageCategory: string;
+  businessEmail: string;
+  businessPhone: string;
+  expiryDate: string;
+  browserTabTitle: string;
 }
 
 export interface NotificationSettings {
