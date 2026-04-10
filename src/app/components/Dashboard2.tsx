@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Clock, Download, ChevronDown } from "lucide-react";
 import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, PieChart, Pie } from "recharts";
 import { TrendingUp } from "lucide-react";
-import ButtonV2 from "../../imports/ButtonV2";
+import { SecondaryButton } from "./Button";
 import { ActionsNotificationsWidget } from "./ActionsNotificationsWidget";
 
 const paymentData = [
@@ -133,9 +133,9 @@ export function Dashboard2() {
                 <div className="flex items-center gap-2 text-sm">
                   
                 </div>
-                <div className="w-fit h-[40px]">
-                  <ButtonV2 />
-                </div>
+                <SecondaryButton type="button" icon={<Download className="size-5" strokeWidth={2} />}>
+                  Download Report
+                </SecondaryButton>
               </div>
             </div>
             <ResponsiveContainer width="100%" height={280}>

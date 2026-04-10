@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, Copy, Download, RefreshCw, ChevronRight } from "lucide-react";
+import { ChevronDown, Download, RefreshCw, ChevronRight } from "lucide-react";
+import { CopyIcon } from "./Icons";
 import { SecondaryButton } from "./SecondaryButton";
 import { TertiaryButton } from "./TertiaryButton";
 import { SearchWithDropdown } from "./SearchWithDropdown";
@@ -349,8 +350,8 @@ export function PaymentsPage() {
               <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.paymentOption}</span>
               <div className="flex items-center gap-2">
                 <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.transactionId}</span>
-                <button className="text-[#00b8f5] hover:text-[#004299] transition-colors shrink-0">
-                  <Copy className="size-4" />
+                <button className="text-[#004299] hover:text-[#009de5] transition-colors shrink-0">
+                  <CopyIcon className="size-4" />
                 </button>
               </div>
               <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.collectionMode}</span>

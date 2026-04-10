@@ -1,7 +1,15 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, Search, Copy, Download, ChevronRight } from "lucide-react";
+import { ChevronDown, Download, ChevronRight } from "lucide-react";
+import { CopyIcon } from "./Icons";
 import { SecondaryButton } from "./Button";
+import { SearchWithDropdown } from "./SearchWithDropdown";
 import SuccessSmall from "../../imports/SuccessSmall";
+
+const settlementSearchOptions = [
+  { label: "UTR", value: "utr" },
+  { label: "Date", value: "date" },
+  { label: "Amount", value: "amount" },
+];
 
 // Mock data for settlements
 const mockSettlements = [
@@ -63,22 +71,15 @@ const mockSettlements = [
 
 export function SettlementsPage() {
   const [durationFilter, setDurationFilter] = useState("Weekly");
-  const [filterType, setFilterType] = useState("UTR");
-  const [searchValue, setSearchValue] = useState("");
   const [isDurationDropdownOpen, setIsDurationDropdownOpen] = useState(false);
-  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
 
   const durationDropdownRef = useRef<HTMLDivElement>(null);
-  const filterDropdownRef = useRef<HTMLDivElement>(null);
 
   // Click outside handler
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (durationDropdownRef.current && !durationDropdownRef.current.contains(event.target as Node)) {
         setIsDurationDropdownOpen(false);
-      }
-      if (filterDropdownRef.current && !filterDropdownRef.current.contains(event.target as Node)) {
-        setIsFilterDropdownOpen(false);
       }
     };
 
@@ -102,7 +103,7 @@ export function SettlementsPage() {
         {/* Top Separator */}
         <div className="w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]" />
 
-        {/* Filters Row */}
+        {/* Filters Row — duration + search widget (same pattern as Payments) */}
         <div className="flex flex-col md:flex-row gap-[15px] md:gap-5 items-start md:items-center">
           {/* Duration Filter */}
           <div className="flex flex-col gap-[1px]">
@@ -160,69 +161,15 @@ export function SettlementsPage() {
             </div>
           </div>
 
-          {/* Select Filter */}
-          <div className="flex flex-col gap-[1px]">
-            <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold">SELECT FILTER</span>
-            <div className="relative" ref={filterDropdownRef}>
-              <button
-                className={`flex items-center gap-2 text-[14px] text-[#101010] font-semibold hover:bg-[#f5f9fe] transition-colors ${isFilterDropdownOpen ? "bg-[#f5f9fe]" : ""}`}
-                onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
-              >
-                <span>{filterType}</span>
-                <ChevronDown className={`size-4 transition-transform ${isFilterDropdownOpen ? "rotate-180" : ""}`} />
-              </button>
-              {isFilterDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[140px] z-10">
-                  <div className="py-1">
-                    <button
-                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
-                      onClick={() => {
-                        setFilterType("UTR");
-                        setIsFilterDropdownOpen(false);
-                      }}
-                    >
-                      UTR
-                    </button>
-                    <button
-                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
-                      onClick={() => {
-                        setFilterType("Date");
-                        setIsFilterDropdownOpen(false);
-                      }}
-                    >
-                      Date
-                    </button>
-                    <button
-                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
-                      onClick={() => {
-                        setFilterType("Amount");
-                        setIsFilterDropdownOpen(false);
-                      }}
-                    >
-                      Amount
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Search Field */}
-          <div className="flex items-center bg-white border border-[#e0e0e0] rounded-lg h-[40px] px-3 ml-auto">
-            <Search className="size-5 text-[#7e7e7e] mr-2" />
-            <input
-              type="text"
-              placeholder="Enter Search Value"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              className="bg-transparent text-[14px] text-[#101010] placeholder:text-[#7e7e7e] outline-none font-semibold w-[300px]"
+          <div className="ml-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+            <SearchWithDropdown
+              options={settlementSearchOptions}
+              defaultOption="utr"
             />
+            <SecondaryButton type="button" icon={<Download className="size-5" strokeWidth={2} />}>
+              Download
+            </SecondaryButton>
           </div>
-
-          {/* Download Button */}
-          <SecondaryButton icon={<Download />}>
-            Download
-          </SecondaryButton>
         </div>
 
         {/* Bottom Separator */}
@@ -274,13 +221,13 @@ export function SettlementsPage() {
                       <div className="flex items-center gap-2 pl-7">
                         <span className="text-[14px] text-[#7e7e7e] leading-[24px] whitespace-nowrap">{settlement.utr}</span>
                         <button 
-                          className="text-[#00b8f5] hover:text-[#004299] transition-colors shrink-0"
+                          className="text-[#004299] hover:text-[#009de5] transition-colors shrink-0"
                           onClick={(e) => {
                             e.stopPropagation();
                             navigator.clipboard.writeText(settlement.utr);
                           }}
                         >
-                          <Copy className="size-4" />
+                          <CopyIcon className="size-4" />
                         </button>
                       </div>
                     </div>
