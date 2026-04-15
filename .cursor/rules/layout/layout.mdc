@@ -63,6 +63,8 @@ Full-width lines that span outside the page padding:
 
 ## Interaction Patterns
 
+Project-wide interaction guidance (hover, active, focus, disabled, overlays, loading) lives in **`interactions/interactions.mdc`**. The following summarizes layout-adjacent defaults.
+
 ### Hover States
 - Cards: opacity change (60% → 100%) or background color change
 - Buttons: background color lightening/darkening

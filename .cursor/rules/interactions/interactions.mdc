@@ -1,0 +1,79 @@
+---
+description: UMP Design System — Cross-component interaction patterns (hover, focus, active, disabled, motion, overlays)
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Interactions (Project-wide)
+
+Use these patterns for **all** interactive UI in this repo unless a component-specific rule (e.g. `buttons.mdc`, `sidebar.mdc`) overrides them.
+
+## Hover
+
+- Prefer **background** changes over large colour shifts on body text.
+- Tables and list rows: `hover:bg-[#f5f9fe]` with `transition-colors`.
+- Sidebar L1 icon pill: `hover:bg-[#e0e0e0]`; L2 rows: `hover:bg-[#e0e0e0]` when not selected.
+- Primary buttons: `hover:bg-[#009de5]` (from `buttons.mdc`).
+- Secondary / outline controls: `hover:bg-[#e7f1f8]`, border/text hover per `buttons.mdc`.
+- Links and text CTAs: `hover:text-[#009de5]` or `hover:underline` where specified in `hyperlinks.mdc`.
+- Every clickable control should have a visible hover (or disabled styling if disabled).
+
+## Active / selected
+
+- **Navigation lists** (sidebar L2, `ReportMenu`): selected row uses **`bg-[#b1e6fb]`**; indicate selection with **weight** (`font-bold` or `font-semibold` per spec) **without** changing default body text colour away from `#101010` unless the pattern explicitly calls for primary blue.
+- **Tabs**: follow `components/tabs.mdc`.
+- Do not rely on colour alone for state; pair with weight, icon, or background.
+
+## Focus (keyboard & a11y)
+
+- Focusable elements should be keyboard operable (`button`, `a`, inputs).
+- Use visible focus rings where the design system provides them; if using Tailwind, prefer `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004299] focus-visible:ring-offset-2` on custom chips unless a stricter component rule applies.
+- Do not remove outline without a replacement ring.
+
+## Disabled
+
+- Muted colours: `disabled:bg-[#ebebeb] disabled:text-[#acacac]` / `opacity-64` / `cursor-not-allowed` per `Button` and `page-level-menu.mdc`.
+- No hover “lift” on disabled controls.
+
+## Pressed / active mouse (optional)
+
+- For icon-only buttons, a subtle `active:scale-[0.98]` is acceptable if used consistently; not required.
+
+## Transitions
+
+- Colour and background: `transition-colors` (default Tailwind duration).
+- Shadows: `transition-shadow`.
+- Chevrons / arrows: `transition-transform` with `rotate-180` etc.
+- Avoid long or bouncy animations for standard UI.
+
+## Overlays (dropdowns, popovers, drawers)
+
+- **Click outside** to close: `useRef` on container + `mousedown` on `document`, cleanup on unmount (see `layout/layout.mdc` snippet).
+- **Escape** to close: recommended for modals and drawers when implementing keyboard UX.
+- Close on selection for single-select menus unless the UX requires multi-step.
+
+## Loading & async
+
+- Buttons: use `loading` prop pattern from `Button` (spinner + `disabled`).
+- Avoid double submission: disable trigger while request is in flight.
+
+## Drag / pan (special surfaces)
+
+- Canvas or zoomed views: document Space/Meta/Ctrl patterns in the feature rule file (e.g. payment page builder), not here.
+
+## References
+
+| Topic | Rule file |
+|---|---|
+| Buttons | `components/buttons.mdc` |
+| Tables / rows | `components/table.mdc` |
+| Sidebar / L2 | `components/sidebar.mdc` |
+| Report type list | `components/report-menu.mdc` |
+| Layout / separators | `layout/layout.mdc` |
+| Links | `components/hyperlinks.mdc` |
+
+## Common mistakes
+
+- Skipping hover on one of several adjacent clickable regions.
+- Using primary blue (`#004299`) text for every “selected” list row; prefer background + weight for nav-style lists.
+- Removing focus outline with no `focus-visible` replacement.
