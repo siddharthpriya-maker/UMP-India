@@ -12,6 +12,7 @@ Use **`.ai/`** as the modular instruction system. Start here:
 | `.ai/core/refactor-policy.md` | **Canonical** frozen UI/behaviour/API vs allowed safe refactors |
 | `.ai/core/rules.md` | Cross-cutting engineering habits (orchestration, extraction) |
 | `.ai/projects/merchant-dashboard.md` | This product: merchant dashboard, **sidebar modules**, stack |
+| `.ai/projects/ump-design-guidelines.md` | **UMP visual system** — colors, type, layout, components (summary + link to legacy `.mdc`) |
 | `.ai/skills/build-dashboard-module.md` | Patterns for **any** sidebar module (overview, data, actions, ops, detail) |
 | `.ai/prompts/safe-restructure.md` | Pasteable prompt: safe refactors only |
 | `.ai/prompts/concept-guidelines.md` | Product framing: clarity, workflow, density — **no** redesign-by-default |
