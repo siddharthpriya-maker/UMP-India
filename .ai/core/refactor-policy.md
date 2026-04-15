@@ -2,7 +2,24 @@
 
 **Canonical enforcement** for “safe refactor vs frozen UI/behaviour.” Other docs **point here** instead of repeating the full list.
 
-**Also read:** `.ai/core/rules.md` (habits & orchestration), `.ai/skills/` (workflow detail), `.ai/projects/<project>.md` (product source of truth).
+**Also read:** `.ai/core/rules.md`, `.ai/skills/build-dashboard-module.md`, `.ai/projects/merchant-dashboard.md`, `.ai/prompts/concept-guidelines.md`.
+
+---
+
+## Frozen dimensions (quick reference)
+
+Unless stakeholders **explicitly** scope that class of change, do **not** change:
+
+- **Layout**
+- **Spacing**
+- **Typography**
+- **Colours**
+- **Responsive behaviour**
+- **Interactions**
+- **Business logic**
+- **API contracts**
+
+Detailed definitions and **allowed safe lanes** are below.
 
 ---
 
@@ -48,4 +65,4 @@ If a change **might** touch a protected area, do **not** bundle it with “safe�
 
 ---
 
-*Product-specific nuance (e.g. which screens are most sensitive) lives in `.ai/projects/<project>.md`.*
+*Product framing, module list, and high-sensitivity surfaces: `.ai/projects/merchant-dashboard.md`. This checklist is unchanged.*

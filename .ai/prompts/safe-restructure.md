@@ -1,4 +1,4 @@
-# Prompt template: Safe UI restructure (no design change)
+# Prompt template: Safe UI restructure (merchant dashboard; no design change)
 
 Copy everything below the line into chat, fill the bracketed fields, and send.
 
@@ -7,15 +7,16 @@ Copy everything below the line into chat, fill the bracketed fields, and send.
 ## Context
 
 - **Repo / product:** [PRODUCT_OR_REPO_NAME]  
-- **Relevant project doc (if any):** [.ai/projects/FILE.md or “none”]  
+- **Relevant project doc:** [.ai/projects/merchant-dashboard.md or “none”]  
 - **Scope (files or area):** [PATHS_OR_COMPONENT_NAMES]  
-- **Goal:** Refactor for **maintainability only**.
+- **Goal:** Refactor for **maintainability only** — **any sidebar module**, not report-specific.
 
 ## Non-negotiables
 
-1. Follow **`.ai/core/refactor-policy.md`** — it is the **canonical** list of frozen UI/behaviour/API boundaries and allowed safe lanes. Do not violate it.  
+1. Follow **`.ai/core/refactor-policy.md`** — canonical frozen dimensions (layout, spacing, typography, colours, responsive behaviour, interactions, business logic, API contracts) and allowed safe lanes.  
 2. Follow **`.ai/core/rules.md`** for orchestration and extraction habits.  
-3. **Business logic** and **API contracts** — default **unchanged** unless listed under optional scope below.
+3. **Framing:** `.ai/prompts/concept-guidelines.md` — no redesign-by-default, no trendy UI.  
+4. **Business logic** and **API contracts** — default **unchanged** unless listed under optional scope below.
 
 ## What I want you to do
 
@@ -27,7 +28,7 @@ Copy everything below the line into chat, fill the bracketed fields, and send.
 
 ## Out of scope (unless I add below)
 
-Visual redesign, tokens/theme, copy, UX flow, new dependencies, API/schema changes.
+Visual redesign, **trendy UI defaults**, tokens/theme, copy, UX flow, new dependencies, API/schema changes.
 
 **Optional extra scope:** [NONE_OR_DESCRIPTION]
 

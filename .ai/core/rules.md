@@ -1,8 +1,8 @@
 # Core rules (multi-project)
 
-For **what must never change** on a refactor (layout, spacing, type, colour, responsive, interactions, logic, API): use **`.ai/core/refactor-policy.md`** — that file is the **canonical checklist**.
+For **what must never change** on a refactor: use **`.ai/core/refactor-policy.md`** — canonical checklist (layout, spacing, typography, colours, responsive behaviour, interactions, business logic, API contracts).
 
-Put **product- or stack-only** facts in `.ai/projects/<project>.md`, not here.
+Put **product- or stack-only** facts in `.ai/projects/<project>.md` (this repo: **`merchant-dashboard.md`**), not here.
 
 ## Engineering habits
 
@@ -12,7 +12,7 @@ Put **product- or stack-only** facts in `.ai/projects/<project>.md`, not here.
 
 ## Page and route files: orchestration-focused
 
-- **Pages / route containers** compose children, pass data, handle navigation — keep them thin.
+- **Pages / route containers** compose children, pass data, handle navigation and **cross-module flows** where needed — keep them thin.
 - **Heavy logic** → hooks, utils, or domain modules as fits the stack.
 - **Avoid** monolithic pages that mix orchestration, domain rules, and large markup in one file when splitting clarifies ownership **without** changing output.
 
@@ -30,11 +30,11 @@ Put **product- or stack-only** facts in `.ai/projects/<project>.md`, not here.
 
 | Folder | Role |
 |--------|------|
-| `.ai/core/` | Cross-repo rules + **refactor-policy** (enforcement) |
-| `.ai/projects/` | One file per product (stack, paths, “what this UI is”) |
-| `.ai/skills/` | Repeatable workflows (e.g. list/report pages) |
-| `.ai/prompts/` | Pasteable agent prompts |
+| `.ai/core/` | Cross-repo rules + **refactor-policy** |
+| `.ai/projects/` | Product context (merchant dashboard, modules, stack) |
+| `.ai/skills/` | Repeatable workflows (e.g. **dashboard modules** — any sidebar item) |
+| `.ai/prompts/` | Pasteable prompts + **concept** framing |
 
 ---
 
-*Copy this file across repositories; only `.ai/projects/` and `.ai/skills/` are product-specific.*
+*Copy this file across repositories; only `.ai/projects/` and `.ai/skills/` are deployment-specific.*

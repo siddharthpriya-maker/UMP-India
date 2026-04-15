@@ -1,23 +1,24 @@
 ---
-description: Instruction router — modular docs under .ai; enforce refactor policy for UI work
+description: Router — merchant dashboard AI instructions under .ai; no design drift without scoped approval
 alwaysApply: true
 ---
 
 # Cursor rules entry
 
-Modular instructions live under **`.ai/`**. Use this table as the index:
+Use **`.ai/`** as the modular instruction system. Start here:
 
 | Path | Responsibility |
 |------|----------------|
-| `.ai/core/rules.md` | Cross-project engineering habits (orchestration, extraction philosophy, where docs live) |
-| `.ai/core/refactor-policy.md` | **Canonical** list: frozen UI/behaviour/API vs allowed refactors |
-| `.ai/projects/ump-india.md` | UMP India product context & visual source of truth |
-| `.ai/skills/build-report-page.md` | Report / dashboard **list-page** structure & extraction order |
-| `.ai/prompts/safe-restructure.md` | Reusable **chat prompt** for safe UI-only refactors |
+| `.ai/core/refactor-policy.md` | **Canonical** frozen UI/behaviour/API vs allowed safe refactors |
+| `.ai/core/rules.md` | Cross-cutting engineering habits (orchestration, extraction) |
+| `.ai/projects/merchant-dashboard.md` | This product: merchant dashboard, **sidebar modules**, stack |
+| `.ai/skills/build-dashboard-module.md` | Patterns for **any** sidebar module (overview, data, actions, ops, detail) |
+| `.ai/prompts/safe-restructure.md` | Pasteable prompt: safe refactors only |
+| `.ai/prompts/concept-guidelines.md` | Product framing: clarity, workflow, density — **no** redesign-by-default |
 
-## Enforcement (no design drift)
+## Enforcement
 
-For any work that touches UI or behaviour: follow **`.ai/core/refactor-policy.md`**. Do not restate exceptions here—the policy file is the single checklist.
+Work that touches UI or behaviour: follow **`.ai/core/refactor-policy.md`**. Do not restate exceptions here.
 
 ## Product code guard
 
@@ -25,4 +26,4 @@ Do **not** modify `src/` when the task is limited to instruction / tooling / `.c
 
 ## Legacy design tokens & components
 
-Granular **`.mdc`** rules live under **`.ai/core/legacy-cursor-rules/`** (e.g. `legacy-cursor-rules/components/buttons.mdc`). Use for token and component detail when implementing **explicit** design work.
+**`.mdc`** specs live under **`.ai/core/legacy-cursor-rules/`**. Use only for **explicit** design/token work; they do not override the refactor policy.

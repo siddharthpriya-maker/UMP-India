@@ -20,7 +20,6 @@ import type {
   DevicePreview,
   CoverType,
 } from "./builder-types";
-import { SECTION_META } from "./builder-types";
 
 interface PropertyPanelProps {
   selectedSection: SectionId | null;
@@ -34,23 +33,11 @@ export function PropertyPanel({
   onUpdate,
 }: PropertyPanelProps) {
   const [activeTab, setActiveTab] = useState<"properties" | "customize">("properties");
-
-  if (!selectedSection) {
-    return (
-      <div className="flex w-[300px] shrink-0 flex-col items-center justify-center border-l border-[#e0e0e0] bg-white p-6 text-center">
-        <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-[#f5f5f5]">
-          <Layout className="size-5 text-[#ccc]" />
-        </div>
-        <p className="text-[13px] text-[#acacac]">
-          Select a section on the artboard to edit its properties and customization.
-        </p>
-      </div>
-    );
-  }
+  const hasSection = selectedSection !== null;
 
   return (
     <div className="flex w-[300px] shrink-0 flex-col overflow-hidden border-l border-[#e0e0e0] bg-white">
-      {/* Tab header */}
+      {/* Properties = selected section only. Customize = full artboard (page-level). */}
       <div className="flex shrink-0 border-b border-[#e0e0e0]">
         <button
           type="button"
@@ -62,7 +49,7 @@ export function PropertyPanel({
               : "text-[#acacac] hover:text-[#7e7e7e]",
           ].join(" ")}
         >
-          {SECTION_META[selectedSection].label}
+          Properties
         </button>
         <button
           type="button"
@@ -78,14 +65,30 @@ export function PropertyPanel({
         </button>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
         {activeTab === "properties" ? (
-          <SectionProperties
-            section={selectedSection}
-            pageState={pageState}
-            onUpdate={onUpdate}
-          />
+          hasSection ? (
+            <SectionProperties
+              section={selectedSection}
+              pageState={pageState}
+              onUpdate={onUpdate}
+            />
+          ) : (
+            <div
+              className="flex flex-col items-center justify-center px-6 py-12 text-center opacity-60 select-none"
+              aria-disabled="true"
+            >
+              <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-[#f5f5f5]">
+                <Layout className="size-5 text-[#ccc]" />
+              </div>
+              <p className="text-[13px] text-[#acacac]">
+                Select a section on the artboard to edit its properties.
+              </p>
+              <p className="mt-2 text-[12px] text-[#ccc]">
+                Page-wide theme and layout are under Customize.
+              </p>
+            </div>
+          )
         ) : (
           <CustomizationPanel
             customization={pageState.customization}
