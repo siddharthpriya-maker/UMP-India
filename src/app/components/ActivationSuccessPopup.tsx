@@ -57,7 +57,7 @@ export function ActivationSuccessPopup({
                 </div>
                 <button
                   onClick={onUpgradeLimit}
-                  className="border border-[#004299] text-[#004299] text-[14px] font-semibold px-4 py-2.5 rounded-[8px] hover:bg-[#e7f1f8] hover:border-[#009de5] hover:text-[#009de5] transition-colors whitespace-nowrap shrink-0"
+                  className="border border-[#004299] text-[#004299] text-[14px] font-semibold px-4 py-2.5 rounded-[8px] hover:bg-[#f7f9fd] hover:border-[#012A72] hover:text-[#012A72] transition-colors whitespace-nowrap shrink-0"
                 >
                   Upgrade limit
                 </button>
@@ -113,7 +113,7 @@ export function ActivationSuccessPopup({
           <div className="px-8 pb-6 shrink-0">
             <button
               onClick={onClose}
-              className="w-full bg-[#004299] text-white text-[16px] font-semibold py-4 rounded-[8px] hover:bg-[#009de5] transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-[#004299] text-white text-[16px] font-semibold py-4 rounded-[8px] hover:bg-[#012A72] transition-colors flex items-center justify-center gap-2"
             >
               Explore Dashboard
               <ArrowRight className="size-5" />

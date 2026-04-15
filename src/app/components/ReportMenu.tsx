@@ -1,19 +1,5 @@
 import { ChevronRight } from "lucide-react";
-
-export type ReportCategory = {
-  id: string;
-  label: string;
-};
-
-export const REPORT_CATEGORIES: ReportCategory[] = [
-  { id: "payment", label: "Payment" },
-  { id: "settlement", label: "Settlement" },
-  { id: "refund", label: "Refund" },
-  { id: "dispute", label: "Dispute" },
-  { id: "balance_statement", label: "Balance Statement" },
-  { id: "ncmc_recharge", label: "NCMC Recharge Report" },
-  { id: "links", label: "Links" },
-];
+import { REPORT_CATEGORIES } from "./reportMenu.constants";
 
 interface ReportMenuProps {
   selectedCategory: string;
@@ -31,7 +17,7 @@ export function ReportMenu({ selectedCategory, onSelectCategory }: ReportMenuPro
             type="button"
             onClick={() => onSelectCategory(cat.id)}
             className={`flex w-full items-center justify-between rounded-[12px] py-3 pl-6 pr-3 text-left transition-colors ${
-              isActive ? "bg-[#b1e6fb] font-bold" : "font-medium hover:bg-[#e0e0e0]"
+              isActive ? "bg-[#e0f5fd] font-bold" : "font-medium hover:bg-[#fafafa]"
             }`}
           >
             <span className="text-[14px] leading-[24px] text-[#101010]">{cat.label}</span>

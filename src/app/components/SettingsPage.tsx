@@ -237,7 +237,7 @@ function PaymentSettingsContent() {
             <p className="text-[12px] text-[#101010] leading-[16px] text-right max-w-[200px]">
               Collect payments from your customers without any limits
             </p>
-            <button className="bg-[#004299] hover:bg-[#009de5] text-white text-[14px] font-semibold px-4 py-2.5 rounded-[8px] whitespace-nowrap transition-colors">
+            <button className="bg-[#004299] hover:bg-[#012A72] text-white text-[14px] font-semibold px-4 py-2.5 rounded-[8px] whitespace-nowrap transition-colors">
               Upgrade Account
             </button>
           </div>
@@ -372,7 +372,7 @@ function PaymentSettingsContent() {
                       {instrument.status}
                     </span>
                   ) : instrument.hasActivateButton ? (
-                    <button className="bg-[#e7f1f8] text-[#004299] hover:bg-[#f5f9fe] hover:text-[#009de5] text-[12px] leading-[16px] font-semibold px-4 py-2 min-w-[80px] rounded-[8px] whitespace-nowrap transition-colors">
+                    <button className="bg-[#e7f1f8] text-[#004299] hover:bg-[#e7eaf4] hover:text-[#012A72] text-[12px] leading-[16px] font-semibold px-4 py-2 min-w-[80px] rounded-[8px] whitespace-nowrap transition-colors">
                       Activate Now
                     </button>
                   ) : (

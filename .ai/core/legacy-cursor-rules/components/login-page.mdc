@@ -21,7 +21,7 @@ Route: `/login` (default landing — `/` redirects to `/login`)
 
 ## Button States
 - **Disabled** (empty fields): `bg-[#ebebeb] text-[#acacac] cursor-not-allowed`
-- **Enabled** (both filled): `bg-[#004299] text-white hover:bg-[#009de5]`
+- **Enabled** (both filled): `bg-[#004299] text-white hover:bg-[#012A72]`
 - Logic: `isDisabled = !email.trim() || !password.trim()`
 - On click: `navigate("/home")`
 

@@ -172,7 +172,7 @@ export function AuthorizationPage({
               {/* Secondary (Medium emphasis) */}
               <button
                 onClick={onCancel}
-                className="flex items-center justify-center border border-[#004299] text-[#004299] hover:bg-[#e7f1f8] hover:border-[#009de5] hover:text-[#009de5] text-[14px] leading-[20px] font-semibold px-4 py-2.5 min-w-[120px] rounded-[8px] transition-colors flex-1"
+                className="flex items-center justify-center border border-[#004299] text-[#004299] hover:bg-[#f7f9fd] hover:border-[#012A72] hover:text-[#012A72] text-[14px] leading-[20px] font-semibold px-4 py-2.5 min-w-[120px] rounded-[8px] transition-colors flex-1"
               >
                 Cancel
               </button>
@@ -182,7 +182,7 @@ export function AuthorizationPage({
                 disabled={!agreed}
                 className={`flex items-center justify-center gap-2 text-[14px] leading-[20px] font-semibold px-4 py-2.5 min-w-[120px] rounded-[8px] transition-colors flex-1 ${
                   agreed
-                    ? "bg-[#004299] hover:bg-[#009de5] text-white"
+                    ? "bg-[#004299] hover:bg-[#012A72] text-white"
                     : "bg-[#ebebeb] text-[#acacac] opacity-64 cursor-not-allowed"
                 }`}
               >

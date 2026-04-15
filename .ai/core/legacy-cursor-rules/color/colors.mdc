@@ -13,6 +13,9 @@ All colors must use CSS variables from `/src/styles/theme.css` or the semantic t
 |---|---|---|---|
 | Background Primary 1 Strong | `#00b8f5` | sky_blue_400 | Brand primary, `var(--primary)` |
 | Background Primary 2 Strong | `#004299` | navy_blue_650 | Hyperlinks, CTA buttons |
+| Background Primary 2 Hover | `#012A72` | — | Primary / outline button hover (see `buttons.mdc`) |
+| Secondary outline hover fill | `#f7f9fd` | — | Medium-emphasis outline button hover background (`SecondaryButton`, `Button` secondary) |
+| Tertiary button hover fill | `#e7eaf4` | — | Low-emphasis filled button hover (`TertiaryButton`, `Button` tertiary) |
 | Background Primary Weak | `#e0f5fd` | sky_blue_50 | Icon containers, subtle highlights |
 | Background Primary Medium | `#b1e6fb` | sky_blue_100 | Sidebar active state |
 

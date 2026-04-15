@@ -26,13 +26,13 @@ export function TertiaryButton({
         rounded-[8px] 
         bg-[#e7f1f8]
         transition-colors
-        hover:bg-[#f5f9fe]
+        hover:bg-[#e7eaf4]
         disabled:bg-[#ebebeb] disabled:text-[#acacac] disabled:opacity-64 disabled:cursor-not-allowed
         ${className}
       `}
     >
-      {icon && <span className="shrink-0 size-4 text-[#004299] group-hover:text-[#009de5] transition-colors [&_svg]:size-full [&_svg]:block">{icon}</span>}
-      <span className="text-[12px] leading-[16px] text-[#004299] group-hover:text-[#009de5] transition-colors font-semibold text-center whitespace-nowrap">
+      {icon && <span className="shrink-0 size-4 text-[#004299] group-hover:text-[#012A72] transition-colors [&_svg]:size-full [&_svg]:block">{icon}</span>}
+      <span className="text-[12px] leading-[16px] text-[#004299] group-hover:text-[#012A72] transition-colors font-semibold text-center whitespace-nowrap">
         {children}
       </span>
     </button>

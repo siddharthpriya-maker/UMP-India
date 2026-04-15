@@ -22,7 +22,7 @@ Sticky bottom bar for **all three** Payment Pages wizard stages: Page Informatio
 
 ## Right column (buttons)
 - **Secondary** (Medium emphasis): `min-w-[120px] rounded-[8px] border border-[#004299] px-4 py-2.5 text-[14px] font-semibold text-[#004299]` + hover per `buttons.mdc` outline pattern
-- **Primary** (default / High emphasis): `min-w-[120px] rounded-[8px] bg-[#004299] px-4 py-2.5 text-[14px] font-semibold text-white` + `hover:bg-[#009de5]`
+- **Primary** (default / High emphasis): `min-w-[120px] rounded-[8px] bg-[#004299] px-4 py-2.5 text-[14px] font-semibold text-white` + `hover:bg-[#012A72]`
 - **Primary disabled:** `primaryDisabled` — `bg-[#ebebeb] text-[#acacac] opacity-64 cursor-not-allowed`
 - **Primary success** (`primaryEmphasis="success"`): `bg-[#21c179] hover:bg-[#1aa866] text-white` (Additional Settings — Save & Publish)
 

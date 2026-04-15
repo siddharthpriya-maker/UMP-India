@@ -166,7 +166,7 @@ function ServiceCard({ icon, title, body, linkLabel, linkHref = "#", statusChip,
       </div>
       <button
         onClick={onClick}
-        className="border border-[#004299] text-[#004299] px-4 py-2 rounded-[8px] text-[12px] font-semibold hover:bg-[#e7f1f8] hover:border-[#009de5] hover:text-[#009de5] transition-colors self-start flex items-center gap-1.5"
+        className="border border-[#004299] text-[#004299] px-4 py-2 rounded-[8px] text-[12px] font-semibold hover:bg-[#f7f9fd] hover:border-[#012A72] hover:text-[#012A72] transition-colors self-start flex items-center gap-1.5"
       >
         {linkLabel}
         <ArrowRight className="size-3.5" />
@@ -319,7 +319,7 @@ export function MyServicesPage() {
             disabled={!termsAccepted}
             className={`px-4 py-2.5 min-w-[120px] rounded-[8px] text-[14px] leading-[20px] font-semibold transition-colors self-start ${
               termsAccepted
-                ? "bg-[#004299] text-white hover:bg-[#009de5]"
+                ? "bg-[#004299] text-white hover:bg-[#012A72]"
                 : "bg-[#ebebeb] text-[#acacac] opacity-64 cursor-not-allowed"
             }`}
           >

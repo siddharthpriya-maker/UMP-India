@@ -221,7 +221,7 @@ export function LoginPage() {
                 className={`flex items-center justify-center gap-2 text-[14px] leading-[20px] font-semibold px-6 py-3.5 rounded-[8px] transition-colors ${
                   isDisabled
                     ? "bg-[#ebebeb] text-[#acacac] opacity-64 cursor-not-allowed"
-                    : "bg-[#004299] hover:bg-[#009de5] text-white"
+                    : "bg-[#004299] hover:bg-[#012A72] text-white"
                 }`}
               >
                 <Lock className="size-4" />

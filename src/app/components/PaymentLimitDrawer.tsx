@@ -197,7 +197,7 @@ export function PaymentLimitDrawer({ open, onClose }: PaymentLimitDrawerProps) {
           onClick={handleStartKYC}
           className={`w-full text-[16px] font-semibold py-4 rounded-[8px] transition-colors flex items-center justify-center ${
             consented
-              ? "bg-[#004299] text-white hover:bg-[#009de5]"
+              ? "bg-[#004299] text-white hover:bg-[#012A72]"
               : "bg-[#ebebeb] text-[#acacac] cursor-not-allowed"
           }`}
         >

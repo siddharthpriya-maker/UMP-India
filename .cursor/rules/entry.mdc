@@ -1,0 +1,28 @@
+---
+description: Instruction router — modular docs under .ai; enforce refactor policy for UI work
+alwaysApply: true
+---
+
+# Cursor rules entry
+
+Modular instructions live under **`.ai/`**. Use this table as the index:
+
+| Path | Responsibility |
+|------|----------------|
+| `.ai/core/rules.md` | Cross-project engineering habits (orchestration, extraction philosophy, where docs live) |
+| `.ai/core/refactor-policy.md` | **Canonical** list: frozen UI/behaviour/API vs allowed refactors |
+| `.ai/projects/ump-india.md` | UMP India product context & visual source of truth |
+| `.ai/skills/build-report-page.md` | Report / dashboard **list-page** structure & extraction order |
+| `.ai/prompts/safe-restructure.md` | Reusable **chat prompt** for safe UI-only refactors |
+
+## Enforcement (no design drift)
+
+For any work that touches UI or behaviour: follow **`.ai/core/refactor-policy.md`**. Do not restate exceptions here—the policy file is the single checklist.
+
+## Product code guard
+
+Do **not** modify `src/` when the task is limited to instruction / tooling / `.cursor` / `.ai` layout only.
+
+## Legacy design tokens & components
+
+Granular **`.mdc`** rules live under **`.ai/core/legacy-cursor-rules/`** (e.g. `legacy-cursor-rules/components/buttons.mdc`). Use for token and component detail when implementing **explicit** design work.

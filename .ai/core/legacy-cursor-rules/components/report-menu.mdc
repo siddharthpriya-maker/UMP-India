@@ -1,0 +1,86 @@
+---
+description: UMP Design System — ReportMenu and Reports page patterns (Please note callout)
+globs: **/ReportMenu.tsx,**/ReportsPage.tsx
+alwaysApply: false
+---
+
+# Report Menu (`ReportMenu`)
+
+**Path:** `src/app/components/ReportMenu.tsx`
+
+Vertical list used on the **Reports** page to choose which report category to configure. Selection uses **Primary Weak** and **Surface Level 3** from `color/colors.mdc` (lighter than sidebar L2 for a softer in-page nav). **Do not** use a left accent bar or a different text colour for the active row—selection is shown by **background** and **font weight** only.
+
+## Container (`<nav>`)
+
+- `aria-label="Report types"`
+- Layout: `flex flex-col gap-0.5 py-1 px-2`
+- Horizontal `px-2` (8px) keeps rounded rows from clipping at the column edge while keeping label alignment consistent with the page title row (8px + 24px = 32px to label start when using `pl-6` on each row).
+
+## Row (`<button type="button">`)
+
+- Layout: `flex w-full items-center justify-between`
+- Padding: `py-3 pl-6 pr-3`
+- Radius: `rounded-[12px]` (same as L2 menu items)
+- Transition: `transition-colors`
+
+### Active (selected category)
+
+- Background: `bg-[#e0f5fd]` — **Background Primary Weak** / sky_blue_50 (`color/colors.mdc`; lighter than `sky_blue_100` used in the main sidebar)
+- Typography: `font-bold` on the button (label inherits)
+- **No** left border / accent stripe
+- **No** change to label or chevron colour vs inactive — both stay on the default palette below
+
+### Inactive
+
+- Weight: `font-medium`
+- Hover: `hover:bg-[#fafafa]` — **Surface Level 3** (`var(--surface-level-3)`)
+
+### Label
+
+- Always: `text-[14px] leading-[24px] text-[#101010]` (active and inactive)
+
+### Chevron
+
+- Always: `size-4 shrink-0 text-[#7e7e7e]` (do not tint active blue)
+
+## Data
+
+- Categories live in `REPORT_CATEGORIES` (exported from this file for reuse or tests).
+- Parent owns `selectedCategory` and passes `onSelectCategory(id)`.
+
+## Integration
+
+- Used inside `ReportsPage`: menu column flush to the main content left edge; vertical `#e0e0e0` divider and horizontal separators per `layout.mdc` / Reports layout spec.
+
+---
+
+# Reports page — Please note (informational callout)
+
+**Path:** `src/app/components/ReportsPage.tsx` (config panel, under the report-type title)
+
+Inline notice before filters. Uses **notice / warning surface** tokens from `color/colors.mdc` without a coloured left stripe.
+
+## Container
+
+- `role="note"`
+- Background: `bg-[#fff4e0]` (same warm surface as `DrawerBanner` warning in `RightDrawer.tsx`; pairs with Notice strong `#ff9d00` in the palette)
+- Radius: `rounded-[8px]`
+- Padding: `px-4 py-3`
+- Optional max width: `max-w-[720px]` so long copy does not span the full config column
+- **Do not** use `border-l-[3px]` or any **vertical accent bar** in this context—the drawer `DrawerBanner` warning may use a left border for emphasis in a drawer; the Reports inline callout does **not**.
+
+## Content
+
+- **Title:** `Please note` — `text-[14px] font-semibold text-[#101010] leading-[20px] mb-1`
+- **Body:** `text-[14px] text-[#7e7e7e] leading-[24px]` (muted foreground per `typography.mdc`)
+
+## Do not
+
+- Do not use `border-l-[#004299]` or primary-coloured text for the active row.
+- Do not use `bg-[#f5f9fe]` for active (that is table-row hover, not nav selection).
+
+## Related rules
+
+- `components/sidebar.mdc` — L1/L2 reference
+- `components/right-drawer.mdc` — `DrawerBanner` warning (drawer context may keep `border-l-[3px]`; Reports inline callout does not)
+- `interactions/interactions.mdc` — shared hover, focus, transition patterns

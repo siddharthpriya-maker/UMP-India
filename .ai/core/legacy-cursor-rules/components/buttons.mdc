@@ -21,15 +21,15 @@ All buttons: `rounded-[8px] font-semibold transition-colors`, centered text+icon
 
 ### High (Primary)
 - `bg-[#004299] text-white`
-- Hover: `hover:bg-[#009de5]`
+- Hover: `hover:bg-[#012A72]` (darker navy on hover)
 
 ### Medium (Secondary)
 - `border border-[#004299] text-[#004299]`
-- Hover: `hover:bg-[#e7f1f8] hover:border-[#009de5] hover:text-[#009de5]`
+- Hover: `hover:bg-[#f7f9fd] hover:border-[#012A72] hover:text-[#012A72]` (outline hover fill — very light; distinct from sidebar `Sidebar BG` `#e7f1f8`)
 
 ### Low (Tertiary)
 - `bg-[#e7f1f8] text-[#004299]`
-- Hover: `hover:bg-[#f5f9fe] hover:text-[#009de5]`
+- Hover: `hover:bg-[#e7eaf4] hover:text-[#012A72]` (hover fill `#e7eaf4`; distinct from **Offset Weak** `#f5f9fe` used for tables, filters, and rows)
 
 ## Sizes
 

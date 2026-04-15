@@ -47,7 +47,7 @@ export function PageLevelMenu({
         : "bg-[#21c179] hover:bg-[#1aa866] text-white"
       : primaryDisabled
         ? "bg-[#ebebeb] text-[#acacac] opacity-64 cursor-not-allowed"
-        : "bg-[#004299] hover:bg-[#009de5] text-white";
+        : "bg-[#004299] hover:bg-[#012A72] text-white";
 
   return (
     <footer
@@ -78,7 +78,7 @@ export function PageLevelMenu({
         <button
           type="button"
           onClick={onSecondary}
-          className="flex min-w-[120px] items-center justify-center rounded-[8px] border border-[#004299] px-4 py-2.5 text-[14px] font-semibold leading-[20px] text-[#004299] transition-colors hover:border-[#009de5] hover:bg-[#e7f1f8] hover:text-[#009de5]"
+          className="flex min-w-[120px] items-center justify-center rounded-[8px] border border-[#004299] px-4 py-2.5 text-[14px] font-semibold leading-[20px] text-[#004299] transition-colors hover:border-[#012A72] hover:bg-[#f7f9fd] hover:text-[#012A72]"
         >
           {secondaryLabel}
         </button>

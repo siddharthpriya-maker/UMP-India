@@ -19,7 +19,7 @@ type ReportConfig = {
 const REPORT_CONFIGS: Record<string, ReportConfig> = {
   payment: {
     title: "Payment Reports",
-    note: "Data available for 18 months : 5 Feb'21 - Today,  Max duration in a single report : 1 month",
+    note: "Data is available for the last 18 months (5 Feb 2021 – today). Each report can cover at most one month.",
     filters: [
       { label: "Duration of Collections", options: ["1 Jan 2022 -31 Jan 2022", "1 Feb 2022 -28 Feb 2022", "1 Mar 2022 -31 Mar 2022"], default: "1 Jan 2022 -31 Jan 2022" },
       { label: "Payment Status", options: ["All", "Success", "Failed", "Pending"], default: "Success" },
@@ -27,7 +27,7 @@ const REPORT_CONFIGS: Record<string, ReportConfig> = {
   },
   settlement: {
     title: "Settlement Reports",
-    note: "Data available for 18 months. Max duration in a single report : 1 month",
+    note: "Data is available for the last 18 months. Each report can cover at most one month.",
     filters: [
       { label: "Duration", options: ["1 Jan 2022 -31 Jan 2022", "1 Feb 2022 -28 Feb 2022"], default: "1 Jan 2022 -31 Jan 2022" },
       { label: "Settlement Status", options: ["All", "Settled", "Pending"], default: "All" },
@@ -35,7 +35,7 @@ const REPORT_CONFIGS: Record<string, ReportConfig> = {
   },
   refund: {
     title: "Refund Reports",
-    note: "Data available for 18 months. Max duration in a single report : 1 month",
+    note: "Data is available for the last 18 months. Each report can cover at most one month.",
     filters: [
       { label: "Duration", options: ["1 Jan 2022 -31 Jan 2022", "1 Feb 2022 -28 Feb 2022"], default: "1 Jan 2022 -31 Jan 2022" },
       { label: "Refund Status", options: ["All", "Success", "Failed"], default: "All" },
@@ -43,28 +43,28 @@ const REPORT_CONFIGS: Record<string, ReportConfig> = {
   },
   dispute: {
     title: "Dispute Reports",
-    note: "Data available for 12 months. Max duration in a single report : 1 month",
+    note: "Data is available for the last 12 months. Each report can cover at most one month.",
     filters: [
       { label: "Duration", options: ["1 Jan 2022 -31 Jan 2022", "1 Feb 2022 -28 Feb 2022"], default: "1 Jan 2022 -31 Jan 2022" },
     ],
   },
   balance_statement: {
     title: "Balance Statement Reports",
-    note: "Data available for 18 months. Max duration in a single report : 1 month",
+    note: "Data is available for the last 18 months. Each report can cover at most one month.",
     filters: [
       { label: "Duration", options: ["1 Jan 2022 -31 Jan 2022", "1 Feb 2022 -28 Feb 2022"], default: "1 Jan 2022 -31 Jan 2022" },
     ],
   },
   ncmc_recharge: {
     title: "NCMC Recharge Reports",
-    note: "Data available for 6 months. Max duration in a single report : 1 month",
+    note: "Data is available for the last 6 months. Each report can cover at most one month.",
     filters: [
       { label: "Duration", options: ["1 Jan 2022 -31 Jan 2022", "1 Feb 2022 -28 Feb 2022"], default: "1 Jan 2022 -31 Jan 2022" },
     ],
   },
   links: {
     title: "Links Reports",
-    note: "Data available for 18 months. Max duration in a single report : 1 month",
+    note: "Data is available for the last 18 months. Each report can cover at most one month.",
     filters: [
       { label: "Duration", options: ["1 Jan 2022 -31 Jan 2022", "1 Feb 2022 -28 Feb 2022"], default: "1 Jan 2022 -31 Jan 2022" },
       { label: "Link Status", options: ["All", "Active", "Expired"], default: "All" },
@@ -149,13 +149,13 @@ export function ReportsPage() {
           {/* Header row: title + manage settings */}
           <div className="flex items-start justify-between">
             <div className="flex flex-col gap-3">
-              <h2 className="text-[20px] font-semibold text-[#101010]">{config.title}</h2>
-              <div className="flex flex-col gap-1">
-                <span className="text-[14px] text-[#ff9d00] font-medium">Please note:</span>
-                <div className="flex items-start gap-2">
-                  <span className="text-[#7e7e7e] mt-[6px] shrink-0">•</span>
-                  <span className="text-[14px] text-[#7e7e7e] leading-[22px]">{config.note}</span>
-                </div>
+              <h2 className="text-[20px] font-medium text-[#101010]">{config.title}</h2>
+              <div
+                className="rounded-[8px] bg-[#fff4e0] px-4 py-3 max-w-[720px]"
+                role="note"
+              >
+                <p className="text-[14px] font-semibold text-[#101010] leading-[20px] mb-1">Please note</p>
+                <p className="text-[14px] text-[#7e7e7e] leading-[24px]">{config.note}</p>
               </div>
             </div>
 
@@ -227,19 +227,16 @@ export function ReportsPage() {
 
       {/* Recently Generated Reports */}
       <div className="flex flex-col gap-4 px-[32px] pt-6">
-        <h2 className="text-[20px] font-semibold text-[#101010]">Recently Generated Reports</h2>
+        <h2 className="text-[20px] font-medium text-[#101010]">Recently Generated Reports</h2>
 
         {/* Table */}
         <div className="overflow-x-auto border border-[#e0e0e0] rounded-[12px]">
           <div className="min-w-[900px]">
             {/* Table Header */}
             <div className="grid grid-cols-[180px_1fr_200px_180px_160px] gap-4 px-6 py-3 border-b border-[#e0e0e0]">
-              <div className="flex items-center gap-2">
-                <span className="size-[6px] rounded-full bg-[#004299] shrink-0" />
-                <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">
-                  Report Generation Date
-                </span>
-              </div>
+              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">
+                Report Generation Date
+              </span>
               <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">
                 Report Type
               </span>

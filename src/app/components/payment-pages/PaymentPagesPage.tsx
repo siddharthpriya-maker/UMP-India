@@ -166,7 +166,7 @@ export function PaymentPagesPage() {
           <h1 className="text-[32px] font-semibold text-[#101010]">Payment Pages</h1>
           <button
             onClick={() => setShowCreatePopup(true)}
-            className="flex items-center gap-2 bg-[#004299] hover:bg-[#009de5] text-white text-[14px] leading-[20px] font-semibold px-4 py-2.5 rounded-[8px] transition-colors"
+            className="flex items-center gap-2 bg-[#004299] hover:bg-[#012A72] text-white text-[14px] leading-[20px] font-semibold px-4 py-2.5 rounded-[8px] transition-colors"
           >
             <Plus className="size-4" />
             Create Page

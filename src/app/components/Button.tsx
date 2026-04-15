@@ -32,9 +32,9 @@ export function Button({
 
   // Variant styles (Button_v2 guidelines)
   const variantStyles = {
-    primary: "bg-[#004299] text-white hover:bg-[#009de5]",
-    secondary: "border border-[#004299] text-[#004299] hover:bg-[#e7f1f8] hover:border-[#009de5] hover:text-[#009de5]",
-    tertiary: "bg-[#e7f1f8] text-[#004299] hover:bg-[#f5f9fe] hover:text-[#009de5]",
+    primary: "bg-[#004299] text-white hover:bg-[#012A72]",
+    secondary: "border border-[#004299] text-[#004299] hover:bg-[#f7f9fd] hover:border-[#012A72] hover:text-[#012A72]",
+    tertiary: "bg-[#e7f1f8] text-[#004299] hover:bg-[#e7eaf4] hover:text-[#012A72]",
   };
 
   // Size styles (Button_v2 guidelines)
