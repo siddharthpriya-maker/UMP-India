@@ -6,6 +6,7 @@ import { PaymentsPage } from "./components/PaymentsPage";
 import { SettlementsPage } from "./components/SettlementsPage";
 import { ConnectPlusPage } from "./components/ConnectPlusPage";
 import { DesignInProgress } from "./components/DesignInProgress";
+import { ReportsPage } from "./components/ReportsPage";
 import { MyServicesPage } from "./components/MyServicesPage";
 import { PaymentPagesPage } from "./components/payment-pages/PaymentPagesPage";
 import { SettingsPage } from "./components/SettingsPage";
@@ -60,7 +61,7 @@ function AppShell() {
                   <Route path="/my-services" element={<MyServicesPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
                   <Route path="/refunds" element={<DesignInProgress pageName="Refunds" />} />
-                  <Route path="/reports" element={<DesignInProgress pageName="Reports" />} />
+                  <Route path="/reports" element={<ReportsPage />} />
                   <Route path="/accept-payments" element={<DesignInProgress pageName="Accept Payments" />} />
                   <Route path="/payment-links" element={<DesignInProgress pageName="Payment Links" />} />
                   <Route path="/payment-pages" element={<PaymentPagesPage />} />
