@@ -286,12 +286,12 @@ export function SettlementsPage() {
       <div className="flex items-center justify-between">
         <span className="text-[14px] text-[#7e7e7e]">PAGE 1 OF 12</span>
         <div className="flex items-center gap-2">
-          <button className="px-4 py-2 text-[14px] text-[#101010] bg-white border border-[#e0e0e0] rounded-lg hover:bg-[#f5f9fe] transition-colors font-semibold">
+          <SecondaryButton size="medium" type="button">
             Prev
-          </button>
-          <button className="px-4 py-2 text-[14px] text-[#101010] bg-white border border-[#e0e0e0] rounded-lg hover:bg-[#f5f9fe] transition-colors font-semibold">
+          </SecondaryButton>
+          <SecondaryButton size="medium" type="button">
             Next
-          </button>
+          </SecondaryButton>
         </div>
       </div>
     </div>

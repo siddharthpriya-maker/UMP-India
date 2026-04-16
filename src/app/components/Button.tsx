@@ -49,7 +49,7 @@ export function Button({
   const contentGap = isSmall ? "gap-1" : "gap-2";
 
   const baseStyles =
-    "inline-flex items-center justify-center rounded-[8px] font-semibold transition-colors relative isolate";
+    "inline-flex items-center justify-center rounded-[8px] font-semibold transition-colors relative isolate focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004299] focus-visible:ring-offset-2";
 
   const disabledIdle =
     "disabled:bg-[#ebebeb] disabled:text-[#acacac] disabled:opacity-64 disabled:cursor-not-allowed disabled:border-none";
@@ -119,7 +119,6 @@ export function Button({
   return (
     <button
       type="button"
-      data-loading={loading ? "" : undefined}
       className={combinedClassName}
       disabled={disabled || loading}
       aria-busy={loading || undefined}

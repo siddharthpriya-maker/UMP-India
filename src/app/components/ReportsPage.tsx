@@ -159,10 +159,14 @@ export function ReportsPage() {
               </div>
             </div>
 
-            <button className="flex items-center gap-2 px-4 py-2 border border-[#e0e0e0] rounded-[8px] text-[14px] text-[#101010] font-medium hover:bg-[#f5f9fe] transition-colors whitespace-nowrap shrink-0">
-              <SettingIcon className="size-5" />
-              <span>Manage report settings</span>
-            </button>
+            <SecondaryButton
+              size="medium"
+              type="button"
+              icon={<SettingIcon className="size-5" />}
+              className="shrink-0 whitespace-nowrap"
+            >
+              Manage report settings
+            </SecondaryButton>
           </div>
 
           {/* Filters */}
@@ -310,26 +314,25 @@ export function ReportsPage() {
         <div className="flex items-center justify-between">
           <span className="text-[14px] text-[#7e7e7e]">PAGE {currentPage} OF {totalPages}</span>
           <div className="flex items-center gap-2">
-            <button
-              className="px-4 py-2 text-[14px] text-[#101010] bg-white border border-[#e0e0e0] rounded-lg hover:bg-[#f5f9fe] transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            <SecondaryButton
+              size="medium"
+              type="button"
+              icon={<ChevronRight className="size-4 rotate-180" />}
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             >
-              <span className="flex items-center gap-1">
-                <ChevronRight className="size-4 rotate-180" />
-                Prev
-              </span>
-            </button>
-            <button
-              className="px-4 py-2 text-[14px] text-[#101010] bg-white border border-[#e0e0e0] rounded-lg hover:bg-[#f5f9fe] transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              Prev
+            </SecondaryButton>
+            <SecondaryButton
+              size="medium"
+              type="button"
+              icon={<ChevronRight className="size-4" />}
+              iconPosition="right"
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             >
-              <span className="flex items-center gap-1">
-                Next
-                <ChevronRight className="size-4" />
-              </span>
-            </button>
+              Next
+            </SecondaryButton>
           </div>
         </div>
       </div>

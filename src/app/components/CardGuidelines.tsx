@@ -9,6 +9,7 @@
  */
 
 import { ArrowRight, AlertCircle, CreditCard, Shield, ChevronDown, ChevronRight } from "lucide-react";
+import { PrimaryButton } from "./Button";
 import Payments from "../../imports/Payments-41-36";
 import Settlement from "../../imports/Settlement";
 import Refunds from "../../imports/Refunds";
@@ -244,9 +245,9 @@ export function PaymentSummaryCards() {
       <div className="bg-[#e0f5fd] rounded-[12px] p-5 flex flex-col flex-1">
         <span className="text-[14px] text-[#7e7e7e] truncate">Available for Settlement</span>
         <span className="text-[20px] font-semibold text-[#101010]">₹4,00,000</span>
-        <button className="bg-[#004299] text-white text-[12px] font-semibold px-4 py-2 rounded-lg hover:bg-[#003377] transition-colors mt-2">
+        <PrimaryButton size="small" type="button" fullWidth className="mt-2">
           Settle Now
-        </button>
+        </PrimaryButton>
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ Use with **`.ai/projects/merchant-dashboard.md`**. These guidelines **do not** r
 ## Relationship to implementation
 
 - **Source of truth** for visuals: shipped UI and project doc — not aspirational Dribbble-style layouts.
-- **Legacy token/component specs:** `.ai/core/legacy-cursor-rules/` — use when doing **explicit** design work only.
+- **Token/component specs:** `design-guidelines/rules/` (see `design-guidelines/OVERVIEW.md`) — use when doing **explicit** design work only.
 
 ## When in doubt
 

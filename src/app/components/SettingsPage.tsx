@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Info } from "lucide-react";
+import { PrimaryButton, TertiaryButton } from "./Button";
 import { PrimaryTabs } from "./Tabs";
 import { SecondaryTabs } from "./Tabs";
 import { DesignInProgress } from "./DesignInProgress";
@@ -237,9 +238,9 @@ function PaymentSettingsContent() {
             <p className="text-[12px] text-[#101010] leading-[16px] text-right max-w-[200px]">
               Collect payments from your customers without any limits
             </p>
-            <button className="bg-[#004299] hover:bg-[#012A72] text-white text-[14px] font-semibold px-4 py-2.5 rounded-[8px] whitespace-nowrap transition-colors">
+            <PrimaryButton size="medium" type="button" className="whitespace-nowrap">
               Upgrade Account
-            </button>
+            </PrimaryButton>
           </div>
         </div>
 
@@ -372,9 +373,9 @@ function PaymentSettingsContent() {
                       {instrument.status}
                     </span>
                   ) : instrument.hasActivateButton ? (
-                    <button className="bg-[#e7f1f8] text-[#004299] hover:bg-[#e7eaf4] hover:text-[#012A72] text-[12px] leading-[16px] font-semibold px-4 py-2 min-w-[80px] rounded-[8px] whitespace-nowrap transition-colors">
+                    <TertiaryButton size="small" type="button" className="whitespace-nowrap">
                       Activate Now
-                    </button>
+                    </TertiaryButton>
                   ) : (
                     <ToggleSwitch
                       active={toggleStates[instrument.name] ?? true}

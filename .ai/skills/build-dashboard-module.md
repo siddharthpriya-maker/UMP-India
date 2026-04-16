@@ -3,6 +3,7 @@
 **When:** Work on **any merchant dashboard sidebar module** — overview, data-heavy views, operational screens, **action** flows (forms, drawers, confirmations), detail views, or list/table surfaces — including refactors that **must not** change look or behaviour.
 
 **Product context:** `.ai/projects/merchant-dashboard.md`.  
+**Visual system (tokens, components):** `design-guidelines/OVERVIEW.md` and `design-guidelines/rules/`.  
 **Frozen vs allowed refactors:** **`.ai/core/refactor-policy.md`** (canonical).
 
 ---

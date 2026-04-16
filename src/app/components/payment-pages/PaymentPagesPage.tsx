@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Plus, ChevronDown, MoreVertical, Search } from "lucide-react";
 import type { PaymentPage, PageStatus, BuilderStep, PageInfo } from "./types";
+import { SecondaryButton } from "../Button";
 import { CreatePageEntry } from "./CreatePageEntry";
 import { PageInfoForm } from "./PageInfoForm";
 import { PageBuilder } from "./PageBuilder";
@@ -329,12 +330,12 @@ export function PaymentPagesPage() {
       <div className="flex items-center justify-between">
         <span className="text-[14px] text-[#7e7e7e]">PAGE 1 OF 1</span>
         <div className="flex items-center gap-2">
-          <button className="px-4 py-2 text-[14px] text-[#101010] bg-white border border-[#e0e0e0] rounded-lg hover:bg-[#f5f9fe] transition-colors font-semibold">
+          <SecondaryButton size="medium" type="button">
             Prev
-          </button>
-          <button className="px-4 py-2 text-[14px] text-[#101010] bg-white border border-[#e0e0e0] rounded-lg hover:bg-[#f5f9fe] transition-colors font-semibold">
+          </SecondaryButton>
+          <SecondaryButton size="medium" type="button">
             Next
-          </button>
+          </SecondaryButton>
         </div>
       </div>
 

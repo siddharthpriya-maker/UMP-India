@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CheckCircle, ShieldCheck, ArrowRight, MessageCircle, Sparkles } from "lucide-react";
+import { PrimaryButton } from "./Button";
 
 export function ConnectPlusPage() {
   const [isAccepted, setIsAccepted] = useState(false);
@@ -132,10 +133,15 @@ export function ConnectPlusPage() {
               </div>
 
               {/* CTA Button at bottom, left-aligned */}
-              <button className="px-6 py-3 bg-[#004299] text-white rounded-lg flex items-center gap-2 hover:bg-[#003377] transition-colors self-start mt-auto">
-                <span className="text-[14px] font-semibold">Go to Connect Plus Dashboard</span>
-                <ArrowRight className="size-4" />
-              </button>
+              <PrimaryButton
+                size="medium"
+                type="button"
+                icon={<ArrowRight className="size-4" />}
+                iconPosition="right"
+                className="self-start mt-auto px-6 py-3"
+              >
+                Go to Connect Plus Dashboard
+              </PrimaryButton>
             </div>
 
             {/* Column 2: Service Cards (Neutral, No Stroke) */}

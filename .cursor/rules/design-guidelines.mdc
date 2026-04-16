@@ -1,0 +1,13 @@
+---
+description: Paytm merchant UI — portable pack at design-guidelines/ (OVERVIEW + rules). Use for design-token work, new screens, or when @-mentioning the visual system.
+globs: design-guidelines/**/*
+alwaysApply: false
+---
+
+# Design guidelines pack
+
+- **Start:** `design-guidelines/OVERVIEW.md` (summary, tokens, components).
+- **Reuse in other repos:** copy the whole `design-guidelines/` folder; read `design-guidelines/README.md`.
+- **Granular rules:** `design-guidelines/rules/**/*.mdc` (buttons, tables, sidebar, layout, …).
+
+Engineering policy and refactors still live under `.ai/core/`. Product module framing: `.ai/projects/merchant-dashboard.md`.

@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Download, RefreshCw, ChevronRight } from "lucide-react";
 import { CopyIcon } from "./Icons";
-import { SecondaryButton } from "./SecondaryButton";
-import { TertiaryButton } from "./TertiaryButton";
+import { PrimaryButton, SecondaryButton, TertiaryButton } from "./Button";
 import { SearchWithDropdown } from "./SearchWithDropdown";
 import { PaymentDetailDrawer } from "./PaymentDetailDrawer";
 import SuccessSmall from "../../imports/SuccessSmall";
@@ -225,10 +224,10 @@ export function PaymentsPage() {
         <div className="flex items-center justify-between">
           <h2 className="text-[20px] font-medium text-[#101010]">Payments Summary</h2>
           <div className="flex items-center gap-2">
-            <TertiaryButton icon={<RefreshCw />}>
+            <TertiaryButton size="small" type="button" icon={<RefreshCw />}>
               Refresh
             </TertiaryButton>
-            <SecondaryButton icon={<Download />}>
+            <SecondaryButton size="small" type="button" icon={<Download />}>
               Download
             </SecondaryButton>
           </div>
@@ -310,9 +309,9 @@ export function PaymentsPage() {
           <div className="bg-[#e0f5fd] rounded-[12px] p-5 flex flex-col flex-1">
             <span className="text-[14px] text-[#7e7e7e] truncate">Available for Settlement</span>
             <span className="text-[20px] font-semibold text-[#101010]">₹4,00,000</span>
-            <button className="bg-[#004299] text-white text-[12px] font-semibold px-4 py-2 min-w-[80px] rounded-[8px] hover:bg-[#012A72] transition-colors mt-2">
+            <PrimaryButton size="small" type="button" fullWidth className="mt-2">
               Settle Now
-            </button>
+            </PrimaryButton>
           </div>
         </div>
       </div>
@@ -368,12 +367,12 @@ export function PaymentsPage() {
       <div className="flex items-center justify-between">
         <span className="text-[14px] text-[#7e7e7e]">PAGE 1 OF 32</span>
         <div className="flex items-center gap-2">
-          <button className="px-4 py-2 text-[14px] text-[#101010] bg-white border border-[#e0e0e0] rounded-lg hover:bg-[#f5f9fe] transition-colors font-semibold">
+          <SecondaryButton size="medium" type="button">
             Prev
-          </button>
-          <button className="px-4 py-2 text-[14px] text-[#101010] bg-white border border-[#e0e0e0] rounded-lg hover:bg-[#f5f9fe] transition-colors font-semibold">
+          </SecondaryButton>
+          <SecondaryButton size="medium" type="button">
             Next
-          </button>
+          </SecondaryButton>
         </div>
       </div>
 

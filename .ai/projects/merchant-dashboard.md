@@ -31,4 +31,4 @@ Follow **`.ai/core/refactor-policy.md`** for all frozen dimensions. Be especiall
 
 ---
 
-*Module patterns: `.ai/skills/build-dashboard-module.md`. Safe refactor prompt: `.ai/prompts/safe-restructure.md`. Concept framing: `.ai/prompts/concept-guidelines.md`. **Visual system (tokens, components, layouts):** `.ai/projects/ump-design-guidelines.md`.*
+*Module patterns: `.ai/skills/build-dashboard-module.md`. Safe refactor prompt: `.ai/prompts/safe-restructure.md`. Concept framing: `.ai/prompts/concept-guidelines.md`. **Visual system (tokens, components, layouts):** `design-guidelines/OVERVIEW.md` (stub: `.ai/projects/ump-design-guidelines.md`).*

@@ -16,7 +16,7 @@ alwaysApply: false
 
 - **Shape:** `rounded-[8px]` (UMP default). Do not use ad-hoc `rounded-lg` for new buttons.
 - **Typography:** `font-semibold`; sizes per table below (explicit `text-[Npx]`).
-- **Layout:** `inline-flex items-center justify-center`; icon + label `gap-2`.
+- **Layout:** `inline-flex items-center justify-center`; icon + label `gap-2` (large/medium); **small** text/icon rows use `gap-1` (4px) to match Figma.
 - **Motion:** `transition-colors` (and `transition-opacity` where loading/disabled fades apply).
 - **Icons:** `currentColor` in SVGs; colour comes from button text class — see `icons/icons.mdc`.
 
@@ -65,10 +65,12 @@ Matches Figma **Emphasis=Low, State=Hover**.
 - **Visual:** `bg-[#ebebeb] text-[#acacac]`; optional `opacity-64`; `cursor-not-allowed`; **no** hover lift or colour shift.
 - **Apply** to every variant when `disabled` or non-interactive.
 
-### 7. Loading (per variant container)
+### 7. Loading (PODS sheet — all emphases)
 
-- **Behaviour:** Replace label (keep icon slot policy per row below) with a **horizontal dot** indicator (design sheet: four dots; colour follows container — white / light blue on solid primaries).
-- **Implementation:** Prefer reusing `Button` `loading` prop; animation should read as “busy”, not a second CTA.
+- **Container:** `background: #E7F1F8` (`#e7f1f8`), **no** variant border in this state (`border-transparent`); `cursor-wait` while `disabled` is used to block interaction.
+- **Content row:** Icons + label hidden with `opacity-0` (still in DOM for layout stability); **loader** is `absolute inset-0 flex items-center justify-center`.
+- **Loader:** Horizontal **five dots**, `gap: 4.41px` — three **`#012A72`**, two **`#00B8F5`** (Figma ellipse order); dot diameter scales lightly by button size (`Button.tsx` `ButtonLoadingDots`).
+- **Implementation:** `Button` `loading` prop; `aria-busy` set when loading.
 
 ---
 

@@ -32,9 +32,10 @@ Put **product- or stack-only** facts in `.ai/projects/<project>.md` (this repo: 
 |--------|------|
 | `.ai/core/` | Cross-repo rules + **refactor-policy** |
 | `.ai/projects/` | Product context (merchant dashboard, modules, stack) |
+| **`design-guidelines/`** (repo root) | **Portable** visual system — `OVERVIEW.md`, `rules/**/*.mdc`; copy wholesale to other products |
 | `.ai/skills/` | Repeatable workflows (e.g. **dashboard modules** — any sidebar item) |
 | `.ai/prompts/` | Pasteable prompts + **concept** framing |
 
 ---
 
-*Copy this file across repositories; only `.ai/projects/` and `.ai/skills/` are deployment-specific.*
+*Copy this file across repositories; only `.ai/projects/`, `.ai/skills/`, and optional `design-guidelines/` are deployment-specific.*

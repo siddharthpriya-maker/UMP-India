@@ -12,7 +12,8 @@ Use **`.ai/`** as the modular instruction system. Start here:
 | `.ai/core/refactor-policy.md` | **Canonical** frozen UI/behaviour/API vs allowed safe refactors |
 | `.ai/core/rules.md` | Cross-cutting engineering habits (orchestration, extraction) |
 | `.ai/projects/merchant-dashboard.md` | This product: merchant dashboard, **sidebar modules**, stack |
-| `.ai/projects/ump-design-guidelines.md` | **UMP visual system** — colors, type, layout, components (summary + link to legacy `.mdc`) |
+| **`design-guidelines/`** (root) | **UMP visual system** — `OVERVIEW.md` + `rules/**/*.mdc` (portable; copy folder to other products) |
+| `.ai/projects/ump-design-guidelines.md` | **Stub** → points at `design-guidelines/` |
 | `.ai/skills/build-dashboard-module.md` | Patterns for **any** sidebar module (overview, data, actions, ops, detail) |
 | `.ai/prompts/safe-restructure.md` | Pasteable prompt: safe refactors only |
 | `.ai/prompts/concept-guidelines.md` | Product framing: clarity, workflow, density — **no** redesign-by-default |
@@ -25,6 +26,6 @@ Work that touches UI or behaviour: follow **`.ai/core/refactor-policy.md`**. Do 
 
 Do **not** modify `src/` when the task is limited to instruction / tooling / `.cursor` / `.ai` layout only.
 
-## Legacy design tokens & components
+## Design tokens & components
 
-**`.mdc`** specs live under **`.ai/core/legacy-cursor-rules/`**. Use only for **explicit** design/token work; they do not override the refactor policy.
+**Granular `.mdc` specs** live under **`design-guidelines/rules/`** (same pack as `OVERVIEW.md`). Optional Cursor router: **`.cursor/rules/design-guidelines.mdc`**. Use for **explicit** design/token work; they do not override the refactor policy.
