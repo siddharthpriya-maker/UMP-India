@@ -163,14 +163,17 @@
 
 ## 8. Components
 
-### 8.1 Buttons (`Button_v2`)
+### 8.1 Buttons (`Button_v2` + variant sheet)
 
-- All: `rounded-[8px] font-semibold transition-colors`.
-- **High:** `bg-[#004299] text-white`, hover `#012A72`.
-- **Medium:** `border border-[#004299] text-[#004299]`, hover fill `#f7f9fd`, border/text hover `#012A72`.
-- **Low:** `bg-[#e7f1f8] text-[#004299]`, hover `#e7eaf4` / text `#012A72`.
-- **Sizes:** Large 56px height / `text-[16px]`; Medium 40px / `text-[14px]`; Small 32px / `text-[12px]` — see `buttons.mdc` table.
-- **Special:** Save & Publish green `#21c179`; disabled pattern shared.
+Full matrix (emphasis × size × content × states) lives in **`legacy-cursor-rules/components/buttons.mdc`** — aligned to the **PODS Admin / Components** button sheet (navy primary, **primary subdued** sky `#00b8f5`, **ghost** outline, **secondary** filled light, **tertiary** pale, **disabled**, **loading** with dot row).
+
+**Summary**
+
+- **Radius:** `rounded-[8px]` everywhere for new work.
+- **Sizes:** Large 56px / `text-[16px]`; Medium 40px / `text-[14px]`; Small 32px / `text-[12px]`; icon-only squares 56 / 40 / 32px with inner padding per Figma (`p-4` / `p-2.5` / `p-2`).
+- **Hovers (Figma):** High → `#012A72`; Medium outline → fill `#e7f1f8`, border/text `#012A72`; Low → fill `#f5f9fe`, text `#012A72`.
+- **Content columns:** text only · leading icon + text · text + trailing · dual icons · icon-only (`aria-label` required).
+- **Implementation:** `src/app/components/Button.tsx` maps **primary / secondary / tertiary** to High / Medium / Low; see `buttons.mdc` for extended variants not yet in code.
 
 *File:* `src/app/components/Button.tsx` · *Rule:* `legacy-cursor-rules/components/buttons.mdc`
 

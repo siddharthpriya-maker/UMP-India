@@ -1,60 +1,137 @@
 ---
-description: UMP Button_v2 — emphasis, size, icon, states. Use when adding or changing buttons/CTAs; @-mention this rule if the active file is not matched below.
+description: UMP / Admin Button — variant matrix (emphasis, size, icon layout, states). Use when adding or changing buttons/CTAs; @-mention this rule if the active file is not matched below.
 globs: src/app/components/Button.tsx
 alwaysApply: false
 ---
 
-# Buttons (Button_v2)
+# Buttons (Button_v2 + extended variant sheet)
 
-**Scope:** This rule is not tied to all TSX files—only auto-includes when `Button.tsx` is in context. For `<button>` / CTA work in other files (e.g. `PageLevelMenu`, pages), attach **`@buttons`** or this rule in chat.
+**Scope:** Canonical rules for **all** button appearances used across merchant dashboard and admin-style surfaces. This rule auto-includes when `Button.tsx` is in context. For raw `<button>` in other files (e.g. `PageLevelMenu`), attach **`@buttons`** or this rule in chat.
 
-All buttons: `rounded-[8px] font-semibold transition-colors`, centered text+icon layout.
+**Reference:** PODS Admin — Components button matrix (Figma: file `vfjj5z2JnLH21vPKY4jygD`, node `2680-309` region) — **layout of variants** below matches that sheet; **hex values** stay aligned to UMP tokens in `color/colors.mdc` unless design explicitly supersedes.
 
-## Props
-- `emphasis`: High | Medium | Low
-- `size`: Large | Medium | Small
-- `icon`: None | Leading | Trailing | Both | Only
-- `state`: Normal | Hover | Loading
-- `enabled`: boolean
+---
 
-## Emphasis Levels
+## Global rules (every variant)
 
-### High (Primary)
-- `bg-[#004299] text-white`
-- Hover: `hover:bg-[#012A72]` (darker navy on hover)
+- **Shape:** `rounded-[8px]` (UMP default). Do not use ad-hoc `rounded-lg` for new buttons.
+- **Typography:** `font-semibold`; sizes per table below (explicit `text-[Npx]`).
+- **Layout:** `inline-flex items-center justify-center`; icon + label `gap-2`.
+- **Motion:** `transition-colors` (and `transition-opacity` where loading/disabled fades apply).
+- **Icons:** `currentColor` in SVGs; colour comes from button text class — see `icons/icons.mdc`.
 
-### Medium (Secondary)
-- `border border-[#004299] text-[#004299]`
-- Hover: `hover:bg-[#f7f9fd] hover:border-[#012A72] hover:text-[#012A72]` (outline hover fill — very light; distinct from sidebar `Sidebar BG` `#e7f1f8`)
+---
 
-### Low (Tertiary)
-- `bg-[#e7f1f8] text-[#004299]`
-- Hover: `hover:bg-[#e7eaf4] hover:text-[#012A72]` (hover fill `#e7eaf4`; distinct from **Offset Weak** `#f5f9fe` used for tables, filters, and rows)
+## Variant matrix (emphasis / appearance)
 
-## Sizes
+Rows in the design sheet map to these **emphasis** types. Use the name in reviews and in props when `Button` exposes them.
 
-| Size | Padding | Min Width | Text | Height |
-|---|---|---|---|---|
-| Large | `p-4` | `min-w-[120px]` | `text-[16px] leading-[20px]` | 56px |
-| Medium | `px-4 py-2.5` | `min-w-[120px]` | `text-[14px] leading-[20px]` | 40px |
-| Small | `px-4 py-2` | `min-w-[80px]` | `text-[12px] leading-[16px]` | 32px |
+### 1. Primary (solid — high emphasis)
 
-## States
+- **Default:** `bg-[#004299] text-white`
+- **Hover:** `hover:bg-[#012A72]`
+- **Use:** Main CTAs, destructive flows’ primary confirm when spec calls for navy.
 
-### Disabled (all emphasis levels)
-- `bg-[#ebebeb] text-[#acacac] opacity-64 cursor-not-allowed`
+### 2. Primary subdued (solid — medium emphasis on brand)
 
-### Loading
-- Replace label with animated dots, same container styling
+- **Default:** `bg-[#00b8f5] text-white` (Primary 1 Strong / sky — `color/colors.mdc`)
+- **Hover:** darken slightly, e.g. `hover:bg-[#0090c7]` (tune in implementation to match visual QA)
+- **Use:** Secondary prominence actions, less aggressive than navy primary.
 
-## Icon Variants
-- **Leading/Trailing**: icon + label in row, `gap-2`
-- **Both**: leading icon + label + trailing icon
-- **Only**: square (56×56 / 40×40 / 32×32), icon centered, no label
+### 3. Ghost / outline (transparent)
 
-## Special Buttons
-- **"Save & Publish"**: success green `bg-[#21c179] hover:bg-[#1aa866]`
-- **"Settle Now"**: small primary `bg-[#004299] text-white text-[12px] px-4 py-2 rounded-[8px]`
+- **Default:** `bg-transparent border border-[#004299] text-[#004299]`
+- **Hover (if distinct from Medium outline in implementation):** `hover:bg-[#f7f9fd] hover:border-[#012A72] hover:text-[#012A72]`
+- **Use:** Dark or tinted backgrounds; de-emphasised actions that still read as interactive.
 
-## Legacy CTA Pattern
-Some older pages use: `bg-[#004299] text-white text-[14px] font-semibold px-6 py-3 rounded-lg hover:bg-[#003377]`. Prefer Button_v2 for new code.
+### 4. Medium emphasis — outline (`Button` `variant="secondary"`)
+
+Matches Figma **Emphasis=Medium, State=Hover** (outline on default, hover fill + border).
+
+- **Default:** `border border-[#004299] text-[#004299]` (transparent / white page bg)
+- **Hover:** `background: #E7F1F8` (`#e7f1f8`), `border: 1px solid #012A72`, `text: #012A72`
+- **Use:** Secondary CTAs next to primary; medium emphasis actions.
+
+### 5. Low emphasis — filled pale (`Button` `variant="tertiary"`)
+
+Matches Figma **Emphasis=Low, State=Hover**.
+
+- **Default:** `bg-[#e7f1f8] text-[#004299]`
+- **Hover:** `background: #F5F9FE` (`#f5f9fe`), `text: #012A72` (no border)
+- **Use:** Lowest priority actions. Hover fill `#f5f9fe` is **Offset Weak** — do not use for table row hover styling on the same surface without spacing/context.
+
+### 6. Disabled (all emphases)
+
+- **Visual:** `bg-[#ebebeb] text-[#acacac]`; optional `opacity-64`; `cursor-not-allowed`; **no** hover lift or colour shift.
+- **Apply** to every variant when `disabled` or non-interactive.
+
+### 7. Loading (per variant container)
+
+- **Behaviour:** Replace label (keep icon slot policy per row below) with a **horizontal dot** indicator (design sheet: four dots; colour follows container — white / light blue on solid primaries).
+- **Implementation:** Prefer reusing `Button` `loading` prop; animation should read as “busy”, not a second CTA.
+
+---
+
+## Size scale (rows in sheet: Large / Medium / Small)
+
+| Size | Height | Min width (text) | Text | Padding (typical) |
+|------|--------|-------------------|------|---------------------|
+| Large | 56px | `min-w-[120px]` | `text-[16px] leading-[20px]` | `p-4` |
+| Medium | 40px | `min-w-[120px]` | `text-[14px] leading-[20px]` | `px-4 py-2.5` |
+| Small | 32px | `min-w-[80px]` | `text-[12px] leading-[16px]` | `px-4 py-2` |
+
+**Icon-only** square targets (no label; Figma padding inside fixed box — `box-border` in `Button.tsx`):
+
+| Size | Box | Padding (Figma) |
+|------|-----|-----------------|
+| Large | `size-[56px]` | `16px` → `p-4` |
+| Medium | `size-[40px]` | `10px` → `p-2.5` |
+| Small | `size-[32px]` | `8px` → `p-2` |
+
+---
+
+## Content layouts (columns in sheet)
+
+For each **emphasis × size** row, support these five **content** arrangements:
+
+| # | Layout | Rules |
+|---|--------|--------|
+| 1 | **Text only** | Label only, centred. |
+| 2 | **Leading icon + text** | Icon `gap-2` before label; icon size follows row size (`size-4` / `size-5` / `size-6`). |
+| 3 | **Text + trailing icon** | Label then icon. |
+| 4 | **Leading + text + trailing** | Two icons; same gap rules. |
+| 5 | **Icon only** | Square button per table above; `aria-label` required. |
+
+---
+
+## Props (conceptual → `Button.tsx`)
+
+Map design intent to code as follows (extend `Button` when a variant is missing):
+
+| Design sheet | Suggested `variant` / notes |
+|----------------|----------------------------|
+| Primary solid navy | `primary` (today) |
+| Primary subdued sky | add `primarySubdued` **or** `variant="primary"` + `tone="subdued"` when implemented |
+| Ghost outline | overlap with `secondary` on light BG; use explicit ghost classes when on dark BG |
+| Secondary filled light | add `secondarySolid` **or** extend `secondary` with `appearance="outline" \| "filled"` |
+| Tertiary pale | `tertiary` (today) |
+| Disabled | `disabled` |
+| Loading | `loading` |
+
+**Current implementation note:** `src/app/components/Button.tsx` exposes `variant`: `primary` | `secondary` | `tertiary` and sizes including icon-only. **New** sheet rows (primary subdued, filled secondary) should be added here first, then implemented in `Button.tsx` — do not fork one-off colours in pages.
+
+---
+
+## Special cases (outside matrix)
+
+- **Save & Publish:** `bg-[#21c179] text-white hover:bg-[#1aa866]` (success).
+- **Legacy CTA:** Some pages use `rounded-lg` / older hover `#003377` — migrate to this doc when touching those files.
+
+---
+
+## Do / don’t
+
+- **Do** pick variant + size + content layout from the matrix before inventing new styles.
+- **Do** keep disabled and loading visually subordinate (no competing saturation with enabled primary).
+- **Don’t** embed `#004299` / `#00b8f5` inside SVG paths — use `currentColor` on icons inside buttons.
+- **Don’t** use Tailwind ambiguous text scales for button labels — use the px sizes in the table.

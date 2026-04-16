@@ -13,9 +13,10 @@ Use these patterns for **all** interactive UI in this repo unless a component-sp
 - Prefer **background** changes over large colour shifts on body text.
 - Tables and list rows: `hover:bg-[#f5f9fe]` with `transition-colors`.
 - Sidebar L1 icon pill: `hover:bg-[#e0e0e0]`; L2 rows: `hover:bg-[#e0e0e0]` when not selected.
-- Primary buttons: `hover:bg-[#012A72]` (from `buttons.mdc`).
-- Secondary / outline controls: `hover:bg-[#f7f9fd]`, border/text hover per `buttons.mdc` (`#012A72`).
-- Tertiary (low-emphasis filled) buttons: `hover:bg-[#e7eaf4]`, text hover per `buttons.mdc` (`#012A72`).
+- Primary buttons (navy): `hover:bg-[#012A72]` (from `buttons.mdc`).
+- Primary subdued (sky solid): darken on hover (e.g. `#0090c7` — tune in `buttons.mdc` / visual QA).
+- Secondary / outline controls (medium emphasis): `hover:bg-[#e7f1f8]`, `hover:border-[#012A72]`, `hover:text-[#012A72]` per `buttons.mdc`.
+- Tertiary (low-emphasis filled) buttons: `hover:bg-[#f5f9fe]`, text hover per `buttons.mdc` (`#012A72`).
 - Links and text CTAs: `hover:text-[#009de5]` or `hover:underline` where specified in `hyperlinks.mdc`.
 - Every clickable control should have a visible hover (or disabled styling if disabled).
 
