@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Plus, ChevronDown, MoreVertical, Search } from "lucide-react";
 import type { PaymentPage, PageStatus, BuilderStep, PageInfo } from "./types";
-import { SecondaryButton } from "../Button";
 import { CreatePageEntry } from "./CreatePageEntry";
+import { Pagination } from "../Pagination";
 import { PageInfoForm } from "./PageInfoForm";
 import { PageBuilder } from "./PageBuilder";
 import { AdditionalSettings } from "./AdditionalSettings";
@@ -253,11 +253,12 @@ export function PaymentPagesPage() {
         <div className="w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]" />
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto border border-[#e0e0e0] rounded-[12px]">
-        <div className="min-w-[800px]">
-          {/* Header */}
-          <div className="grid grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr] px-6 py-3 border-b border-[#e0e0e0]">
+      <div className="flex flex-col gap-0">
+        {/* Table */}
+        <div className="overflow-x-auto border border-[#e0e0e0] rounded-[12px]">
+          <div className="min-w-[800px]">
+            {/* Header */}
+            <div className="grid grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr] px-6 py-3 border-b border-[#e0e0e0]">
             <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">Page Name</span>
             <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">URL</span>
             <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">Created</span>
@@ -318,25 +319,15 @@ export function PaymentPagesPage() {
             </div>
           ))}
 
-          {filteredPages.length === 0 && (
-            <div className="flex items-center justify-center py-12">
-              <p className="text-[14px] text-[#7e7e7e]">No payment pages found.</p>
-            </div>
-          )}
+            {filteredPages.length === 0 && (
+              <div className="flex items-center justify-center py-12">
+                <p className="text-[14px] text-[#7e7e7e]">No payment pages found.</p>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between">
-        <span className="text-[14px] text-[#7e7e7e]">PAGE 1 OF 1</span>
-        <div className="flex items-center gap-2">
-          <SecondaryButton size="medium" type="button">
-            Prev
-          </SecondaryButton>
-          <SecondaryButton size="medium" type="button">
-            Next
-          </SecondaryButton>
-        </div>
+        <Pagination currentPage={1} totalPages={1} />
       </div>
 
       {/* Create Page popup */}

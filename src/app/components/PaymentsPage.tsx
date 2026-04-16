@@ -4,6 +4,7 @@ import { CopyIcon } from "./Icons";
 import { PrimaryButton, SecondaryButton, TertiaryButton } from "./Button";
 import { SearchWithDropdown } from "./SearchWithDropdown";
 import { PaymentDetailDrawer } from "./PaymentDetailDrawer";
+import { Pagination } from "./Pagination";
 import SuccessSmall from "../../imports/SuccessSmall";
 
 // Mock data for payments
@@ -316,64 +317,55 @@ export function PaymentsPage() {
         </div>
       </div>
 
-      {/* Transactions Table */}
-      <div className="overflow-x-auto border border-[#e0e0e0] rounded-[12px]">
-        <div className="min-w-[800px]">
-          {/* Table Header */}
-          <div className="grid grid-cols-[90px_1fr_110px_130px_140px_130px_40px] gap-8 px-6 py-3 border-b border-[#e0e0e0]">
-            <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">Time</span>
-            <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">Customer Name</span>
-            <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Payment Option</span>
-            <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Transaction ID</span>
-            <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Collection Mode</span>
-            <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] text-right whitespace-nowrap">Amount Collected</span>
-            <span></span>
-          </div>
-
-          {/* Table Rows */}
-          {mockTransactions.map((transaction, index) => (
-            <div
-              key={transaction.id}
-              onClick={() => setSelectedTransaction(transaction)}
-              className={`grid grid-cols-[90px_1fr_110px_130px_140px_130px_40px] gap-8 px-6 py-4 hover:bg-[#f5f9fe] transition-colors cursor-pointer items-center ${
-                index < mockTransactions.length - 1 ? "border-b border-[#e0e0e0]" : ""
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div className="size-5 shrink-0">
-                  <SuccessSmall />
-                </div>
-                <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.time}</span>
-              </div>
-              <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.customerName}</span>
-              <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.paymentOption}</span>
-              <div className="flex items-center gap-2">
-                <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.transactionId}</span>
-                <button className="text-[#004299] hover:text-[#009de5] transition-colors shrink-0">
-                  <CopyIcon className="size-4" />
-                </button>
-              </div>
-              <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.collectionMode}</span>
-              <span className="text-[14px] text-[#101010] leading-[24px] font-semibold text-right whitespace-nowrap">₹{transaction.amount.toLocaleString('en-IN')}</span>
-              <div className="flex justify-end">
-                <ChevronRight className="size-5 text-[#7e7e7e]" />
-              </div>
+      <div className="flex flex-col gap-0">
+        {/* Transactions Table */}
+        <div className="overflow-x-auto border border-[#e0e0e0] rounded-[12px]">
+          <div className="min-w-[800px]">
+            {/* Table Header */}
+            <div className="grid grid-cols-[90px_1fr_110px_130px_140px_130px_40px] gap-8 px-6 py-3 border-b border-[#e0e0e0]">
+              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">Time</span>
+              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">Customer Name</span>
+              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Payment Option</span>
+              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Transaction ID</span>
+              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Collection Mode</span>
+              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] text-right whitespace-nowrap">Amount Collected</span>
+              <span></span>
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between">
-        <span className="text-[14px] text-[#7e7e7e]">PAGE 1 OF 32</span>
-        <div className="flex items-center gap-2">
-          <SecondaryButton size="medium" type="button">
-            Prev
-          </SecondaryButton>
-          <SecondaryButton size="medium" type="button">
-            Next
-          </SecondaryButton>
+            {/* Table Rows */}
+            {mockTransactions.map((transaction, index) => (
+              <div
+                key={transaction.id}
+                onClick={() => setSelectedTransaction(transaction)}
+                className={`grid grid-cols-[90px_1fr_110px_130px_140px_130px_40px] gap-8 px-6 py-4 hover:bg-[#f5f9fe] transition-colors cursor-pointer items-center ${
+                  index < mockTransactions.length - 1 ? "border-b border-[#e0e0e0]" : ""
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="size-5 shrink-0">
+                    <SuccessSmall />
+                  </div>
+                  <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.time}</span>
+                </div>
+                <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.customerName}</span>
+                <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.paymentOption}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.transactionId}</span>
+                  <button className="text-[#004299] hover:text-[#009de5] transition-colors shrink-0">
+                    <CopyIcon className="size-4" />
+                  </button>
+                </div>
+                <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.collectionMode}</span>
+                <span className="text-[14px] text-[#101010] leading-[24px] font-semibold text-right whitespace-nowrap">₹{transaction.amount.toLocaleString('en-IN')}</span>
+                <div className="flex justify-end">
+                  <ChevronRight className="size-5 text-[#7e7e7e]" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
+
+        <Pagination currentPage={1} totalPages={32} />
       </div>
 
       {/* Payment Detail Drawer */}

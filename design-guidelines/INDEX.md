@@ -24,12 +24,9 @@ All paths below are relative to the **`design-guidelines/`** folder (same direct
 
 - [rules/icons/icons.mdc](./rules/icons/icons.mdc)
 
-### Layout
+### Layout (all screens in one file)
 
-- [rules/layout/layout.mdc](./rules/layout/layout.mdc)
-- [rules/layout/payment-pages.mdc](./rules/layout/payment-pages.mdc)
-- [rules/layout/payment-settings.mdc](./rules/layout/payment-settings.mdc)
-- [rules/layout/connect-plus.mdc](./rules/layout/connect-plus.mdc)
+- [rules/layout/layout.mdc](./rules/layout/layout.mdc) — app shell + every L1/L2 sidebar route screen specification
 
 ### Components
 

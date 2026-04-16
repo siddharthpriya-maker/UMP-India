@@ -1,58 +1,85 @@
 ---
-description: UMP Design System - Page layout, spacing, borders, shadows, responsive patterns, interactions
+description: UMP Design System — Complete page layout, spacing, borders, shadows, responsive patterns, interactions, and per-screen specifications for every L1/L2 sidebar route
 globs: **/*.tsx
 alwaysApply: false
 ---
 
 # Layout & Spacing
 
-## App shell: 16:9 product frame
-The **entire** shell (sidebar + header + content) is drawn inside the **largest 16:9 rectangle** that fits the viewport: `.app-product-letterbox` centers it; `.app-product-frame` uses `width: min(100vw, 100vh×16/9)` and `height: min(100vh, 100vw×9/16)`. Non-16:9 viewports show **letterboxing** (gray bars). **Scrolling:** sidebar nav uses `overflow-y-auto` on its inner stack; **main** uses `flex-1 min-h-0 overflow-y-auto` on `.shell-main-canvas` so route content scrolls inside the main column. Routed content may also use a **max width 1440px** centered column via `.shell-main-canvas`.
+## App Shell: 16:9 Product Frame
 
-## Page Container
-- Padding: `px-[32px] pt-[12px] pb-[32px]`
-- Background: `bg-[#ffffff]` (`bg-white`)
-- Min height: `min-h-full`
-- Section gap: `gap-4 md:gap-6`
+The **entire** shell (sidebar + header + content) is drawn inside the **largest 16:9 rectangle** that fits the viewport.
+
+| Layer | Classes / CSS |
+|---|---|
+| `.app-product-letterbox` | Centers shell; `min-height: 100vh/100dvh`; `overflow: hidden`; `background: #d4d4d4` |
+| `.app-product-frame` | `position: relative`; `width: min(100vw, 100vh×16/9)`; `height: min(100vh, 100vw×9/16)`; column flex; `overflow: hidden` |
+| Inner chrome | `flex h-full w-full min-h-0 overflow-hidden bg-white` → **Sidebar** + column |
+| Main column | `flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden` → **Header** + **`<main>`** |
+| `<main>` | `flex min-h-0 flex-1 flex-col overflow-hidden bg-[#f5f9fe]` |
+| `.shell-main-canvas` | `min-h-0 min-w-0 flex-1 overflow-y-auto`; CSS: `width: 100%; max-width: 1440px; margin: 0 auto` |
+
+Non-16:9 viewports show letterboxing (gray bars). Sidebar nav uses `overflow-y-auto` on its inner stack; main uses `.shell-main-canvas` for route-content scrolling.
+
+## Standard Page Container
+
+Most in-shell pages follow this pattern:
 
 ```tsx
 <div className="flex flex-col gap-4 md:gap-6 bg-white min-h-full px-[32px] pt-[12px] pb-[32px]">
 ```
 
+**Exception:** Settings uses `pt-[20px]` instead of `pt-[12px]`.
+
 ## Edge-to-Edge Separators
-Full-width lines that span outside the page padding:
+
+Full-width lines that escape horizontal padding:
+
 ```tsx
 <div className="w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]" />
 ```
 
+Reports uses `w-full h-[1px] bg-[#e0e0e0]` (no bleed) for its top-level dividers.
+
 ## Border Radius
+
 | Element | Radius | Tailwind |
 |---|---|---|
 | Button | 8px | `rounded-[8px]` |
 | Default | 8px | `rounded-lg` |
 | Card | 12px | `rounded-[12px]` |
-| Dashboard cards | 20px | `rounded-[20px]` |
+| Dashboard metric cards | 20px | `rounded-[20px]` |
+| Dashboard chart surface top | 32px (top only) | `rounded-tl-[32px] rounded-tr-[32px]` |
 | TextField | 4px | `rounded-[4px]` |
 | Dropdown menu | 8px | `rounded-lg` |
 | Full-round (avatar, pill) | 50% | `rounded-full` |
+| Login hero image | 24px | `rounded-[24px]` |
 
 ## Shadows & Elevation
-- Small: `shadow-elevation-sm` → `0 8px 16px rgba(16,16,16,0.07)` — use sparingly for cards, dropdowns
+
+- Small: `shadow-elevation-sm` → `0 8px 16px rgba(16,16,16,0.07)` — cards, dropdowns
 - Drawer: `shadow-[-4px_0_24px_rgba(0,0,0,0.08)]`
+- Sticky footer: `shadow-[0_-2px_12px_rgba(16,16,16,0.06)]`
 
 ## Component Internal Padding
-- Cards: `p-5` (20px)
+
+- Cards: `p-5` (20px) or `p-6` (24px) for consent/agreement
+- Chart containers: `p-[24px]`
 - Table cells: `px-6 py-4` (rows), `px-6 py-3` (headers)
 - Modals/Popups: `px-8`
 - Drawers: `px-8`
+- Payment limit card: `p-6`
 
 ## Spacing Patterns
+
 - Section gaps: `gap-4 md:gap-6`
 - Card grid gaps: `gap-4` or `gap-6`
 - Summary card strip: `gap-1` (4px) between cards + operator symbols
 - Filter row gaps: `gap-5` (20px desktop), `gap-[15px]` (mobile)
+- Dashboard surface section: `gap-4 md:gap-6 lg:gap-8`
 
 ## Scrollbar Styling
+
 ```
 [&::-webkit-scrollbar]:w-2
 [&::-webkit-scrollbar-track]:bg-transparent
@@ -63,11 +90,11 @@ Full-width lines that span outside the page padding:
 
 ## Interaction Patterns
 
-Project-wide interaction guidance (hover, active, focus, disabled, overlays, loading) lives in **`interactions/interactions.mdc`**. The following summarizes layout-adjacent defaults.
+Project-wide interaction guidance lives in **`interactions/interactions.mdc`**. Layout-adjacent defaults:
 
 ### Hover States
-- Cards: opacity change (60% → 100%) or background color change
-- Buttons: background color lightening/darkening
+- Cards: opacity change (60% → 100%) or `hover:bg-[#f5f9fe]`
+- Buttons: per emphasis level (see `buttons.mdc`)
 - Links: underline appearance
 - Dropdowns/rows: `hover:bg-[#f5f9fe]`
 
@@ -78,6 +105,7 @@ Project-wide interaction guidance (hover, active, focus, disabled, overlays, loa
 - Duration: default Tailwind timing (150–200ms)
 
 ### Click Outside Detection
+
 ```tsx
 const ref = useRef<HTMLDivElement>(null);
 useEffect(() => {
@@ -90,6 +118,7 @@ useEffect(() => {
 ```
 
 ## Responsive Design
+
 - Mobile-first: `sm:`, `md:`, `lg:` breakpoints
 - Grid: `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
 - Flex direction: `flex-col sm:flex-row`
@@ -97,26 +126,289 @@ useEffect(() => {
 - Padding: `p-4 md:p-6 lg:p-8`
 
 ## Date & Time Formatting
+
 - Date: "Today, 24 Jan" / "Yesterday, 23 Jan"
+- Chart tooltip: full date "06 January 2026" (DD MMMM YYYY)
 - Time: "7:30 AM, 23 Sep" / "8:00 AM Everyday"
 - Use relative dates when appropriate
 
-## Module & page layouts
+---
 
-Full-route / module specs (page shells, flows, multi-step layouts) live under this folder — not under `components/`:
+# Per-Screen Layout Specifications
 
-| Rule file | Module |
-|---|---|
-| `layout/connect-plus.mdc` | Connect Plus activation |
-| `layout/payment-pages.mdc` | Payment Pages (SwiftPay Builder) |
-| `layout/payment-settings.mdc` | Settings → Payment settings |
+## L1: Home → Dashboard (`/home`)
 
-Use `components/` rules for reusable UI pieces (buttons, cards, drawers); use `layout/*.mdc` for how entire pages or modules are structured.
+**Files:** `Dashboard.tsx` → `Dashboard1.tsx` + `Dashboard2.tsx`
 
-## Common Mistakes
+### Dashboard1 — Business Overview
+- Container: `bg-white p-4 md:p-6 lg:p-8 flex flex-col gap-4 md:gap-6`
+- Merchant header: H1 business name, MID chip, logo
+- Date dropdown: `bg-[#f5f9fe] rounded-lg px-3 py-1.5 h-[40px]` with `ChevronDown`
+- Metric cards grid: `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6`
+- Card pattern: `rounded-[20px] p-5 flex flex-col gap-3` with tinted backgrounds
+- Card footer: `border-t border-border pt-3` with stats in two-column layout
+
+### Dashboard2 — Charts & Actions
+- Outer container: `flex flex-col gap-4 md:gap-6 lg:gap-8`
+- Surface: `bg-[var(--surface-level-3,#fafafa)] p-8 rounded-tl-[32px] rounded-tr-[32px]`
+- Grid: `grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6`
+- Payment Summary chart: `lg:col-span-2 bg-white rounded-2xl p-[24px]`
+  - Section title: `text-[20px] font-medium` + date dropdown
+  - Chart: `ResponsiveContainer height={280}`, `ComposedChart` with bar + line
+  - Tooltip: shows **full date** (e.g. "06 January 2026"), formatted amount
+  - Custom legend at bottom with colored squares
+- Actions/Notifications widget: `lg:col-span-1 lg:row-span-2`
+  - Tabs: Actions | Notifications with `border-b` underline pattern
+  - Actions: priority cards P0/P1 (see `cards.mdc`)
+  - Notifications: read/unread cards with time stamps
+- Payment Sources: `lg:col-span-2 bg-white rounded-2xl p-4 md:p-6`
+  - Two-column: `grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8`
+  - Left: `PieChart` with inner/outer radius donut
+  - Right: Legend rows `px-4 py-3 bg-[var(--surface-level-3,#fafafa)] rounded-lg`
+
+### Overlays
+- `ActivationSuccessPopup`: session-gated, shown once
+- `PaymentLimitDrawer`: triggered from popup's "Upgrade" CTA
+
+---
+
+## L1: Payments (`/payments`)
+
+**File:** `PaymentsPage.tsx`
+
+- Container: `flex flex-col gap-4 md:gap-6 bg-[#ffffff] min-h-full px-[32px] pt-[12px] pb-[32px]`
+- Title: `text-[32px] font-semibold`
+- Bleed separators: `w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]`
+- Filters row: `flex flex-col md:flex-row gap-[15px] md:gap-5`
+  - Left: DATE dropdown + STATUS dropdown
+  - Right (`ml-auto`): `SearchWithDropdown`
+- Summary strip: `flex items-center gap-1`
+  - Cards: `flex-1 rounded-[12px] p-5` with tinted backgrounds
+  - Math operators: `16×16 shrink-0` white tiles with gray symbols
+  - Order: Collections **−** Adjustments **−** Deductions **=** Settlement Processed **=** Available for Settlement
+  - Last card: PrimaryButton "Settle Now" `fullWidth`
+- Table: `overflow-x-auto border border-[#e0e0e0] rounded-[12px]`
+  - Inner min-width: `min-w-[800px]`
+  - Grid: `grid-cols-[90px_1fr_110px_130px_140px_130px_40px] gap-8`
+  - Headers: uppercase `text-[12px] tracking-[0.6px]`
+  - Rows: `hover:bg-[#f5f9fe]` with status chips and `CopyIcon`
+- Pagination: `flex items-center justify-between`
+- Drawer: `PaymentDetailDrawer` for row click
+
+---
+
+## L1: Settlements (`/settlements`)
+
+**File:** `SettlementsPage.tsx`
+
+- Container: `px-[32px] pt-[12px] pb-[32px]`
+- Title: `text-[32px] font-semibold` "Settlements"
+- Bleed separators: same calc pattern as Payments
+- Filters row:
+  - Left: DURATION dropdown
+  - Right (`ml-auto flex gap-3`): `SearchWithDropdown` + Download button
+- Content: `flex flex-col gap-6`, date-grouped sections
+  - Date group header: `h3` uppercase
+  - Table per group: `min-w-[960px]`, `grid-cols-[280px_1fr_140px_120px_120px_140px_40px] gap-8`
+- Pagination at bottom
+- No summary cards on this page
+
+---
+
+## L1: Reports (`/reports`)
+
+**File:** `ReportsPage.tsx`
+
+- Container: `flex flex-col bg-white min-h-full pt-[12px] pb-[32px]`
+- Title block: `px-[32px] pb-4`
+- Full-width rules: `w-full h-[1px] bg-[#e0e0e0]` (no bleed pattern)
+- Split layout: `flex min-h-[320px]`
+  - **Left — ReportMenu:** `w-[240px] shrink-0`
+    - Items: `rounded-[12px] py-3 pl-6 pr-3`
+    - Active: `bg-[#e0f5fd] font-bold`
+    - Menu items: Payment Report, Settlement Report, UTR Reconciliation, GST Report
+  - **Vertical separator:** `w-[1px] bg-[#e0e0e0]`
+  - **Right — Config:** `flex-1 px-8 py-5 flex flex-col gap-5`
+    - Note box: `rounded-[8px] bg-[#fff4e0] px-4 py-3 max-w-[720px]`
+    - Filters: `flex flex-wrap gap-6 items-end`
+    - Generate button
+- Recent reports section: `px-[32px] pt-6 gap-4`
+  - Table: `min-w-[900px]`, `grid-cols-[180px_1fr_200px_180px_160px] gap-4`
+  - Failed status: uses `FailedFilledRedIcon` from `Icons.tsx`
+- Pagination with controlled page state
+
+---
+
+## L1: Settings (`/settings`)
+
+**File:** `SettingsPage.tsx`
+
+- Container: `flex flex-col gap-4 md:gap-8 bg-[#ffffff] min-h-full px-[32px] pt-[20px] pb-[32px]`
+- Title: `text-[32px] leading-[36px] font-semibold` "Settings"
+- Primary tabs: Payment Settings | Profile | Business | Bank Details | Manage Users
+  - Only Payment Settings is implemented; others show `DesignInProgress`
+
+### Payment Settings Tab
+- Payment Acceptance Limit card:
+  - Wrapper: `rounded-[12px] overflow-hidden`
+  - Main: `bg-[#fafafa] p-6`; metrics in flex row with `w-px h-[40px] bg-[#e0e0e0]` vertical dividers
+  - Labels: `text-[14px] text-[#7e7e7e]`; Values: `text-[16px] font-semibold`
+  - Remaining: `text-[#21c179]`
+  - CTA: PrimaryButton "Upgrade Account"
+  - Footer: `h-px` divider + `px-6 py-3` with warning `text-[12px] text-[#ff9d00]`
+- Secondary tabs: QR | Card Machine | Payment Links
+- Instruments table: `grid-cols-[1fr_1.5fr_0.5fr]` with `border-r` vertical separators
+  - Charges column: all `font-weight: 400` (NEVER `font-semibold`)
+  - Tiered pricing: `flex flex-col gap-1`, tier label `text-[#7e7e7e]`, tier value `text-[#101010]`
+  - Free: `text-[#21c179]`
+  - Hyperlinks only bold: `text-[#004299] text-[12px] font-semibold hover:underline`
+  - Special: Rupay row with grid sub-rows and horizontal separator
+
+---
+
+## L1: Accept Payments → L2: Payment Links (`/payment-links`) — Design in Progress
+
+**File:** `DesignInProgress.tsx` with `pageName="Payment Links"`
+- Centered placeholder: `flex min-h-full items-center justify-center p-8`
+- Content: `max-w-md`, construction icon, token-based colors
+
+---
+
+## L1: Accept Payments → L2: Payment Pages (`/payment-pages`)
+
+**File:** `payment-pages/PaymentPagesPage.tsx`
+
+### List View (default)
+- Container: `flex flex-col gap-4 md:gap-6 bg-[#ffffff] min-h-full px-[32px] pt-[12px] pb-[32px]`
+- Title row: "Payment Pages" + "Create Page" PrimaryButton
+- Bleed separators
+- Filters: STATUS dropdown + DATE dropdown + search `w-[320px] h-[40px]`
+- Table: `min-w-[800px]`, `grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr]`
+  - Status chips: Active `text-[#21c179] bg-[#e3f6ec]`, Expired `text-[#fd5154] bg-[#ffebef]`, Draft `text-[#7e7e7e] bg-[#fafafa]`
+  - Actions: kebab menu (Share, Download QR, Edit, Expire/Reactivate, Delete)
+- Pagination
+- `CreatePageEntry` popup: 4 option cards, each `border border-[#e0e0e0] rounded-[12px] p-5 hover:bg-[#f5f9fe]`
+
+### Step 1: Page Information (`PageInfoForm.tsx`)
+- Shell: `flex min-h-full min-h-0 flex-col bg-white`
+- `StepWizard` navigation at top
+- Content: `flex-1 px-[32px]`, left-aligned
+- Two-column grid: `grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5`
+- 6 fields in 3 rows:
+  - Row 1: Payment Page Name | Payment Page Category
+  - Row 2: Business Email | Business Phone Number
+  - Row 3: Payment Page Expiry Date | Browser Tab Display Name
+- Footer: `PageLevelMenu` — Cancel + Continue (disabled until required fields filled)
+
+### Step 2: Page Builder (`PageBuilder.tsx`)
+- Shell: `flex h-full min-h-0 flex-col bg-[#fafafa]`
+- `StepWizard` + `BuilderTopBar` (h-[56px])
+- Three-panel layout: `flex min-h-0 flex-1 overflow-hidden`
+  - **Left — Section Component Library:** `w-[260px]`, section-aware tabs
+  - **Center — Canvas Workspace:** `flex-1`, dotted grid background, zoom 40%–200%
+    - Artboard: `max-w-[520px]` desktop / `max-w-[390px]` mobile
+    - 4 fixed sections: Branding → Product → Customer → CTA
+    - Selection: `border-[#004299]` + shadow ring
+  - **Right — Property Panel:** `w-[300px]`, Section Properties | Customize tabs
+- `GuidedOverlay`: modal with gradient header, 4 step cards
+
+### Step 3: Additional Settings (`AdditionalSettings.tsx`)
+- Wizard shell; content `max-w-[640px]`
+- Tabs: Post Transaction | Notifications
+- Footer: `PageLevelMenu` with success emphasis — Back to Builder + Save & Publish `bg-[#21c179]`
+
+---
+
+## L1: My Services (`/my-services`)
+
+**File:** `MyServicesPage.tsx`
+
+- Container: `flex flex-col min-h-full bg-white` → inner `px-[32px] pt-[12px] pb-[32px] flex flex-col gap-6`
+- Title: `text-[32px] font-semibold`
+- Device section: `grid grid-cols-2 gap-6`
+  - Device cards: `bg-white border-[#e0e0e0] rounded-[12px] p-5`
+  - Header: title + "View All" hyperlink
+  - Sub-items: `bg-[#fafafa] hover:bg-accent/50 rounded-[8px] p-3 gap-3`
+  - Icon container: `size-10 rounded-[8px] bg-[#e0f5fd]`
+- "Grow your Business" section: `grid grid-cols-2 gap-6`
+  - Service cards: `bg-white border-[#e0e0e0] rounded-[12px] p-5 gap-4 hover:bg-[#f5f9fe]`
+  - Icon: `size-10 rounded-[8px] bg-[#e0f5fd]`
+  - Status pill when enabled: `text-[#21c179]` on `bg-[#e3f6ec]`
+  - CTA: outline `text-[12px] rounded-[8px] text-[#004299]` + `ArrowRight`
+- Connect Plus popup flow: checkbox consent → loader → new tab
+
+---
+
+## L1: Connect Plus (`/connect-plus`)
+
+**File:** `ConnectPlusPage.tsx`
+
+- Container: `flex flex-col min-h-full bg-white` → inner `px-[32px] pt-[12px] pb-[32px] flex flex-col gap-6`
+- Title: `text-[32px]` "Connect Plus" + `text-[12px]` subtitle
+- Layout: `grid grid-cols-1 md:grid-cols-2 gap-6`
+  - Left column: Consent & Agreement card
+    - `bg-white border border-[#e0e0e0] rounded-[12px] p-6`
+    - Shield icon: `size-10 rounded-[12px] bg-[#00b8f5]` with white `ShieldCheck`
+    - Checkbox: `accent-[#004299]` with T&C links `text-[#00b8f5]`
+    - CTA: "Accept and Continue" (disabled until checkbox)
+  - Right column: Services
+    - `bg-[#fafafa] rounded-[12px] p-6`
+    - Service tiles: Messaging `bg-[#e0f5fd]` + Ad Manager `bg-[#fff8e1]`
+    - Divider: `h-[1px] bg-[#e0e0e0]`
+- Success state: `bg-[#e3f6ec] rounded-[12px] p-6` with `CheckCircle` on `bg-[#21c179]`
+- Flow: consent → loader popup (6s auto-dismiss) → new tab + enabled state
+- Enabled state card moves to My Services with status chip + "Open Connect Plus" CTA
+
+---
+
+## L1: Refunds (`/refunds`) — Design in Progress
+
+**File:** `DesignInProgress.tsx` with `pageName="Refunds"`
+
+---
+
+## L1: Developer (`/developer`) — Design in Progress
+
+**File:** `DesignInProgress.tsx` with `pageName="Developer"`
+
+---
+
+## Outside App Shell
+
+### Login (`/login`)
+
+**File:** `LoginPage.tsx`
+
+- Full screen: `flex min-h-screen`
+- Left panel: `hidden lg:flex w-[480px] bg-[#004299]` + gradient; hero mock `rounded-[24px]`
+- Right panel: `flex-1 bg-[#fafafa] px-6 py-12`
+  - Content: `max-w-[562px] flex flex-col gap-4`
+  - Form cards: `rounded-[12px] p-8`
+  - Fields: `gap-5`
+  - Divider: `h-[1px] bg-[#e0e0e0]`
+  - QR row: `flex items-center gap-4`
+
+### Authorization (`/authorize`)
+
+**File:** `AuthorizationPopupDemo.tsx` → `AuthorizationPopup.tsx`
+
+- Centered: `flex items-center justify-center min-h-screen bg-[#f5f9fe] p-6`
+- Card: `w-[620px] rounded-[4px] overflow-hidden`
+- Blue header: `px-8 pt-8 pb-6`
+- Body: `px-8 pt-4`
+- Separator: `h-px`
+- Buttons: `flex gap-5`
+- Footer stripes: `h-[8px]` × 2
+
+---
+
+## Common Layout Mistakes
+
 - DO NOT use arbitrary hex without design system reference
 - DO NOT hardcode spacing values — use Tailwind spacing scale
 - DO NOT forget transitions on interactive elements
+- DO NOT use `pt-[12px]` for Settings (use `pt-[20px]`)
 - DO use CSS variables from theme.css
 - DO provide hover states for all interactive elements
 - DO ensure mobile responsiveness
+- DO use edge-to-edge separators with `calc(100%+64px)` pattern in padded pages

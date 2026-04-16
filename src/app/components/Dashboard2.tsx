@@ -6,30 +6,30 @@ import { SecondaryButton } from "./Button";
 import { ActionsNotificationsWidget } from "./ActionsNotificationsWidget";
 
 const paymentData = [
-  { id: "day-01", date: "01", amount: 650, count: 550 },
-  { id: "day-02", date: "02", amount: 720, count: 600 },
-  { id: "day-03", date: "03", amount: 850, count: 680 },
-  { id: "day-04", date: "04", amount: 900, count: 700 },
-  { id: "day-05", date: "05", amount: 750, count: 620 },
-  { id: "day-06", date: "06", amount: 1050, count: 800 },
-  { id: "day-07", date: "07", amount: 880, count: 720 },
-  { id: "day-08", date: "08", amount: 950, count: 750 },
-  { id: "day-09", date: "09", amount: 1200, count: 880 },
-  { id: "day-10", date: "10", amount: 720, count: 600 },
-  { id: "day-11", date: "11", amount: 650, count: 560 },
-  { id: "day-12", date: "12", amount: 800, count: 650 },
-  { id: "day-13", date: "13", amount: 950, count: 720 },
-  { id: "day-14", date: "14", amount: 880, count: 700 },
-  { id: "day-15", date: "15", amount: 1100, count: 820 },
-  { id: "day-16", date: "16", amount: 950, count: 750 },
-  { id: "day-17", date: "17", amount: 920, count: 730 },
-  { id: "day-18", date: "18", amount: 1000, count: 780 },
-  { id: "day-19", date: "19", amount: 1150, count: 850 },
-  { id: "day-20", date: "20", amount: 1300, count: 920 },
-  { id: "day-21", date: "21", amount: 1100, count: 840 },
-  { id: "day-22", date: "22", amount: 1000, count: 800 },
-  { id: "day-23", date: "23", amount: 1250, count: 900 },
-  { id: "day-24", date: "24", amount: 950, count: 750 },
+  { id: "day-01", date: "01", fullDate: "01 January 2026", amount: 650, count: 550 },
+  { id: "day-02", date: "02", fullDate: "02 January 2026", amount: 720, count: 600 },
+  { id: "day-03", date: "03", fullDate: "03 January 2026", amount: 850, count: 680 },
+  { id: "day-04", date: "04", fullDate: "04 January 2026", amount: 900, count: 700 },
+  { id: "day-05", date: "05", fullDate: "05 January 2026", amount: 750, count: 620 },
+  { id: "day-06", date: "06", fullDate: "06 January 2026", amount: 1050, count: 800 },
+  { id: "day-07", date: "07", fullDate: "07 January 2026", amount: 880, count: 720 },
+  { id: "day-08", date: "08", fullDate: "08 January 2026", amount: 950, count: 750 },
+  { id: "day-09", date: "09", fullDate: "09 January 2026", amount: 1200, count: 880 },
+  { id: "day-10", date: "10", fullDate: "10 January 2026", amount: 720, count: 600 },
+  { id: "day-11", date: "11", fullDate: "11 January 2026", amount: 650, count: 560 },
+  { id: "day-12", date: "12", fullDate: "12 January 2026", amount: 800, count: 650 },
+  { id: "day-13", date: "13", fullDate: "13 January 2026", amount: 950, count: 720 },
+  { id: "day-14", date: "14", fullDate: "14 January 2026", amount: 880, count: 700 },
+  { id: "day-15", date: "15", fullDate: "15 January 2026", amount: 1100, count: 820 },
+  { id: "day-16", date: "16", fullDate: "16 January 2026", amount: 950, count: 750 },
+  { id: "day-17", date: "17", fullDate: "17 January 2026", amount: 920, count: 730 },
+  { id: "day-18", date: "18", fullDate: "18 January 2026", amount: 1000, count: 780 },
+  { id: "day-19", date: "19", fullDate: "19 January 2026", amount: 1150, count: 850 },
+  { id: "day-20", date: "20", fullDate: "20 January 2026", amount: 1300, count: 920 },
+  { id: "day-21", date: "21", fullDate: "21 January 2026", amount: 1100, count: 840 },
+  { id: "day-22", date: "22", fullDate: "22 January 2026", amount: 1000, count: 800 },
+  { id: "day-23", date: "23", fullDate: "23 January 2026", amount: 1250, count: 900 },
+  { id: "day-24", date: "24", fullDate: "24 January 2026", amount: 950, count: 750 },
 ];
 
 const paymentSourcesData = [
@@ -178,6 +178,12 @@ export function Dashboard2() {
                     fontSize: "12px"
                   }}
                   labelStyle={{ color: "#101010", fontWeight: "600" }}
+                  labelFormatter={(_label, payload) => {
+                    if (payload?.[0]?.payload?.fullDate) {
+                      return payload[0].payload.fullDate;
+                    }
+                    return _label;
+                  }}
                   formatter={(value: number, name: string) => {
                     if (name === "Payment Amount") {
                       return [`₹${(value / 100000).toFixed(2)}L`, name];

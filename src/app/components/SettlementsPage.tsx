@@ -4,6 +4,7 @@ import { CopyIcon } from "./Icons";
 import { SecondaryButton } from "./Button";
 import { SearchWithDropdown } from "./SearchWithDropdown";
 import SuccessSmall from "../../imports/SuccessSmall";
+import { Pagination } from "./Pagination";
 
 const settlementSearchOptions = [
   { label: "UTR", value: "utr" },
@@ -176,9 +177,10 @@ export function SettlementsPage() {
         <div className="w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]" />
       </div>
 
-      {/* Settlements Table */}
-      <div className="flex flex-col gap-6">
-        {mockSettlements.map((dateGroup, dateIndex) => (
+      <div className="flex flex-col gap-0">
+        {/* Settlements Table */}
+        <div className="flex flex-col gap-6">
+          {mockSettlements.map((dateGroup, dateIndex) => (
           <div key={dateIndex} className="flex flex-col gap-4">
             {/* Date Header */}
             <h3 className="text-[14px] text-[#7e7e7e] font-semibold uppercase tracking-[0.6px]">
@@ -279,20 +281,10 @@ export function SettlementsPage() {
               </div>
             </div>
           </div>
-        ))}
-      </div>
-
-      {/* Pagination */}
-      <div className="flex items-center justify-between">
-        <span className="text-[14px] text-[#7e7e7e]">PAGE 1 OF 12</span>
-        <div className="flex items-center gap-2">
-          <SecondaryButton size="medium" type="button">
-            Prev
-          </SecondaryButton>
-          <SecondaryButton size="medium" type="button">
-            Next
-          </SecondaryButton>
+          ))}
         </div>
+
+        <Pagination currentPage={1} totalPages={12} />
       </div>
     </div>
   );

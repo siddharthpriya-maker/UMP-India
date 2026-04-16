@@ -1,5 +1,5 @@
 ---
-description: UMP Design System - SVG icon standards, sizing, color patterns, sources, and usage rules
+description: UMP Design System — SVG icon standards, sizing, color patterns, sources, usage map, containers, and rules
 globs: **/*.tsx
 alwaysApply: false
 ---
@@ -13,10 +13,83 @@ alwaysApply: false
 | Nav (L1 Sidebar) | `size-6` | 24×24 | `0 0 24 24` | Sidebar navigation icons |
 | L2 Submenu | `size-6` | 24×24 | `0 0 24 24` | Submenu item icons |
 | UI Actions | `size-6` | 24×24 | `0 0 24 24` | Buttons, toolbars, utility |
-| Product Illustration | `size-10` | 40×40 | `0 0 32 32` | Device/service cards (Card Machine, Sound Box) |
-| Inline Small | `size-4` | 16×16 | `0 0 24 24` | Chevrons, copy buttons, status |
-| Inline Medium | `size-5` | 20×20 | `0 0 24 24` | Status icons, search icon |
-| Promo/Feature | `size-6`–`size-8` | 24–32 | `0 0 24 24` | Feature cards (Connect Plus) |
+| Product Illustration | `size-10` | 40×40 | `0 0 32 32` | Device/service cards |
+| Promo / Feature tile | `size-10`–`size-12` | 40–48 | varies | Connect Plus, auth page cards |
+| Inline Small | `size-4` | 16×16 | `0 0 24 24` | Chevrons, copy, status, checkbox internals |
+| Inline Medium | `size-5` | 20×20 | `0 0 24 24` | Status icons, search, action card icons, row actions |
+| Inline Tiny | `size-3.5` | 14×14 | `0 0 24 24` | Shadcn checkbox check glyph, CTA arrows |
+| Unread dot | `size-2` | 8×8 | — | Notification unread indicator |
+
+## Icon Sources (Priority Order)
+
+1. **Figma SVG export** — product illustrations, brand marks
+2. **`Icons.tsx`** (`/src/app/components/Icons.tsx`) — 90+ custom SVG components; default `className="size-6"`
+3. **Lucide React** — supplementary (`ChevronDown`, `X`, `Download`, `ArrowRight`, etc.)
+4. **Imported SVGs** (`/src/imports/`) — legacy Paytm brand icons, card illustrations
+5. **Inline SVG** — component-specific icons not shared elsewhere
+
+### Icons.tsx — Actually Used Exports
+
+Only these named exports from `Icons.tsx` are imported in `src/app/components/`:
+
+| Icon | Used in | Size | Context |
+|---|---|---|---|
+| `CopyIcon` | PaymentsPage, SettlementsPage | `size-4` | Copy control in table rows; parent `text-[#004299]` |
+| `CalenderOutlinedIcon` | TextField | `size-[24px]` | Date field trailing icon |
+| `UPIIcon` | SettingsPage | `size-6` | Payment instruments list (brand colors, not currentColor) |
+| `MailOutlinedIcon` | ReportsPage | `size-5` | Report row action |
+| `DownloadOutlinedIcon` | ReportsPage | `size-5` | Report row action |
+| `LinkIcon` | ReportsPage | `size-5` | Report row action |
+| `SettingIcon` | ReportsPage | `size-5` | Report row action |
+| `FailedFilledRedIcon` | ReportsPage | `size-4` | Failed status glyph (fixed `#FD5154`) |
+| `ConnectPlusIcon` | MyServicesPage | default | Service card tile icon |
+| `MyServicesIcon` | Sidebar | `size-6` | Bottom nav item in rounded pill |
+
+The `Icons` registry object is exported but **not imported** by any other file.
+
+### Lucide React — Usage Map by Area
+
+~75 files import from `lucide-react`. Common patterns:
+
+| Area | Icons | Typical size | Color approach |
+|---|---|---|---|
+| **Shell / Header** | — (custom inline SVG for search) | `size-6` | `#101010` fills |
+| **Sidebar L2** | `ChevronDown`, `Link2`, `FileText` | `size-6` | `text-[#101010]` |
+| **Dashboard overview** | `ChevronDown`, `ArrowRight` | `size-4`–`size-5` | `currentColor` |
+| **Dashboard charts** | `ChevronDown`, `Download` | `size-4`–`size-5` | `currentColor` |
+| **Actions widget** | `AlertCircle`, `CreditCard`, `Shield`, `Smartphone` | `size-5` | `text-destructive` / `text-chart-3` |
+| **Payments / Settlements** | `ChevronDown`, `ChevronRight` (pagination) | `size-4` | `currentColor` |
+| **Reports** | `ChevronDown`, `ChevronRight` | `size-4` | `currentColor` |
+| **Settings** | `Info` | `size-[18px]` | `text-[#004299]` |
+| **Login** | `Lock`, `ArrowRight`, `QrCode`, `Eye`, `EyeOff` | `size-5` | `currentColor` |
+| **Auth popup** | `CreditCard`, `Building2`, `Link2`, `Bell`, `ArrowRight` | `size-5` | `currentColor` |
+| **Connect Plus** | `CheckCircle`, `ShieldCheck`, `ArrowRight`, `MessageCircle`, `Sparkles` | `size-5`–`size-12` | various |
+| **My Services** | `ChevronRight`, `ArrowRight` | `size-4`–`size-5` | `currentColor` |
+| **Payment Pages builder** | `Plus`, `Minus`, `Eye`, `Save`, `Monitor`, `Smartphone`, `Maximize`, `ZoomIn`, `ZoomOut`, `GripVertical`, `Trash2`, `ChevronUp`, `ChevronDown`, `X`, `Upload`, `Image`, `Video`, `Type`, `ToggleLeft`, `ArrowRight` | `size-4`–`size-5` | `currentColor` |
+| **Drawers / Popups** | `X`, `Copy`, `RotateCcw`, `Clock`, `Info`, `CheckCircle` | `size-4`–`size-5` | `currentColor` |
+| **UI kit (shadcn)** | `CheckIcon`, `XIcon`, `ChevronRightIcon`, `PanelLeftIcon`, etc. | `size-3.5`–`size-4` | `currentColor` |
+
+### Imported SVGs (`src/imports/`)
+
+| Import | Used in | Role |
+|---|---|---|
+| `svg-9d73oqi9lc` | Header, Sidebar, LoginPage, AuthorizationPopup | Paytm / nav path data |
+| `SuccessSmall` | PaymentsPage, SettlementsPage | Green success glyph in table rows (`#21C179`) |
+| `Payments-41-36`, `Settlement`, `Refunds` | CardGuidelines, Dashboard1 | Large card illustrations |
+| `tata-cliq-logo` | Dashboard, Dashboard1 | Merchant logo image |
+| `RefundsDuo`, `SettingsDuo`, `Dev`, `ReportDuo` | Sidebar | Sidebar nav illustrations in `size-6` wrappers |
+
+### Inline SVG in Components (not in Icons.tsx)
+
+| File | Icons | Notes |
+|---|---|---|
+| Header.tsx | Search glyph | From `svg-9d73oqi9lc`, `size-6`, `#101010` fills |
+| Sidebar.tsx | Paytm logo + nav icons | `svgPaths` object, hardcoded `#002970` / `#00BAF2` + `#101010` |
+| LoginPage.tsx | Logo SVG | Same brand pattern as auth |
+| AuthorizationPopup.tsx | Logo + decorative SVG | `size-3` decorative |
+| MyServicesPage.tsx | `CardMachineIcon`, `SoundBoxIcon`, `EMIIcon`, `AMCIcon` | `size-10`, `currentColor` in `bg-[#e0f5fd]` tiles |
+| SettingsPage.tsx | Local `CreditCardIcon` | `size-6`, `#101010` strokes |
+| PageInfoForm.tsx | Chevron | `size-4`, `text-[#7e7e7e]`, `currentColor` |
 
 ## Color Patterns
 
@@ -33,10 +106,12 @@ All SVG icons MUST use `currentColor` instead of hardcoded hex. The parent contr
 <path stroke="#101010" fill="#101010" />
 ```
 
+**Exceptions:** Brand icons (`UPIIcon` with `#048A43`/`#F57922`, Paytm logo with `#002970`/`#00BAF2`) and fixed-color status glyphs (`FailedFilledRedIcon` `#FD5154`, `CompletedFilledGreenIcon` `#21C179`).
+
 ### 2. Duo-Tone Pattern (Product & Feature Icons)
-- **Body shapes**: `fill="white"`
-- **Detail strokes/fills**: `stroke="currentColor"` / `fill="currentColor"`
-- **Resolved color**: `#101010` (Foreground) — inherited from parent
+- Body shapes: `fill="white"`
+- Detail strokes/fills: `stroke="currentColor"` / `fill="currentColor"`
+- Resolved color: `#101010` (Foreground) inherited from parent
 - Container does NOT set explicit `text-[color]`
 
 ### 3. Sidebar Icon Pattern
@@ -60,6 +135,7 @@ function MyIcon({ className = "size-6" }: IconProps) {
 ```
 
 ### Product Icon (32×32 viewBox)
+
 ```tsx
 function ProductIcon() {
   return (
@@ -77,40 +153,48 @@ function ProductIcon() {
 | Context | Container Class |
 |---|---|
 | Device/service card | `size-10 rounded-[8px] bg-[#e0f5fd] flex items-center justify-center` |
-| Promo card | `size-12 rounded-[12px] bg-[#e0f5fd] flex items-center justify-center` |
-| Circular (status) | `size-10 rounded-full bg-[#e3f6ec] flex items-center justify-center` |
-
-## Icon Source Priority
-1. **Figma SVG export** — product illustrations
-2. **`Icons.tsx` library** (`/src/app/components/Icons.tsx`) — 90+ generic UI icons
-3. **Lucide React** — supplementary only (`ChevronRight`, `X`, `Download`, etc.)
-4. **Imported SVGs** (`/src/imports/`) — legacy Paytm brand icons
+| Promo card / Connect Plus tile | `size-12 rounded-[12px] bg-[#e0f5fd] flex items-center justify-center` |
+| Circular (success status) | `size-10 rounded-full bg-[#e3f6ec] flex items-center justify-center` |
+| Circular (shield / consent) | `size-10 rounded-[12px] bg-[#00b8f5] flex items-center justify-center` |
+| Sidebar L1 nav pill | `h-8 w-[60px] rounded-[32px]`, active `bg-[#b1e6fb]` |
+| Builder section label | badge on hover/selection with `border-[#004299]` |
 
 ## Icon Colors by Semantic Meaning
+
 | Meaning | Color |
 |---|---|
 | Default | `currentColor` (inherits `#101010`) |
-| Primary action | `text-[#00b8f5]` |
+| Primary action / interactive | `text-[#004299]` |
+| Accent / brand highlight | `text-[#00b8f5]` |
 | Success | `text-[#21c179]` |
 | Warning | `text-[#ff9d00]` |
-| Error | `text-[#fd5154]` |
+| Error / destructive | `text-[#fd5154]` or `text-destructive` |
 | Muted | `text-[#7e7e7e]` |
+| On colored surface | `text-white` |
+
+## Dead Imports (Cleanup Candidates)
+
+- `Dashboard.tsx`: imports `ArrowRight`, `Clock`, `Download`, `ChevronDown` — none used
+- `Dashboard1.tsx`: imports `Clock` — not used
+- `Dashboard2.tsx`: imports `Clock`, `TrendingUp` — not used
 
 ## Rules
 
 ### DO
-- Use `currentColor` for all stroke/fill (except `white` body fills)
+- Use `currentColor` for all stroke/fill (except `white` body fills and documented brand exceptions)
 - Use `viewBox` for scalability — never set fixed `width`/`height` in SVG attrs
-- Size via Tailwind: `className="size-6"`
+- Size via Tailwind: `className="size-6"` (not inline `width`/`height`)
 - Use `fill="none"` on root `<svg>`
 - Add `strokeLinecap="round"`, `strokeLinejoin="round"`
 - Wrap in bg container for card contexts
+- Check `Icons.tsx` first before adding Lucide or inline SVG
 
 ### DO NOT
-- Hardcode hex in SVG paths
-- Use `#00b8f5`, `#004299`, or `#101010` directly in SVGs
-- Mix icon sizing conventions
+- Hardcode hex in SVG paths (except documented brand icons)
+- Use `#00b8f5`, `#004299`, or `#101010` directly in SVGs (use `currentColor`)
+- Mix icon sizing conventions within the same context
 - Use raster `<image>` inside SVGs
 - Add `width`/`height` attrs to `<svg>` — use `className`
-- Create icons < `size-5` for touch targets
+- Create icons < `size-5` for touch targets (except inline decorative indicators)
 - Use Lucide when matching icon exists in `Icons.tsx`
+- Import from the `Icons` registry object — use direct named exports instead

@@ -26,10 +26,10 @@
 10. [Navigation](#10-navigation)
 11. [Cards & summaries](#11-cards--summaries)
 12. [Overlays & chrome](#12-overlays--chrome)
-13. [Module layout specs](#13-module-layout-specs)
+13. [Page screen specifications](#13-page-screen-specifications)
 14. [Content & formatting](#14-content--formatting)
 15. [Anti-patterns](#15-anti-patterns)
-16. [Legacy rule index](#16-legacy-rule-index)
+16. [Rule index](#16-rule-index)
 
 ---
 
@@ -52,27 +52,27 @@
 | Accent / sky strong | `#00b8f5` | Brand accent; chart; some interactive links |
 | Primary weak (sky tint) | `#e0f5fd` | Icon containers, subtle highlights |
 | Primary medium (sky) | `#b1e6fb` | Sidebar L2 selected |
-| Offset strong (pale blue) | `#e7f1f8` | Sidebar wash; **medium-emphasis outline button hover** (PODS); **button loading** surface |
-| Secondary outline hover fill (legacy panels) | `#f7f9fd` | Table row chrome, generic light hovers — **not** the default outline-button hover (use `#e7f1f8` for buttons) |
-| Tertiary / low-emphasis hover fill | `#f5f9fe` | **Low-emphasis (tertiary) button hover**; search pills, light panels (`Offset weak` in sheet) |
-| Tertiary pressed / alternate (legacy doc) | `#e7eaf4` | Older spec; prefer `#f5f9fe` for tertiary hover on new work |
+| Offset strong (pale blue) | `#e7f1f8` | Sidebar wash; **medium-emphasis outline button hover**; **button loading** surface |
+| Secondary outline hover fill | `#f7f9fd` | Table row chrome, generic light hovers |
+| Tertiary / low-emphasis hover fill | `#f5f9fe` | **Low-emphasis (tertiary) button hover**; search pills, light panels |
 | Foreground | `#101010` | Body, headings |
 | Muted foreground | `#7e7e7e` | Labels, descriptions |
 | Border | `#e0e0e0` | Dividers, inputs, cards |
 | Background | `#ffffff` | Page surfaces |
-| Surface L3 | `#fafafa` | Table headers, subtle fills |
+| Surface L3 | `#fafafa` | Table headers, subtle fills, notification read bg |
 | Offset weak | `#f5f9fe` | Search, row hover, light panels |
 | Sidebar BG | `#e7f1f8` | L1/L2 nav |
 | Disabled BG | `#ebebeb` | Disabled controls |
 | Disabled text | `#acacac` | Disabled labels |
-| Success strong | `#21c179` | Positive status |
+| Success strong | `#21c179` | Positive status, success chips |
 | Success weak | `#e3f6ec` | Success chips / backgrounds |
-| Warning strong | `#ff9d00` | Notice |
-| Warning weak | `#fff8e1` | Notice backgrounds |
+| Warning strong | `#ff9d00` | Notice, warning labels |
+| Warning weak | `#fff8e1` | Notice backgrounds, P1 action cards |
 | Error strong | `#fd5154` | Errors, destructive |
-| Error weak | `#ffebef` | Error backgrounds |
+| Error weak | `#ffebef` | Error backgrounds, P0 action cards |
+| Callout / note bg | `#fff4e0` | Report callout box |
 
-**Charts:** use `var(--chart-1)` … `var(--chart-5)` as in theme (see `colors.mdc`).
+**Charts:** use `var(--chart-1)` … `var(--chart-5)` as in theme (see `colors.mdc`). Dashboard bar: `#1576DB`, line: `#21C179`.
 
 **Rules:** Hyperlinks default `#004299`; destructive actions use error/destructive tokens. Opacity modifiers allowed (e.g. `bg-[#ffebef]/60`). Do not mix arbitrary hex without aligning to this table.
 
@@ -91,6 +91,10 @@
 | Labels / meta | `text-[12px] text-[#7e7e7e]` |
 | Section header strip | `text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold` |
 | Caption | `text-[10px]` uppercase where specified |
+| Sidebar L1 label | `text-[10px]` |
+| Metric card amount | `text-[32px] font-semibold` |
+| Summary card amount | `text-[20px] font-semibold` |
+| Limit card values | `text-[16px] font-semibold` |
 
 **Font family:** Inter stack from `theme.css` (`'Inter_Subset', 'Inter', sans-serif`).
 
@@ -104,11 +108,14 @@
 
 ## 4. Layout & shell
 
-- **16:9 product frame:** App shell (sidebar + header + main) is letterboxed in the largest 16:9 rectangle; classes `.app-product-letterbox` / `.app-product-frame` (see `layout.mdc`).
-- **Main scroll:** `flex-1 min-h-0 overflow-y-auto` on main canvas; sidebar inner stack scrolls independently.
-- **Page container (typical dashboard page):** `flex flex-col gap-4 md:gap-6 bg-white min-h-full px-[32px] pt-[12px] pb-[32px]`.
-- **Edge-to-edge separator:** full-width line escaping horizontal padding, e.g. `w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]`.
+- **16:9 product frame:** App shell (sidebar + header + main) is letterboxed in the largest 16:9 rectangle; classes `.app-product-letterbox` / `.app-product-frame`.
+- **Main scroll:** `flex-1 min-h-0 overflow-y-auto` on `.shell-main-canvas`; max-width `1440px` centered; sidebar inner stack scrolls independently.
+- **Page container (standard):** `flex flex-col gap-4 md:gap-6 bg-white min-h-full px-[32px] pt-[12px] pb-[32px]`. Exception: Settings uses `pt-[20px]`.
+- **Edge-to-edge separator:** `w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]`.
+- **Dashboard surface:** `bg-[var(--surface-level-3,#fafafa)] p-8 rounded-tl-[32px] rounded-tr-[32px]`.
 - **Responsive:** Mobile-first; common grids `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`, stacks `flex-col sm:flex-row`.
+
+All per-screen layout specifications (every L1 and L2 sidebar route) live in a **single comprehensive** layout rule file.
 
 *Detail:* `./rules/layout/layout.mdc`
 
@@ -121,12 +128,15 @@
 | Buttons | `rounded-[8px]` |
 | Cards (default) | `rounded-[12px]` |
 | Dashboard metric cards | `rounded-[20px]` |
+| Dashboard chart surface (top) | `rounded-tl-[32px] rounded-tr-[32px]` |
 | TextField | `rounded-[4px]` |
-| Card / section padding | often `p-5` |
+| Card / section padding | `p-5` (20px) or `p-6` (24px consent) |
+| Chart container padding | `p-[24px]` |
 | Table header / row | `px-6 py-3` / `px-6 py-4` |
 | Drawer / modal body | `px-8` |
 | Small shadow | `shadow-elevation-sm` (see theme) |
 | Drawer edge shadow | `shadow-[-4px_0_24px_rgba(0,0,0,0.08)]` |
+| Sticky footer shadow | `shadow-[0_-2px_12px_rgba(16,16,16,0.06)]` |
 
 **Scrollbar (optional pattern):** thin thumb, rounded — see `layout.mdc` snippet.
 
@@ -136,9 +146,12 @@
 
 ## 6. Icons
 
-- **Sizes:** Nav / L2 / actions `size-6` (24px); inline small `size-4`; inline medium `size-5`; product illustration `size-10`.
-- **Color:** Parent sets `text-[…]`; SVG uses `stroke="currentColor"` / `fill="currentColor"` where appropriate; duo-tone product icons use `fill="white"` for bodies and `currentColor` for details → resolves to `#101010`.
-- **Do not** embed `#004299` / `#00b8f5` inside SVG paths for generic icons.
+- **Sizes:** Nav / L2 / actions `size-6` (24px); inline small `size-4`; inline medium `size-5`; product illustration `size-10`; promo tile `size-10`–`size-12`; inline tiny `size-3.5`.
+- **Color:** Parent sets `text-[…]`; SVG uses `stroke="currentColor"` / `fill="currentColor"`; duo-tone product icons use `fill="white"` for bodies and `currentColor` for details → resolves to `#101010`.
+- **Sources (priority):** 1) Figma export 2) `Icons.tsx` (90+ components) 3) Lucide React 4) `src/imports/` 5) inline SVG.
+- Only **10 named exports** from `Icons.tsx` are actually imported in `src/` (see `icons.mdc` for the complete map).
+- **Do not** embed `#004299` / `#00b8f5` inside SVG paths for generic icons (brand exceptions documented).
+- **Dead imports** to clean up: `Dashboard.tsx`, `Dashboard1.tsx`, `Dashboard2.tsx` have unused Lucide imports.
 
 *Detail:* `./rules/icons/icons.mdc`
 
@@ -151,14 +164,16 @@
 | Table / list rows | `hover:bg-[#f5f9fe] transition-colors` |
 | Sidebar L1 pill | `hover:bg-[#e0e0e0]`; active `bg-[#b1e6fb]` |
 | Sidebar L2 | hover per `sidebar.mdc`; active `bg-[#b1e6fb]` |
-| Primary buttons (high) | `enabled:hover:bg-[#012A72]` (see `Button.tsx`) |
+| Primary buttons (high) | `enabled:hover:bg-[#012A72]` |
 | Secondary outline (medium) | `enabled:hover:bg-[#e7f1f8]`, `enabled:hover:border-[#012A72]`, `enabled:hover:text-[#012A72]` |
 | Tertiary filled (low) | `enabled:hover:bg-[#f5f9fe]`, `enabled:hover:text-[#012A72]` |
-| Button loading | Container `#e7f1f8`; five-dot loader (`#012A72` / `#00b8f5`); content row hidden |
+| Button loading | Container `#e7f1f8`; five-dot loader; content row hidden |
+| Action cards | `bg-[#ffebef]/60 → hover:bg-[#ffebef]` (P0); `bg-[#fff8e1]/60 → hover:bg-[#fff8e1]` (P1) |
+| Feature/service cards | `hover:bg-[#f5f9fe]` |
 | Links | Strong / subtle patterns in `hyperlinks.mdc` |
-| Focus | `focus-visible:ring-2 focus-visible:ring-[#004299] focus-visible:ring-offset-2` where custom chips |
-| Disabled | `bg-[#ebebeb] text-[#acacac]`, `cursor-not-allowed`, no hover “lift” |
-| Overlays | Click-outside + `mousedown` on `document`; Escape for modals/drawers recommended |
+| Focus | `focus-visible:ring-2 focus-visible:ring-[#004299] focus-visible:ring-offset-2` |
+| Disabled | `bg-[#ebebeb] text-[#acacac]`, `cursor-not-allowed`, no hover |
+| Overlays | Click-outside + `mousedown` on `document`; Escape for modals/drawers |
 
 *Detail:* `./rules/interactions/interactions.mdc`
 
@@ -168,24 +183,22 @@
 
 ### 8.1 Buttons (`Button_v2` + variant sheet)
 
-Full matrix (emphasis × size × content × states) lives in **`./rules/components/buttons.mdc`** — aligned to the **PODS Admin / Components** button sheet (navy primary, **primary subdued** sky `#00b8f5`, **ghost** outline, **secondary** outline medium, **tertiary** pale low, **disabled**, **loading** with five-dot row).
+Full matrix (emphasis × size × content × states) lives in **`./rules/components/buttons.mdc`**.
 
 **Summary**
 
-- **Radius:** `rounded-[8px]` everywhere for new work (avoid `rounded-lg` on CTAs).
-- **Sizes:** Large 56px / `text-[16px]`; Medium 40px / `text-[14px]`; Small 32px / `text-[12px]`; icon-only squares 56 / 40 / 32px with inner padding per Figma (`p-4` / `p-2.5` / `p-2`).
-- **Hovers:** Use **`enabled:hover:`** so disabled rows do not pick up hover colours. High → `#012A72`; medium outline → `#e7f1f8` fill, `#012A72` border/text; low → `#f5f9fe` fill, `#012A72` text.
-- **Loading:** `#e7f1f8` surface, border cleared; label/icon row `opacity-0`; centered **five-dot** loader (see `buttons.mdc` §7).
-- **Focus:** `focus-visible:ring-2 focus-visible:ring-[#004299] focus-visible:ring-offset-2` on the shared `Button` component.
-- **Content columns:** text only · leading icon + text · text + trailing · dual icons · icon-only (`aria-label` required).
-- **Implementation:** `src/app/components/Button.tsx` exports **`Button`**, **`PrimaryButton`**, **`SecondaryButton`**, **`TertiaryButton`** — prefer these over duplicate `SecondaryButton.tsx` / `TertiaryButton.tsx` (those files re-export from `Button.tsx` for backwards compatibility). See `buttons.mdc` for extended variants not yet in code.
+- **Radius:** `rounded-[8px]` everywhere.
+- **Sizes:** Large 56px / `text-[16px]`; Medium 40px / `text-[14px]`; Small 32px / `text-[12px]`; icon-only squares.
+- **Hovers:** Use **`enabled:hover:`** so disabled rows do not pick up hover colours.
+- **Loading:** `#e7f1f8` surface, border cleared; five-dot loader centered; content `opacity-0`.
+- **Focus:** `focus-visible:ring-2 focus-visible:ring-[#004299] focus-visible:ring-offset-2`.
+- **Exports:** `Button`, `PrimaryButton`, `SecondaryButton`, `TertiaryButton` from `Button.tsx`.
 
 *File:* `src/app/components/Button.tsx` · *Rule:* `./rules/components/buttons.mdc`
 
 ### 8.2 TextField (`Text Field_v2`)
 
-- **Single** shared text input component for forms (not search pills).
-- Heights: default 56px, compact 44px; **fixed height across states**.
+- Heights: default 56px, compact 44px; fixed height across states.
 - Border `#e0e0e0` → `#004299` on hover/focus; error `#fd5154`; disabled `#ebebeb` / `#acacac`.
 - Radius `rounded-[4px]`; horizontal padding 16px.
 
@@ -195,6 +208,7 @@ Full matrix (emphasis × size × content × states) lives in **`./rules/componen
 
 - Shell padding `px-4 md:px-6 lg:px-8 py-3`.
 - Search: pill `rounded-[100px]`, `bg-[#f5f9fe]` — **not** `TextField`.
+- Profile: text initials "SP", not icon component; `size-9 md:size-10 border border-[#e0e0e0]`.
 
 *Rule:* `./rules/components/header.mdc`
 
@@ -203,6 +217,7 @@ Full matrix (emphasis × size × content × states) lives in **`./rules/componen
 - Strong: `text-[#004299] font-semibold hover:underline`.
 - Subtle: `text-[#004299] font-normal hover:underline`.
 - Sizes: default `text-[12px]` in dense UI; `text-[14px]` when prominent.
+- Accent variant: `text-[#00b8f5] font-semibold hover:underline` (consent card labels).
 
 *Rule:* `./rules/components/hyperlinks.mdc`
 
@@ -214,10 +229,12 @@ Follow dedicated `.mdc` files: `tabs.mdc`, `pagination.mdc`, `filter-dropdown.md
 
 ## 9. Tables & data
 
-- Container: `overflow-x-auto border border-[#e0e0e0] rounded-[12px]`; inner `min-w-[700px]` or `min-w-[800px]` as needed.
+- Container: `overflow-x-auto border border-[#e0e0e0] rounded-[12px]`; inner `min-w-[700px]`–`min-w-[960px]` depending on page.
 - **Grid-based** rows (not `<table>`) unless legacy exception documented.
 - Header: uppercase `text-[12px] font-semibold text-[#7e7e7e]`, bottom border.
-- Rows: `text-[14px] text-[#101010]`, `hover:bg-[#f5f9fe]`, optional vertical separators per variant in rule file.
+- Rows: `text-[14px] text-[#101010]`, `hover:bg-[#f5f9fe]`, optional vertical separators (`border-r`) per variant.
+- Status chips: Active/Success `text-[#21c179] bg-[#e3f6ec]`, Failed/Expired `text-[#fd5154] bg-[#ffebef]`, Draft/Pending `text-[#7e7e7e] bg-[#fafafa]`.
+- Copy controls: `CopyIcon` `size-4` with parent `text-[#004299]`.
 
 *Rule:* `./rules/components/table.mdc`
 
@@ -227,11 +244,14 @@ Follow dedicated `.mdc` files: `tabs.mdc`, `pagination.mdc`, `filter-dropdown.md
 
 ### L1 sidebar
 
-- Width `88px`, `bg-[#e7f1f8]`, icon pills `rounded-[32px]`, active `bg-[#b1e6fb]`, labels `text-[10px]`.
+- Width `88px`, `bg-[#e7f1f8]`, icon pills `rounded-[32px]` (`h-8 w-[60px]`), active `bg-[#b1e6fb]`, labels `text-[10px]`.
+- Menu items: Home, Payments, Settlements, Accept Payments, My Services, Reports, Settings (L1-only: Refunds, Developer — placeholder routes).
 
 ### L2 submenu
 
-- Width `236px`, same BG, `border-l`, shadow, items `rounded-[12px]`, active `bg-[#b1e6fb]`.
+- Width `252px`, same BG, `border-l border-[#e0e0e0]`, `rounded-tr-[16px]`, `pt-[22px] px-[8px]`.
+- Currently wired: Accept Payments → Payment Links | Payment Pages.
+- Items: `rounded-[12px]`, active `bg-[#b1e6fb]`.
 
 *Rule:* `./rules/components/sidebar.mdc`
 
@@ -239,10 +259,16 @@ Follow dedicated `.mdc` files: `tabs.mdc`, `pagination.mdc`, `filter-dropdown.md
 
 ## 11. Cards & summaries
 
-- **Metric cards:** tinted backgrounds (e.g. payments `#F5FBFE`), `rounded-[20px]`, `p-5`.
-- **Action priority cards:** P0 `#ffebef/60`, P1 `#fff8e1/60`, hover solid weak fills.
-- **Summary strip (e.g. Payments):** `flex gap-1`, cards `flex-1 rounded-[12px] p-5`, label `text-[14px] text-[#7e7e7e]`, amount `text-[20px] font-semibold`.
-- **Feature cards:** white, border, icon in `bg-[#e0f5fd]` tile, secondary CTA with arrow.
+- **Metric cards:** tinted backgrounds (payments `#F5FBFE`, settlement `#F0FDF4`, refunds `#FEF2F2`), `rounded-[20px]`, `p-5`.
+- **Action priority cards:** P0 `#ffebef/60`, P1 `#fff8e1/60`, hover to solid weak fills.
+- **Summary strip (Payments):** `flex gap-1`, cards `flex-1 rounded-[12px] p-5`, math operator symbols between cards.
+- **Feature/service cards:** white, border, icon in `bg-[#e0f5fd]` tile, `hover:bg-[#f5f9fe]`, secondary CTA with arrow.
+- **Device cards:** white, border, sub-items in `bg-[#fafafa]` rows, icon in `bg-[#e0f5fd]` tile.
+- **Consent/agreement cards:** white, border, `p-6`, checkbox + T&C links, disabled CTA state.
+- **Payment limit card:** `bg-[#fafafa]`, `rounded-[12px]`, metrics with vertical dividers, footer warning.
+- **Chart containers:** `bg-white rounded-2xl p-[24px]` on `bg-[var(--surface-level-3,#fafafa)]` surface.
+- **Notification cards:** read `#fafafa`, unread `#F5F9FE`, `rounded-[16px]`, blue dot indicator.
+- **Callout/note box:** `bg-[#fff4e0] rounded-[8px] px-4 py-3` (Reports page).
 
 *Rule:* `./rules/components/cards.mdc`
 
@@ -252,28 +278,41 @@ Follow dedicated `.mdc` files: `tabs.mdc`, `pagination.mdc`, `filter-dropdown.md
 
 - Popups / modals: see `popup.mdc` (padding, actions, titles).
 - Drawers: `right-drawer.mdc` (width, shadow, scroll).
-- Page-level sticky footer menus: `page-level-menu.mdc` (primary/secondary placement, Clear all).
+- Page-level sticky footer menus: `page-level-menu.mdc` (primary/secondary placement, Clear all, success variant).
+- Activation popup: `activation-popup.mdc` (session-gated, single-show).
+- Payment limit drawer: `payment-limit-drawer.mdc`.
 
 ---
 
-## 13. Module layout specs
+## 13. Page screen specifications
 
-Full-page flows live under `./rules/layout/`:
+All per-screen layout specifications now live in a **single comprehensive** layout rule file covering every L1 and L2 sidebar route:
 
-| Document | Module |
-|----------|--------|
-| `layout/connect-plus.mdc` | Connect Plus activation |
-| `layout/payment-pages.mdc` | Payment Pages / SwiftPay builder wizard |
-| `layout/payment-settings.mdc` | Settings → Payment settings |
+| Route | Page | Status |
+|-------|------|--------|
+| `/home` | Dashboard (Business Overview + Charts + Actions Widget) | Implemented |
+| `/payments` | Payments (filters, summary strip, table, drawer) | Implemented |
+| `/settlements` | Settlements (date-grouped tables) | Implemented |
+| `/reports` | Reports (split layout: menu + config + recent table) | Implemented |
+| `/settings` | Settings (tabs, payment limit card, instruments table) | Implemented (Payment Settings tab only) |
+| `/payment-pages` | Payment Pages (list + 3-step builder wizard) | Implemented |
+| `/my-services` | My Services (device cards + service cards) | Implemented |
+| `/connect-plus` | Connect Plus (consent → loader → success flow) | Implemented |
+| `/refunds` | Refunds | Design in Progress |
+| `/payment-links` | Payment Links | Design in Progress |
+| `/developer` | Developer | Design in Progress |
+| `/login` | Login (outside shell, split layout) | Implemented |
+| `/authorize` | Authorization popup demo (outside shell) | Implemented |
 
-Use **layout** rules for shells and step flows; **components** rules for reusable controls inside them.
+*Detail:* `./rules/layout/layout.mdc` (single file — all screens)
 
 ---
 
 ## 14. Content & formatting
 
-- **Dates:** e.g. “Today, 24 Jan”; **times:** “7:30 AM, 23 Sep” — human-friendly patterns in `layout.mdc`.
-- **Numbers / money:** INR conventions in UI copy and tables where specified.
+- **Dates:** e.g. "Today, 24 Jan"; chart tooltips: full date "06 January 2026" (DD MMMM YYYY).
+- **Times:** "7:30 AM, 23 Sep" — human-friendly patterns.
+- **Numbers / money:** INR conventions (`₹`), Indian locale grouping.
 
 ---
 
@@ -285,6 +324,9 @@ Use **layout** rules for shells and step flows; **components** rules for reusabl
 - Removing keyboard focus styles with no replacement.
 - One-off buttons that duplicate `Button` emphasis states incorrectly.
 - Tables built as ad-hoc flex rows when the grid pattern + hover specs are required.
+- CSS class ordering that causes unread notification cards to show as read (`bg-[#fafafa]` after `bg-[#F5F9FE]`).
+- Using `font-semibold` in charges column (only hyperlinks may be bold there).
+- Unused icon imports left in component files.
 
 ---
 
@@ -296,7 +338,7 @@ All paths below are relative to **`./rules/`** (inside this `design-guidelines/`
 |------|--------|
 | Color | `color/colors.mdc` |
 | Typography | `typography/typography.mdc` |
-| Layout & spacing | `layout/layout.mdc`, `layout/payment-pages.mdc`, `layout/payment-settings.mdc`, `layout/connect-plus.mdc` |
+| Layout & all screens | `layout/layout.mdc` |
 | Interactions | `interactions/interactions.mdc` |
 | Icons | `icons/icons.mdc` |
 | Buttons, fields, links | `components/buttons.mdc`, `components/text-field.mdc`, `components/hyperlinks.mdc` |
@@ -304,7 +346,8 @@ All paths below are relative to **`./rules/`** (inside this `design-guidelines/`
 | Data display | `components/table.mdc`, `components/pagination.mdc`, `components/filter-dropdown.mdc`, `components/charts.mdc` |
 | Surfaces | `components/cards.mdc`, `components/popup.mdc`, `components/right-drawer.mdc`, `components/tabs.mdc` |
 | Auth & brand | `components/login-page.mdc`, `components/authorization-page.mdc`, `components/paytm-logo.mdc` |
-| Builder / menus | `components/step-wizard.mdc`, `components/report-menu.mdc`, … |
+| Builder / menus | `components/step-wizard.mdc`, `components/report-menu.mdc`, `components/search-widget.mdc` |
+| Overlays | `components/activation-popup.mdc`, `components/payment-limit-drawer.mdc` |
 
 ---
 

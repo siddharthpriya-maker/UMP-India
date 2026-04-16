@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
-import { PrimaryButton, SecondaryButton } from "./Button";
+import { ChevronDown } from "lucide-react";
+import { PrimaryButton } from "./Button";
+import { Pagination } from "./Pagination";
 import {
   MailOutlinedIcon,
   DownloadOutlinedIcon,
@@ -233,9 +234,10 @@ export function ReportsPage() {
       <div className="flex flex-col gap-4 px-[32px] pt-6">
         <h2 className="text-[20px] font-medium text-[#101010]">Recently Generated Reports</h2>
 
-        {/* Table */}
-        <div className="overflow-x-auto border border-[#e0e0e0] rounded-[12px]">
-          <div className="min-w-[900px]">
+        <div className="flex flex-col gap-0">
+          {/* Table */}
+          <div className="overflow-x-auto border border-[#e0e0e0] rounded-[12px]">
+            <div className="min-w-[900px]">
             {/* Table Header */}
             <div className="grid grid-cols-[180px_1fr_200px_180px_160px] gap-4 px-6 py-3 border-b border-[#e0e0e0]">
               <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">
@@ -307,33 +309,15 @@ export function ReportsPage() {
                 </div>
               </div>
             ))}
+            </div>
           </div>
-        </div>
 
-        {/* Pagination */}
-        <div className="flex items-center justify-between">
-          <span className="text-[14px] text-[#7e7e7e]">PAGE {currentPage} OF {totalPages}</span>
-          <div className="flex items-center gap-2">
-            <SecondaryButton
-              size="medium"
-              type="button"
-              icon={<ChevronRight className="size-4 rotate-180" />}
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            >
-              Prev
-            </SecondaryButton>
-            <SecondaryButton
-              size="medium"
-              type="button"
-              icon={<ChevronRight className="size-4" />}
-              iconPosition="right"
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            >
-              Next
-            </SecondaryButton>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPrevious={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            onNext={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+          />
         </div>
       </div>
     </div>

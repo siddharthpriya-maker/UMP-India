@@ -1,36 +1,84 @@
 ---
-description: UMP Design System - Card components (metric, action, notification, feature, consent, summary)
+description: UMP Design System — Card components (metric, action, notification, summary, feature, device, consent, limit, chart container, callout)
 globs: **/*.tsx
 alwaysApply: false
 ---
 
 # Cards
 
-## Dashboard Metric Cards
+## Color Token Reference
+
+```ts
+OVERVIEW_CARD_COLORS = { payments: "#F5FBFE", settlement: "#F0FDF4", refunds: "#FEF2F2" }
+PAYMENT_SUMMARY_COLORS = { collections: "#eaf2fd", adjustments: "#fdeeee", deductions: "rgba(235,87,87,0.1)", settlementProcessed: "rgba(39,174,95,0.1)", availableForSettlement: "#e0f5fd" }
+ACTION_CARD_COLORS = { P0: "#ffebef" (60% default → 100% hover), P1: "#fff8e1" (same) }
+NOTIFICATION_CARD_COLORS = { read: "#fafafa", unread: "#F5F9FE" }
+```
+
+Radius & padding constants:
+- Overview: `rounded-[20px]`, `p-5`
+- Summary: `rounded-[12px]`, `p-5`
+- Action/default: `rounded-[16px]`, `p-4`
+
+---
+
+## 1. Dashboard Metric Cards (Business Overview)
+
 - Payments: `bg-[#F5FBFE]`, Settlement: `bg-[#F0FDF4]`, Refunds: `bg-[#FEF2F2]`
 - Shape: `rounded-[20px]`, padding: `p-5`
 - Layout: `flex flex-col gap-3`
-- Divider: `border-t border-border pt-3`
+- Grid: `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6`
+- Top row: `flex items-start justify-between` — label left, illustration right
+- Label: `text-[14px] text-muted-foreground` (semantic token)
+- Amount: `text-[32px] font-semibold text-foreground` (semantic token)
+- Illustration: in white tile `bg-[var(--background,#ffffff)] rounded-[var(--radius-200,16px)]`
+- Arrow: `ArrowRight` `size-5` — for navigation affordance
+- Divider: `border-t border-border pt-3` (semantic token)
+- Footer stats: two-column layout, `text-[14px]` values / `text-[12px]` labels
+- Success rate accent: `#00c853` (current implementation) — guidelines reference `#21c179`
+- Hover: none on metric cards themselves
+- No CTAs inside cards
 
-## Action Cards
+---
+
+## 2. Action Priority Cards (Actions & Notifications Widget)
+
 - P0 (High Priority): `bg-[#ffebef]/60`, hover: `hover:bg-[#ffebef]`
 - P1 (Low Priority): `bg-[#fff8e1]/60`, hover: `hover:bg-[#fff8e1]`
-- No border/stroke, `rounded-lg`, `p-4`, `transition-colors`
-- Icon on right side
+- No border/stroke, `rounded-[16px]`, `p-4`, `transition-colors`
+- Layout: row `flex gap-3`
+- Icon: Lucide `size-5` on right side
+  - P0: `text-destructive` (resolves to error red), icons like `AlertCircle`, `CreditCard`
+  - P1: `text-chart-3` (resolves to warning), icons like `Shield`, `Smartphone`
+- Typography:
+  - Title: `text-[14px] font-semibold`
+  - Body: `text-[12px]`, bold inline amounts
+  - CTA link: `text-[12px] text-[#004299] hover:underline`
 
-## Notification Cards
-- BG: `bg-[#fafafa]` (read), `bg-[#F5F9FE]` (unread)
+---
+
+## 3. Notification Cards (Actions & Notifications Widget)
+
+- Read: `bg-[#fafafa]`
+- Unread: `bg-[#F5F9FE]` — **note:** CSS class ordering matters; unread bg must come last to win specificity
+- Unread indicator: `bg-primary size-2 rounded-full` blue dot
 - Shape: `rounded-[16px]`, padding: `p-[16px]`
-- Hover: `hover:bg-accent/50`
-- Unread indicator: `bg-primary size-2` blue dot
+- Hover: `hover:bg-accent/50`, `cursor-pointer`
+- Typography:
+  - Title: `text-[14px] font-semibold`
+  - Body: `text-xs` (12px)
+  - Timestamp: `text-[10px] text-muted-foreground`
 
-## Summary Cards (Payments page)
+---
+
+## 4. Payment Summary Cards (Payments Page)
 
 ### Layout
-- Flex strip: `flex items-center gap-1`
+- Strip: `flex items-center gap-1`
 - Each card: `flex-1 rounded-[12px] p-5 flex flex-col`
 
 ### Card Colors
+
 | Type | Background |
 |---|---|
 | Collections | `bg-[#eaf2fd]` |
@@ -42,35 +90,126 @@ alwaysApply: false
 ### Card Content
 - Label: `text-[14px] text-[#7e7e7e]`
 - Amount: `text-[20px] font-semibold text-[#101010]`
-- Link: `text-[12px] text-[#004299] font-medium hover:underline` with divider above
+- Divider above link: `mt-3 pt-3 border-t border-[#e0e0e0]`
+- Link variants:
+  - "View Breakdown": `text-[12px] text-[#004299] font-medium hover:underline` + `ChevronDown` `size-4`
+  - "View Details": `text-[12px] text-[#004299] font-medium hover:underline` + `ChevronRight` `size-4`
+- Available for Settlement card: includes **`PrimaryButton "Settle Now" fullWidth mt-2`**
 
-### Operator Symbols (16×16, `shrink-0`)
-- Minus: single 2px×8px bar
-- Equals: two 1.33px×8px bars, `gap-[2px]`
-- Plus: cross of 1.33px bars
+### Operator Symbols (between cards)
+- Container: `size-4` (16×16), white bg, `rounded-[12px]`, `shrink-0`
+- Minus: single `2px × 8px` bar, `bg-[#7e7e7e]`
+- Plus: cross of `1.33px` bars
+- Equals: two `1.33px × 8px` bars, `gap-[2px]`
+- Order: Collections **−** Adjustments **−** Deductions **=** Settlement Processed **=** Available for Settlement
 
-## Feature / Service Cards
+---
+
+## 5. Chart Container Cards (Dashboard)
+
+- Outer surface: `bg-[var(--surface-level-3,#fafafa)] p-8 rounded-tl-[32px] rounded-tr-[32px]`
+- Chart block: `bg-white rounded-2xl p-[24px]` (16px radius via `rounded-2xl`)
+- Payment Sources block: `bg-white rounded-2xl p-4 md:p-6`
+- Legend rows (inside sources): `px-4 py-3 bg-[var(--surface-level-3,#fafafa)] rounded-lg`
+- Actions widget: `bg-white rounded-2xl`; internal `p-[24px]` on tabs, `px-5 pb-5` on scroll area
+
+---
+
+## 6. Feature / Service Cards (My Services, Connect Plus)
+
 - Container: `bg-white border border-[#e0e0e0] rounded-[12px] p-5 flex flex-col gap-4`
 - Hover: `hover:bg-[#f5f9fe]`
-- Icon: `size-10 rounded-[8px] bg-[#e0f5fd]`
+- Grid: `grid grid-cols-2 gap-6`
+- Icon: `size-10 rounded-[8px] bg-[#e0f5fd] flex items-center justify-center`
 - Title: `text-[14px] font-semibold text-[#101010]`
 - Body: `text-[12px] text-[#7e7e7e] leading-[18px]`
-- CTA: Secondary button with `ArrowRight` (`size-3.5`)
-- Status chip: `px-2.5 py-0.5 rounded-full text-[12px] font-semibold`
-- Grid: `grid grid-cols-2 gap-6`
+- CTA: outline button `text-[12px] rounded-[8px] text-[#004299]` with `ArrowRight` `size-3.5`
+- Status chip (when enabled): `px-2.5 py-0.5 rounded-full text-[12px] font-semibold`
+  - Enabled: `text-[#21c179] bg-[#e3f6ec]`
 
-## Device Cards (My Services)
+---
+
+## 7. Device Cards (My Services)
+
 - Container: `bg-white border border-[#e0e0e0] rounded-[12px] p-5`
-- Header: title left + "View All" hyperlink right
-- Sub-items: `bg-[#fafafa] hover:bg-accent/50 rounded-[8px] p-3`, `gap-3`
-- Icon container: `size-10 rounded-[8px] bg-[#e0f5fd]`
+- Header: title left + "View All" hyperlink right (`text-[#004299] text-[12px]`)
+- Grid: `grid grid-cols-2 gap-6`
+- Sub-items: `bg-[#fafafa] hover:bg-accent/50 rounded-[8px] p-3 gap-3`
+- Icon container: `size-10 rounded-[8px] bg-[#e0f5fd] flex items-center justify-center`
+- Device icons: inline SVGs (`CardMachineIcon`, `SoundBoxIcon`, `EMIIcon`, `AMCIcon`) — `currentColor` in tiles
 - Status text: due = `text-[#ff9d00]`, paid = `text-[#21c179]`
+- Navigation: `ChevronRight` `size-4`
 
-## Consent / Agreement Cards
+---
+
+## 8. Consent / Agreement Cards (Connect Plus)
+
 - Container: `bg-white border border-[#e0e0e0] rounded-[12px] p-6 flex flex-col gap-4`
 - No hover effect
 - Title: `text-[16px] font-semibold`
-- Icon: `size-10 rounded-full` with solid semantic bg, `size-5 text-white` icon
+- Shield icon: `size-10 rounded-[12px] bg-[#00b8f5]` with `size-5 text-white ShieldCheck`
 - Checkbox: `size-4 accent-[#004299]`, label `text-[14px]`, `items-center gap-3`
 - Links in label: `text-[#00b8f5] font-semibold hover:underline`
-- CTA: disabled state `bg-[#e0e0e0] text-[#7e7e7e] cursor-not-allowed`
+- CTA: disabled state `bg-[#e0e0e0] text-[#7e7e7e] cursor-not-allowed`; enabled: custom Accept button
+
+---
+
+## 9. Payment Acceptance Limit Card (Settings)
+
+- Wrapper: `rounded-[12px] overflow-hidden`
+- Main section: `bg-[#fafafa] p-6`
+- Metrics in flex row with `w-px h-[40px] bg-[#e0e0e0]` vertical dividers
+- Labels: `text-[14px] text-[#7e7e7e]`
+- Values: `text-[16px] font-semibold text-[#101010]`
+- Remaining value: `text-[#21c179]`
+- CTA: `PrimaryButton "Upgrade Account"`
+- Helper: `text-[12px] text-[#101010]`
+- Footer: `h-px bg-[#e0e0e0]` divider + `px-6 py-3` warning `text-[12px] text-[#ff9d00]`
+
+---
+
+## 10. Callout / Note Box (Reports)
+
+- Container: `rounded-[8px] bg-[#fff4e0] px-4 py-3 max-w-[720px]`
+- Title: `text-[14px] font-semibold text-[#101010]`
+- Body: `text-[14px] text-[#7e7e7e]`
+- No border, no hover, no CTA
+- Warning-tinted (not error)
+
+---
+
+## 11. Success State Cards
+
+- Connect Plus success: `bg-[#e3f6ec] rounded-[12px] p-6`
+- Icon: `CheckCircle` on `bg-[#21c179] rounded-full size-10` with `size-5 text-white`
+- Title: `text-[16px] font-semibold`
+- CTA: `PrimaryButton`
+
+---
+
+## 12. Create Page Entry Cards (Payment Pages)
+
+- Container: `border border-[#e0e0e0] rounded-[12px] p-5`
+- Hover: `hover:bg-[#f5f9fe]`
+- Icon: `size-10 rounded-[8px] bg-[#e0f5fd]`
+- Title: `text-[14px] font-semibold`
+- Body: `text-[12px] text-[#7e7e7e]`
+- Grid: 4 option cards inside popup
+
+---
+
+## Rules
+
+### DO
+- Use semantic token classes where available (`text-foreground`, `border-border`, `text-muted-foreground`)
+- Maintain card-level `transition-colors` for hover states
+- Use `flex-1` for equal-width summary cards in strip layouts
+- Include divider (`border-t`) before card footers with links
+- Wrap icon in background container for product/feature contexts
+
+### DO NOT
+- Apply hover to consent/agreement cards or callout boxes
+- Use `font-semibold` in charges column (only on hyperlinks)
+- Mix arbitrary hex without mapping to token table in `OVERVIEW.md`
+- Use `bg-[#fafafa]` after `bg-[#F5F9FE]` in same className — last class wins
+- Skip `shrink-0` on math operator symbols

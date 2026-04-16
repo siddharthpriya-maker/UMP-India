@@ -1,36 +1,67 @@
 ---
-description: UMP Design System - Pagination component
+description: UMP Design System — Pagination component (neutral buttons, page info, no default separator)
 globs: **/*.tsx
 alwaysApply: false
 ---
 
 # Pagination
 
-## Layout
-- Flex: `flex items-center justify-between`
-- Page info left, navigation buttons right
+Reusable component: `src/app/components/Pagination.tsx`
+
+## Container
+- Flex: `flex items-center gap-4 bg-white py-[24px] px-0` (no horizontal inset — aligns with the listing frame; page already uses `px-[32px]`)
+- Height: 80px (from vertical padding + 32px-tall buttons)
+- No separator by default — if a top border is needed, add it on the parent
+- **Listing + pagination:** wrap the table and `<Pagination />` in `flex flex-col gap-0` so the page-level `gap-4 md:gap-6` does not insert space between the table and the bar
 
 ## Page Info (Left)
-- Text: `text-[14px] text-[#7e7e7e]`
-- Format: `"PAGE 1 OF 32"` (uppercase)
+- Text: `text-[14px] font-semibold leading-[20px] text-[#7e7e7e]`
+- Format: `"Page 1 of 20"` (sentence case, not uppercase)
+- Takes remaining space: `flex-1`
 
 ## Navigation Buttons (Right)
-- Container: `flex items-center gap-2`
-- Each button:
-  - `px-4 py-2 text-[14px] text-[#101010]`
-  - `bg-white border border-[#e0e0e0] rounded-lg`
-  - `hover:bg-[#f5f9fe] transition-colors font-semibold`
+- Container: `flex items-center gap-3` (12px gap)
+- Each button: neutral style (NOT SecondaryButton)
+  - `h-[32px] px-4 py-2`
+  - `bg-white border border-[#e0e0e0] rounded-[8px]`
+  - `text-[12px] font-semibold leading-[16px] text-[#101010]`
+  - `hover:bg-[#f5f9fe] transition-colors`
+  - `disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white`
+- Content: `flex items-center justify-center gap-1`
+  - Previous: `ChevronLeft` (size-4) + "Previous"
+  - Next: "Next" + `ChevronRight` (size-4)
+
+## Props
+
+| Prop | Type | Description |
+|---|---|---|
+| `currentPage` | `number` | Current page (1-indexed) |
+| `totalPages` | `number` | Total number of pages |
+| `onPrevious` | `() => void` | Called when Previous is clicked |
+| `onNext` | `() => void` | Called when Next is clicked |
+
+## Usage
 
 ```tsx
-<div className="flex items-center justify-between">
-  <span className="text-[14px] text-[#7e7e7e]">PAGE 1 OF 32</span>
-  <div className="flex items-center gap-2">
-    <button className="px-4 py-2 text-[14px] text-[#101010] bg-white border border-[#e0e0e0] rounded-lg hover:bg-[#f5f9fe] transition-colors font-semibold">
-      Prev
-    </button>
-    <button className="px-4 py-2 text-[14px] text-[#101010] bg-white border border-[#e0e0e0] rounded-lg hover:bg-[#f5f9fe] transition-colors font-semibold">
-      Next
-    </button>
-  </div>
-</div>
+import { Pagination } from "./Pagination";
+
+<Pagination
+  currentPage={currentPage}
+  totalPages={totalPages}
+  onPrevious={() => setPage(p => Math.max(1, p - 1))}
+  onNext={() => setPage(p => Math.min(totalPages, p + 1))}
+/>
 ```
+
+## Rules
+
+### DO
+- Use the `Pagination` component for all listing pages
+- Disable Previous on first page, Next on last page (handled automatically)
+- Place directly below the table/listing container
+
+### DO NOT
+- Use `SecondaryButton` for pagination (those have blue borders; pagination uses neutral gray)
+- Add the top separator inside the component — add it on the parent if needed
+- Use uppercase "PAGE" — use sentence case "Page"
+- Change button text ("Prev" → must be "Previous"; "Next" stays "Next")
