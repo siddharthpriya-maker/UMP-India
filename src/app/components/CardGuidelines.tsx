@@ -33,11 +33,11 @@ export const OVERVIEW_CARD_COLORS = {
  * Used in the Payments page for breakdown cards
  */
 export const PAYMENT_SUMMARY_COLORS = {
-  collections: "#eaf2fd",           // Light blue
-  adjustments: "#fdeeee",           // Light pink/red
-  deductions: "rgba(235,87,87,0.1)", // Red with 10% opacity
-  settlementProcessed: "rgba(39,174,95,0.1)", // Green with 10% opacity
-  availableForSettlement: "#e0f5fd", // Sky blue
+  collections: "#F3F8FE", // Light blue (lighter strip)
+  adjustments: "#FEF7F7", // Light pink/red
+  deductions: "rgba(235,87,87,0.06)", // Red tint, softer
+  settlementProcessed: "rgba(39,174,95,0.06)", // Green tint, softer
+  availableForSettlement: "#EFF8FD", // Sky blue, lighter
 };
 
 /**
@@ -213,7 +213,7 @@ export function PaymentSummaryCards() {
   return (
     <div className="flex items-center gap-1">
       {/* Collections Card */}
-      <div className="bg-[#eaf2fd] rounded-[12px] p-5 flex flex-col flex-1">
+      <div className="bg-[#F3F8FE] rounded-[12px] p-5 flex flex-col flex-1">
         <span className="text-[14px] text-[#7e7e7e]">Collections</span>
         <span className="text-[20px] font-semibold text-[#101010]">₹10,12,950.60</span>
         <div className="border-t border-[#e0e0e0] pt-3 mt-3 flex items-center">
@@ -230,7 +230,7 @@ export function PaymentSummaryCards() {
       </div>
 
       {/* Adjustments Card */}
-      <div className="bg-[#fdeeee] rounded-[12px] p-5 flex flex-col flex-1">
+      <div className="bg-[#FEF7F7] rounded-[12px] p-5 flex flex-col flex-1">
         <span className="text-[14px] text-[#7e7e7e]">Adjustments</span>
         <span className="text-[20px] font-semibold text-[#101010]">₹98,100.60</span>
         <div className="border-t border-[#e0e0e0] pt-3 mt-3 flex items-center">
@@ -242,7 +242,7 @@ export function PaymentSummaryCards() {
       </div>
 
       {/* Settlement Processed Card - with CTA button variant */}
-      <div className="bg-[#e0f5fd] rounded-[12px] p-5 flex flex-col flex-1">
+      <div className="bg-[#EFF8FD] rounded-[12px] p-5 flex flex-col flex-1">
         <span className="text-[14px] text-[#7e7e7e] truncate">Available for Settlement</span>
         <span className="text-[20px] font-semibold text-[#101010]">₹4,00,000</span>
         <PrimaryButton size="small" type="button" fullWidth className="mt-2">

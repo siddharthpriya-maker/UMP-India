@@ -79,7 +79,7 @@ export function SearchWithDropdown({
           />
         </button>
         {isDropdownOpen && (
-          <div className="absolute bottom-full left-0 mb-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[180px] z-50">
+          <div className="absolute top-full left-0 mt-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[180px] z-50">
             <div className="py-1">
               {options.map((option) => (
                 <button

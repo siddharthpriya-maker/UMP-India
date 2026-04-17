@@ -31,6 +31,11 @@ Most in-shell pages follow this pattern:
 
 **Exception:** Settings uses `pt-[20px]` instead of `pt-[12px]`.
 
+## Page titles (L1 modules)
+
+- Default: `h1` with `text-[32px] font-semibold text-[#101010]` inside the page’s vertical stack (`gap-4` / `md:gap-6` to the next block).
+- **Do not** add a horizontal rule, `border-b`, or other separator **immediately under** the page title unless that module is **explicitly** spec’d with one — default is **no** title separator.
+
 ## Edge-to-Edge Separators
 
 Full-width lines that escape horizontal padding:
@@ -179,7 +184,7 @@ useEffect(() => {
 - Container: `flex flex-col gap-4 md:gap-6 bg-[#ffffff] min-h-full px-[32px] pt-[12px] pb-[32px]`
 - Title: `text-[32px] font-semibold`
 - **No** bleed separators around the filter strip (title flows into summary via page `gap` only).
-- Filters: `rounded-[12px] bg-[#fafafa] p-0 overflow-visible` (menus must not clip); row `flex-col gap-0 md:flex-row md:items-stretch`; every segment **`px-5 py-5`**, `#EBEBEB` hover on wrappers; search tail same padding, **no** `border-l` / `border-t` (`filter-dropdown.mdc`)
+- Filters: **`FilterBar`** (`FilterBar.tsx`) — `#fafafa` shell + inner row; every segment **`px-5 py-5`**, `#EBEBEB` hover on wrappers; search tail same padding, **no** `border-l` / `border-t` (`filter-dropdown.mdc`)
   - Left: DATE dropdown + STATUS dropdown
   - Right (`ml-auto`): `SearchWithDropdown`
 - Summary strip: `flex items-center gap-1`
@@ -204,7 +209,7 @@ useEffect(() => {
 - Container: `px-[32px] pt-[12px] pb-[32px]`
 - Title: `text-[32px] font-semibold` "Settlements"
 - **No** bleed separators around the filter strip (same as Payments).
-- Filters: same strip pattern as Payments (`p-0`, `gap-0` row, `px-5 py-5` on DURATION + actions tail, no dividers)
+- Filters: **`FilterBar`** + same inner pattern as Payments (`gap-0` row, `px-5 py-5` on DURATION + actions tail, no dividers)
   - Left: DURATION dropdown
   - Right (`ml-auto flex gap-3`): `SearchWithDropdown` + Download button
 - Content: `flex flex-col gap-6`, date-grouped sections
@@ -281,7 +286,7 @@ useEffect(() => {
 - Container: `flex flex-col gap-4 md:gap-6 bg-[#ffffff] min-h-full px-[32px] pt-[12px] pb-[32px]`
 - Title row: "Payment Pages" + "Create Page" PrimaryButton
 - **No** bleed separators around the filter strip (same as Payments).
-- Filters: same strip pattern as Payments; search field remains `h-[40px]` inside the right tail wrapper
+- Filters: **`FilterBar`** + same inner pattern as Payments; search field remains `h-[40px]` inside the right tail wrapper
 - Table: `min-w-[800px]`, `grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr]`; column header row `bg-[#EBEBEB]` + primary dark labels; rows zebra + hover, no row `border-b`
   - Status chips: Active `text-[#21c179] bg-[#e3f6ec]`, Expired `text-[#fd5154] bg-[#ffebef]`, Draft `text-[#7e7e7e] bg-[#fafafa]`
   - Actions: kebab menu (Share, Download QR, Edit, Expire/Reactivate, Delete)
@@ -360,9 +365,15 @@ useEffect(() => {
 
 ---
 
-## L1: Refunds (`/refunds`) — Design in Progress
+## L1: Refunds (`/refunds`)
 
-**File:** `DesignInProgress.tsx` with `pageName="Refunds"`
+**File:** `RefundsPage.tsx`
+
+- Container: `flex flex-col gap-4 md:gap-6 bg-[#ffffff] min-h-full px-[32px] pt-[12px] pb-[32px]`
+- Title: `text-[32px] font-semibold` "Refunds" (follow **Page titles** — no default under-title rule)
+- **`FilterBar`**: DURATION, STATUS, SUB-STATUS (same inner pattern as Payments; **`px-5 py-5`**, `#EBEBEB` hover); **STATUS** and **SUB-STATUS** labels include **`Info`** at **`size-4`** (16×16px, `text-[#004299]`, **no** filled circle behind icon, `aria-label`); tail: **`SearchWithDropdown`** with placeholder **Enter Search Value**, first option **Select filter**
+- Summary card (below filter): `rounded-[12px] bg-[#fafafa]` — **no** outer border; **Total refund amount** (label row: **`Info`** **`size-4`**) + **Total refund transactions**; **`SecondaryButton` Download** on the right (`flex-col` stack on small viewports)
+- Empty state: bordered white panel, centered **`IndianRupee`** + **`RefreshCw`** in `bg-[#e0f5fd]` circle; copy **No refunds available for {date}** (date derived from DURATION label, e.g. `17 April`)
 
 ---
 

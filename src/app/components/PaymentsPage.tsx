@@ -4,6 +4,7 @@ import { CopyIcon } from "./Icons";
 import { PrimaryButton, SecondaryButton, TertiaryButton } from "./Button";
 import { SearchWithDropdown } from "./SearchWithDropdown";
 import { PaymentDetailDrawer } from "./PaymentDetailDrawer";
+import { FilterBar } from "./FilterBar";
 import { Pagination } from "./Pagination";
 import SuccessSmall from "../../imports/SuccessSmall";
 
@@ -90,9 +91,7 @@ export function PaymentsPage() {
       <div className="flex flex-col gap-4">
         <h1 className="text-[32px] font-semibold text-[#101010]">Payments</h1>
 
-        {/* Filters — strip flush top/left (p-0); row height matches strip; each filter hover fills strip height */}
-        <div className="overflow-visible rounded-[12px] bg-[#fafafa] p-0">
-        <div className="flex flex-col gap-0 md:flex-row md:items-stretch">
+        <FilterBar>
           {/* Date Filter — py-5 matches pl-5 so inset feels even vs summary cards */}
           <div
             ref={dateDropdownRef}
@@ -111,7 +110,7 @@ export function PaymentsPage() {
                 <ChevronDown className={`size-4 transition-transform ${isDateDropdownOpen ? "rotate-180" : ""}`} />
               </button>
               {isDateDropdownOpen && (
-                <div className="absolute bottom-full left-0 mb-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[180px] z-50">
+                <div className="absolute top-full left-0 mt-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[180px] z-50">
                   <div className="py-1">
                     <button
                       className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors"
@@ -173,7 +172,7 @@ export function PaymentsPage() {
                 <ChevronDown className={`size-4 transition-transform ${isStatusDropdownOpen ? "rotate-180" : ""}`} />
               </button>
               {isStatusDropdownOpen && (
-                <div className="absolute bottom-full left-0 mb-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[140px] z-50">
+                <div className="absolute top-full left-0 mt-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[140px] z-50">
                   <div className="py-1">
                     <button
                       className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors"
@@ -224,8 +223,7 @@ export function PaymentsPage() {
               defaultOption="transaction_id"
             />
           </div>
-        </div>
-        </div>
+        </FilterBar>
       </div>
 
       {/* Payments Summary Section */}
@@ -245,7 +243,7 @@ export function PaymentsPage() {
         {/* Summary Cards Grid */}
         <div className="flex items-center gap-1">
           {/* Collections Card */}
-          <div className="bg-[#eaf2fd] rounded-[12px] p-5 flex flex-col flex-1">
+          <div className="bg-[#F3F8FE] rounded-[12px] p-5 flex flex-col flex-1">
             <span className="text-[14px] text-[#7e7e7e]">Collections</span>
             <span className="text-[20px] font-semibold text-[#101010]">₹10,12,950.60</span>
             <div className="border-t border-[#e0e0e0] pt-3 mt-3 flex items-center">
@@ -262,7 +260,7 @@ export function PaymentsPage() {
           </div>
 
           {/* Adjustments Card */}
-          <div className="bg-[#fdeeee] rounded-[12px] p-5 flex flex-col flex-1">
+          <div className="bg-[#FEF7F7] rounded-[12px] p-5 flex flex-col flex-1">
             <span className="text-[14px] text-[#7e7e7e]">Adjustments</span>
             <span className="text-[20px] font-semibold text-[#101010]">₹98,100.60</span>
             <div className="border-t border-[#e0e0e0] pt-3 mt-3 flex items-center">
@@ -279,7 +277,7 @@ export function PaymentsPage() {
           </div>
 
           {/* Deductions Card */}
-          <div className="bg-[rgba(235,87,87,0.1)] rounded-[12px] p-5 flex flex-col flex-1">
+          <div className="bg-[rgba(235,87,87,0.06)] rounded-[12px] p-5 flex flex-col flex-1">
             <span className="text-[14px] text-[#7e7e7e]">Deductions</span>
             <span className="text-[20px] font-semibold text-[#101010]">₹4,000</span>
             <div className="border-t border-[#e0e0e0] pt-3 mt-3 flex items-center">
@@ -297,7 +295,7 @@ export function PaymentsPage() {
           </div>
 
           {/* Settlement Processed Card */}
-          <div className="bg-[rgba(39,174,95,0.1)] rounded-[12px] p-5 flex flex-col flex-1">
+          <div className="bg-[rgba(39,174,95,0.06)] rounded-[12px] p-5 flex flex-col flex-1">
             <span className="text-[14px] text-[#7e7e7e]">Settlement Processed</span>
             <span className="text-[20px] font-semibold text-[#101010]">₹5,10,850.60</span>
             <div className="border-t border-[#e0e0e0] pt-3 mt-3 flex items-center">
@@ -315,7 +313,7 @@ export function PaymentsPage() {
           </div>
 
           {/* Available for Settlement Card - Primary */}
-          <div className="bg-[#e0f5fd] rounded-[12px] p-5 flex flex-col flex-1">
+          <div className="bg-[#EFF8FD] rounded-[12px] p-5 flex flex-col flex-1">
             <span className="text-[14px] text-[#7e7e7e] truncate">Available for Settlement</span>
             <span className="text-[20px] font-semibold text-[#101010]">₹4,00,000</span>
             <PrimaryButton size="small" type="button" fullWidth className="mt-2">

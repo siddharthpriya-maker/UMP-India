@@ -14,9 +14,12 @@ This is the default filter design for ALL modules unless specifically requested 
 - **Minimal spacing**: `gap-[1px]` between label and value row inside the unit.
 - **Hover / open fill (filter chrome only)**: `#EBEBEB` (`transition-colors`) — distinct from listing row hover `#f5f9fe`.
 
-## Filter strip container (`#fafafa` card)
-- `rounded-[12px] bg-[#fafafa] p-0 overflow-visible` — do **not** use `overflow-hidden` here or dropdown panels clip; **no** extra padding on the strip shell
-- Inner row: `flex flex-col gap-0 md:flex-row md:items-stretch` — **no** gap between adjacent filter columns, **no** `border-l` / `border-t`; every segment uses the same **`px-5 py-5`**
+## FilterBar (`#fafafa` shell)
+
+**Implementation:** `src/app/components/FilterBar.tsx` — wraps the whole strip; pass filter columns + search/actions as **`children`**.
+
+- Outer: `rounded-[12px] bg-[#fafafa] p-0 overflow-visible` — do **not** use `overflow-hidden` here or dropdown panels clip
+- Inner row (inside `FilterBar`): `flex flex-col gap-0 md:flex-row md:items-stretch` — **no** gap between adjacent filter columns, **no** `border-l` / `border-t`; every segment uses the same **`px-5 py-5`**
 
 ## Filter unit (label + trigger — one hover target)
 Treat each dropdown (DATE, STATUS, DURATION, etc.) as a single column:
@@ -45,7 +48,7 @@ text-[14px] text-[#101010] font-semibold
 - Chevron: `size-4`, `rotate-180` when open
 
 ### Dropdown Menu
-- `absolute bottom-full left-0 mb-1` (opens **up** so it is not clipped by the strip or content below) + `z-50`
+- `absolute top-full left-0 mt-1` (opens **below** the trigger by default) + `z-50` — strip shell uses **`overflow-visible`** so the panel is not clipped
 - `bg-white border border-[#e0e0e0] rounded-lg shadow-lg z-10`
 - Width varies: Date = 180px, Status = 140px
 

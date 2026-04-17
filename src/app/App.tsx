@@ -9,6 +9,7 @@ import { DesignInProgress } from "./components/DesignInProgress";
 import { ReportsPage } from "./components/ReportsPage";
 import { MyServicesPage } from "./components/MyServicesPage";
 import { PaymentPagesPage } from "./components/payment-pages/PaymentPagesPage";
+import { RefundsPage } from "./components/RefundsPage";
 import { SettingsPage } from "./components/SettingsPage";
 import { AuthorizationPopupDemo } from "./components/AuthorizationPopupDemo";
 import { LoginPage } from "./components/LoginPage";
@@ -60,7 +61,7 @@ function AppShell() {
                   <Route path="/connect-plus" element={<ConnectPlusPage />} />
                   <Route path="/my-services" element={<MyServicesPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
-                  <Route path="/refunds" element={<DesignInProgress pageName="Refunds" />} />
+                  <Route path="/refunds" element={<RefundsPage />} />
                   <Route path="/reports" element={<ReportsPage />} />
                   <Route path="/report" element={<Navigate to="/reports" replace />} />
                   <Route path="/accept-payments" element={<DesignInProgress pageName="Accept Payments" />} />

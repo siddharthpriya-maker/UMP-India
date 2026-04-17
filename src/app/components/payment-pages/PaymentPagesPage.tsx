@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Plus, ChevronDown, MoreVertical, Search } from "lucide-react";
 import type { PaymentPage, PageStatus, BuilderStep, PageInfo } from "./types";
 import { CreatePageEntry } from "./CreatePageEntry";
+import { FilterBar } from "../FilterBar";
 import { Pagination } from "../Pagination";
 import { PageInfoForm } from "./PageInfoForm";
 import { PageBuilder } from "./PageBuilder";
@@ -174,9 +175,7 @@ export function PaymentPagesPage() {
           </button>
         </div>
 
-        {/* Filters — flush top/left strip (same pattern as Payments) */}
-        <div className="overflow-visible rounded-[12px] bg-[#fafafa] p-0">
-        <div className="flex flex-col gap-0 md:flex-row md:items-stretch">
+        <FilterBar>
           {/* Status filter */}
           <div
             ref={statusRef}
@@ -195,7 +194,7 @@ export function PaymentPagesPage() {
                 <ChevronDown className={`size-4 transition-transform ${isStatusOpen ? "rotate-180" : ""}`} />
               </button>
               {isStatusOpen && (
-                <div className="absolute bottom-full left-0 mb-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[140px] z-50">
+                <div className="absolute top-full left-0 mt-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[140px] z-50">
                   <div className="py-1">
                     {["All", "Active", "Expired", "Draft"].map((opt) => (
                       <button
@@ -230,7 +229,7 @@ export function PaymentPagesPage() {
                 <ChevronDown className={`size-4 transition-transform ${isDateOpen ? "rotate-180" : ""}`} />
               </button>
               {isDateOpen && (
-                <div className="absolute bottom-full left-0 mb-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[160px] z-50">
+                <div className="absolute top-full left-0 mt-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[160px] z-50">
                   <div className="py-1">
                     {["All Time", "Today", "Last 7 Days", "Last 30 Days"].map((opt) => (
                       <button
@@ -262,8 +261,7 @@ export function PaymentPagesPage() {
             />
             </div>
           </div>
-        </div>
-        </div>
+        </FilterBar>
       </div>
 
       <div className="flex flex-col gap-0">
