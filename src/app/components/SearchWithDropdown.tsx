@@ -10,16 +10,21 @@ interface SearchWithDropdownProps {
   options: SearchOption[];
   defaultOption?: string;
   onSearch?: (field: string, query: string) => void;
+  /** When omitted and the selected filter is the “select” sentinel (`value: "select"`), input shows **Enter search value**. Otherwise defaults to `Search {label}`. */
   placeholder?: string;
+  /** Tailwind width classes; default matches all FilterBar tails: full width of slot, max 560px. */
   width?: string;
 }
+
+/** Sentinel: left trigger shows **Select Filter**; empty input placeholder **Enter search value**. */
+const SELECT_FILTER_VALUE = "select";
 
 export function SearchWithDropdown({
   options,
   defaultOption,
   onSearch,
   placeholder,
-  width = "w-[560px]",
+  width = "w-full max-w-[560px]",
 }: SearchWithDropdownProps) {
   const [selectedOption, setSelectedOption] = useState(
     defaultOption || options[0]?.value || ""
@@ -28,8 +33,18 @@ export function SearchWithDropdown({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const selectedLabel =
-    options.find((o) => o.value === selectedOption)?.label || selectedOption;
+  const isSelectFilter = selectedOption === SELECT_FILTER_VALUE;
+
+  const selectedLabel = isSelectFilter
+    ? "Select Filter"
+    : options.find((o) => o.value === selectedOption)?.label || selectedOption;
+
+  const inputPlaceholder =
+    placeholder !== undefined
+      ? placeholder
+      : isSelectFilter
+        ? "Enter search value"
+        : `Search ${selectedLabel}`;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -79,19 +94,22 @@ export function SearchWithDropdown({
           />
         </button>
         {isDropdownOpen && (
-          <div className="absolute top-full left-0 mt-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[180px] z-50">
-            <div className="py-1">
-              {options.map((option) => (
-                <button
-                  key={option.value}
-                  className={`w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors ${
-                    selectedOption === option.value ? "bg-[#EBEBEB] font-semibold" : ""
-                  }`}
-                  onClick={() => handleOptionSelect(option.value)}
-                >
-                  {option.label}
-                </button>
-              ))}
+          <div className="absolute top-full left-0 z-50 mt-1 w-[200px] rounded-lg border border-[#e0e0e0] bg-white shadow-lg">
+            <div className="max-h-[min(280px,50vh)] overflow-y-auto py-0">
+              <div className="flex flex-col divide-y divide-[#e0e0e0]">
+                {options.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={`w-full px-4 py-2.5 text-left text-[14px] text-[#101010] transition-colors hover:bg-[#EBEBEB] ${
+                      selectedOption === option.value ? "bg-[#EBEBEB] font-semibold" : ""
+                    }`}
+                    onClick={() => handleOptionSelect(option.value)}
+                  >
+                    {option.value === SELECT_FILTER_VALUE ? "Select Filter" : option.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -108,7 +126,7 @@ export function SearchWithDropdown({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder || `Search ${selectedLabel}`}
+          placeholder={inputPlaceholder}
           className="flex-1 bg-transparent text-[14px] text-[#101010] placeholder:text-[#7e7e7e] outline-none font-semibold"
         />
       </div>

@@ -1,11 +1,22 @@
-import { useState, useRef, useEffect } from "react";
-import { ChevronDown, Download, RefreshCw, ChevronRight } from "lucide-react";
+import {
+  useState,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  useCallback,
+  type CSSProperties,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
+import { createPortal } from "react-dom";
+import { ChevronDown, ChevronUp, Download, RefreshCw, ChevronRight, Info } from "lucide-react";
 import { CopyIcon } from "./Icons";
 import { PrimaryButton, SecondaryButton, TertiaryButton } from "./Button";
 import { SearchWithDropdown } from "./SearchWithDropdown";
 import { PaymentDetailDrawer } from "./PaymentDetailDrawer";
 import { FilterBar } from "./FilterBar";
 import { Pagination } from "./Pagination";
+import { Overlay } from "./Overlay";
 import SuccessSmall from "../../imports/SuccessSmall";
 
 // Mock data for payments
@@ -52,15 +63,345 @@ const mockTransactions = [
   },
 ];
 
+type SummaryBreakdownKey = "collections" | "adjustments" | "deductions";
+
+/** Collections expanded breakdown — copy aligned with UMP / Figma Payments summary */
+const collectionsBreakdownRows: { label: string; amount: string }[] = [
+  { label: "Payments (1145)", amount: "₹9,12,950.60" },
+  { label: "Tip", amount: "₹11,240" },
+  { label: "Reversal", amount: "₹8,760" },
+  { label: "Bank Credit", amount: "₹80,000" },
+];
+
+const refundSubBreakdownRows: { label: string; amount: string }[] = [
+  { label: "Chargebacks", amount: "₹700" },
+  { label: "Refund", amount: "₹4,000" },
+  { label: "Merchant Subvention", amount: "₹200" },
+  { label: "Bill Advance Cash", amount: "₹3,000" },
+  { label: "Payment Hold", amount: "₹600" },
+];
+
+const adjustmentsBreakdownRows: { label: string; amount: string }[] = [
+  { label: "Credits applied", amount: "₹62,400.00" },
+  { label: "Promotional adjustments", amount: "₹25,700.60" },
+  { label: "Other", amount: "₹10,000.00" },
+];
+
+const deductionsBreakdownRows: { label: string; amount: string }[] = [
+  { label: "Platform fees", amount: "₹2,400" },
+  { label: "Tax withheld", amount: "₹1,200" },
+  { label: "Miscellaneous", amount: "₹400" },
+];
+
+function summaryBreakdownMeta(key: SummaryBreakdownKey): {
+  title: string;
+  total: string;
+  surface: string;
+  rows: { label: string; amount: string }[];
+} {
+  switch (key) {
+    case "collections":
+      return {
+        title: "Collections",
+        total: "₹10,12,950.60",
+        surface: "bg-[#F3F8FE]",
+        rows: collectionsBreakdownRows,
+      };
+    case "adjustments":
+      return {
+        title: "Adjustments",
+        total: "₹98,100.60",
+        surface: "bg-[#FEF7F7]",
+        rows: adjustmentsBreakdownRows,
+      };
+    case "deductions":
+      return {
+        title: "Deductions",
+        total: "₹4,000",
+        surface: "bg-[#FEF7F7]",
+        rows: deductionsBreakdownRows,
+      };
+  }
+}
+
+type BreakdownAnchorRect = { top: number; left: number; width: number; height: number };
+
+/** Figma Frame 1261156551 — 320×228, padding 12×20, inner column gap 12px, row gap 4px, shadow, blue tint on white */
+const PANEL_W = 320;
+const PANEL_H = 228;
+const collectionsFigmaRows: {
+  label: string;
+  amount: string;
+  labelClass?: string;
+  amountClass: string;
+  info?: boolean;
+}[] = [
+  {
+    label: "Payments",
+    amount: "(1145) ₹9,12,950.60",
+    amountClass: "text-[14px] font-normal leading-[20px] text-[#7e7e7e]",
+  },
+  {
+    label: "Tip",
+    amount: "₹11,240",
+    amountClass: "text-[14px] font-semibold leading-[20px] text-[#101010]",
+  },
+  {
+    label: "Reversal",
+    amount: "₹8,760",
+    amountClass: "text-[14px] font-semibold leading-[20px] text-[#101010]",
+    info: true,
+  },
+  {
+    label: "Bank Credit",
+    amount: "₹80,000",
+    amountClass: "text-[14px] font-semibold leading-[20px] text-[#101010]",
+  },
+];
+
+const REVERSAL_TOOLTIP_W = 200;
+const REVERSAL_TOOLTIP_GAP = 8;
+
+function PaymentsSummaryExpandedPanel({
+  active,
+  anchor,
+  refundSubOpen,
+  setRefundSubOpen,
+  onClose,
+}: {
+  active: SummaryBreakdownKey;
+  anchor: BreakdownAnchorRect;
+  refundSubOpen: boolean;
+  setRefundSubOpen: Dispatch<SetStateAction<boolean>>;
+  onClose: () => void;
+}) {
+  const meta = summaryBreakdownMeta(active);
+  const reversalInfoBtnRef = useRef<HTMLButtonElement>(null);
+  const [reversalTooltipPos, setReversalTooltipPos] = useState<{ left: number; top: number } | null>(null);
+
+  const updateReversalTooltipPosition = useCallback(() => {
+    if (!refundSubOpen || active !== "collections") {
+      setReversalTooltipPos(null);
+      return;
+    }
+    const el = reversalInfoBtnRef.current;
+    if (!el) {
+      setReversalTooltipPos(null);
+      return;
+    }
+    const r = el.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const left = Math.min(r.right + REVERSAL_TOOLTIP_GAP, vw - REVERSAL_TOOLTIP_W - 16);
+    setReversalTooltipPos({ left, top: r.top + r.height / 2 });
+  }, [refundSubOpen, active]);
+
+  useLayoutEffect(() => {
+    updateReversalTooltipPosition();
+  }, [updateReversalTooltipPosition, anchor]);
+
+  useEffect(() => {
+    if (!refundSubOpen) return;
+    window.addEventListener("scroll", updateReversalTooltipPosition, true);
+    window.addEventListener("resize", updateReversalTooltipPosition);
+    return () => {
+      window.removeEventListener("scroll", updateReversalTooltipPosition, true);
+      window.removeEventListener("resize", updateReversalTooltipPosition);
+    };
+  }, [refundSubOpen, updateReversalTooltipPosition]);
+
+  const vw = typeof window !== "undefined" ? window.innerWidth : 1200;
+  const vh = typeof window !== "undefined" ? window.innerHeight : 800;
+  const margin = 16;
+  const panelLeft = Math.min(anchor.left, vw - PANEL_W - margin);
+  const panelTop = Math.min(anchor.top, vh - PANEL_H - margin);
+
+  const collectionsBg: CSSProperties =
+    active === "collections"
+      ? {
+          background:
+            "linear-gradient(0deg, rgba(47, 129, 237, 0.1), rgba(47, 129, 237, 0.1)), #FFFFFF",
+        }
+      : {};
+
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-y-auto">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="payments-summary-breakdown-title"
+        style={{
+          position: "fixed",
+          left: panelLeft,
+          top: panelTop,
+          width: PANEL_W,
+          height: PANEL_H,
+          ...collectionsBg,
+        }}
+        className={`pointer-events-auto z-[1] flex h-full w-full flex-col items-stretch gap-3 overflow-hidden rounded-[12px] px-5 py-3 shadow-[0_0_10px_rgba(0,0,0,0.15)] ${
+          active === "collections" ? "" : meta.surface
+        }`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex w-full shrink-0 flex-col gap-1">
+          <span
+            id="payments-summary-breakdown-title"
+            className="text-[14px] font-normal leading-[20px] text-[#101010]"
+          >
+            {meta.title}
+          </span>
+          <span className="text-[20px] font-semibold leading-[24px] text-[#101010]">{meta.total}</span>
+        </div>
+
+        <div className="h-px w-full shrink-0 bg-[#e0e0e0]" />
+
+        <div className="flex min-h-0 w-full flex-1 flex-col gap-1 overflow-y-auto">
+            {active === "collections"
+              ? collectionsFigmaRows.map((row) => (
+                  <div
+                    key={row.label}
+                    className="grid w-full grid-cols-[1fr_auto] items-center gap-x-3"
+                  >
+                    <span
+                      className={
+                        row.labelClass ??
+                        "min-w-0 text-[12px] font-normal leading-[16px] text-[#101010]"
+                      }
+                    >
+                      {row.label}
+                    </span>
+                    <div className="flex justify-end gap-1">
+                      {row.info && (
+                        <button
+                          ref={reversalInfoBtnRef}
+                          type="button"
+                          aria-expanded={refundSubOpen}
+                          aria-label="Reversal breakdown"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setRefundSubOpen((o) => !o);
+                          }}
+                          className="inline-flex shrink-0 items-center justify-center p-0 text-[#004299] transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#004299]"
+                        >
+                          <Info className="size-4" strokeWidth={2} />
+                        </button>
+                      )}
+                      <span className={`tabular-nums ${row.amountClass}`}>{row.amount}</span>
+                    </div>
+                  </div>
+                ))
+              : meta.rows.map((row) => (
+                  <div
+                    key={row.label}
+                    className="grid w-full grid-cols-[1fr_auto] items-center gap-x-3 text-[12px] leading-[16px]"
+                  >
+                    <span className="min-w-0 font-normal text-[#101010]">{row.label}</span>
+                    <div className="flex justify-end">
+                      <span className="text-[14px] font-semibold leading-[20px] tabular-nums text-[#101010]">
+                        {row.amount}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+        </div>
+
+        <div className="h-px w-full shrink-0 bg-[#e0e0e0]" />
+
+        <button
+          type="button"
+          className="inline-flex w-full shrink-0 items-center justify-start gap-1 text-[#004299]"
+          onClick={() => {
+            setRefundSubOpen(false);
+            onClose();
+          }}
+        >
+          <span className="text-[12px] font-medium leading-[16px]">Hide Breakdown</span>
+          <ChevronUp className="size-4 shrink-0" strokeWidth={2} aria-hidden />
+        </button>
+      </div>
+
+      {refundSubOpen &&
+        active === "collections" &&
+        reversalTooltipPos &&
+        createPortal(
+          <div
+            role="tooltip"
+            style={{
+              position: "fixed",
+              left: reversalTooltipPos.left,
+              top: reversalTooltipPos.top,
+              transform: "translateY(-50%)",
+              zIndex: 200,
+              width: REVERSAL_TOOLTIP_W,
+            }}
+            className="pointer-events-auto rounded-[8px] bg-[#3a3a3a] px-3 py-2.5 text-left shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="absolute right-full top-1/2 mr-[-1px] h-0 w-0 -translate-y-1/2 border-y-[6px] border-r-[6px] border-y-transparent border-r-[#3a3a3a]" />
+            <div className="flex flex-col gap-1.5">
+              {refundSubBreakdownRows.map((sub) => (
+                <div
+                  key={sub.label}
+                  className="flex justify-between gap-2 text-[11px] leading-[16px] text-white"
+                >
+                  <span className="min-w-0 shrink text-white/90">{sub.label}</span>
+                  <span className="shrink-0 font-medium tabular-nums">{sub.amount}</span>
+                </div>
+              ))}
+            </div>
+          </div>,
+          document.body
+        )}
+    </div>
+  );
+}
+
 export function PaymentsPage() {
   const [dateFilter, setDateFilter] = useState("Today, 28 Aug");
   const [statusFilter, setStatusFilter] = useState("Success");
   const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<(typeof mockTransactions)[number] | null>(null);
+  const [summaryBreakdown, setSummaryBreakdown] = useState<SummaryBreakdownKey | null>(null);
+  const [breakdownAnchor, setBreakdownAnchor] = useState<BreakdownAnchorRect | null>(null);
+  const [refundSubOpen, setRefundSubOpen] = useState(false);
 
   const dateDropdownRef = useRef<HTMLDivElement>(null);
   const statusDropdownRef = useRef<HTMLDivElement>(null);
+  const collectionsCardRef = useRef<HTMLDivElement>(null);
+  const adjustmentsCardRef = useRef<HTMLDivElement>(null);
+  const deductionsCardRef = useRef<HTMLDivElement>(null);
+
+  const toggleBreakdown = (key: SummaryBreakdownKey) => {
+    setRefundSubOpen(false);
+    setSummaryBreakdown((prev) => (prev === key ? null : key));
+  };
+
+  useLayoutEffect(() => {
+    if (!summaryBreakdown) {
+      setBreakdownAnchor(null);
+      return;
+    }
+    const map = {
+      collections: collectionsCardRef,
+      adjustments: adjustmentsCardRef,
+      deductions: deductionsCardRef,
+    } as const;
+    const update = () => {
+      const el = map[summaryBreakdown].current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      setBreakdownAnchor({ top: r.top, left: r.left, width: r.width, height: r.height });
+    };
+    update();
+    const el = map[summaryBreakdown].current;
+    const scrollRoot = el?.closest(".shell-main-canvas") as HTMLElement | null;
+    window.addEventListener("resize", update);
+    scrollRoot?.addEventListener("scroll", update, { passive: true });
+    return () => {
+      window.removeEventListener("resize", update);
+      scrollRoot?.removeEventListener("scroll", update);
+    };
+  }, [summaryBreakdown]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -78,7 +419,12 @@ export function PaymentsPage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!summaryBreakdown) setRefundSubOpen(false);
+  }, [summaryBreakdown]);
+
   const searchOptions = [
+    { label: "Select Filter", value: "select" },
     { label: "Transaction ID", value: "transaction_id" },
     { label: "Order ID", value: "order_id" },
     { label: "Refund ID", value: "refund_id" },
@@ -218,15 +564,12 @@ export function PaymentsPage() {
 
           {/* Search Widget — py-5 matches filter columns */}
           <div className="flex w-full flex-1 items-center justify-end px-5 py-5 md:h-full md:w-auto">
-            <SearchWithDropdown
-              options={searchOptions}
-              defaultOption="transaction_id"
-            />
+            <SearchWithDropdown options={searchOptions} defaultOption="select" />
           </div>
         </FilterBar>
       </div>
 
-      {/* Payments Summary Section */}
+      {/* Payments Summary — in-flow cards stay same size (no layout shift); expanded panel is fixed at card top/left above Overlay */}
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h2 className="text-[20px] font-medium text-[#101010]">Payments Summary</h2>
@@ -240,14 +583,22 @@ export function PaymentsPage() {
           </div>
         </div>
 
-        {/* Summary Cards Grid */}
         <div className="flex items-center gap-1">
-          {/* Collections Card */}
-          <div className="bg-[#F3F8FE] rounded-[12px] p-5 flex flex-col flex-1">
+          {/* Collections Card — ref + ring mark slot; expanded panel is fixed at same top/left */}
+          <div
+            ref={collectionsCardRef}
+            className={`relative flex flex-1 flex-col rounded-[12px] bg-[#F3F8FE] p-5 ${
+              summaryBreakdown === "collections" ? "ring-2 ring-inset ring-[#004299]/40" : ""
+            }`}
+          >
             <span className="text-[14px] text-[#7e7e7e]">Collections</span>
             <span className="text-[20px] font-semibold text-[#101010]">₹10,12,950.60</span>
-            <div className="border-t border-[#e0e0e0] pt-3 mt-3 flex items-center">
-              <button className="flex items-center gap-1 text-[12px] text-[#004299] font-medium hover:underline">
+            <div className="mt-3 flex items-center border-t border-[#e0e0e0] pt-3">
+              <button
+                type="button"
+                className="flex items-center gap-1 text-[12px] font-medium text-[#004299] hover:underline"
+                onClick={() => toggleBreakdown("collections")}
+              >
                 <span>View Breakdown</span>
                 <ChevronDown className="size-4" />
               </button>
@@ -255,16 +606,25 @@ export function PaymentsPage() {
           </div>
 
           {/* Minus Symbol */}
-          <div className="bg-white content-stretch flex flex-col items-center justify-center rounded-[12px] shrink-0 size-[16px]">
-            <div className="bg-[#7e7e7e] h-[2px] shrink-0 w-[8px]" />
+          <div className="flex size-[16px] shrink-0 flex-col content-stretch items-center justify-center rounded-[12px] bg-white">
+            <div className="h-[2px] w-[8px] shrink-0 bg-[#7e7e7e]" />
           </div>
 
           {/* Adjustments Card */}
-          <div className="bg-[#FEF7F7] rounded-[12px] p-5 flex flex-col flex-1">
+          <div
+            ref={adjustmentsCardRef}
+            className={`relative flex flex-1 flex-col rounded-[12px] bg-[#FEF7F7] p-5 ${
+              summaryBreakdown === "adjustments" ? "ring-2 ring-inset ring-[#004299]/40" : ""
+            }`}
+          >
             <span className="text-[14px] text-[#7e7e7e]">Adjustments</span>
             <span className="text-[20px] font-semibold text-[#101010]">₹98,100.60</span>
-            <div className="border-t border-[#e0e0e0] pt-3 mt-3 flex items-center">
-              <button className="flex items-center gap-1 text-[12px] text-[#004299] font-medium hover:underline">
+            <div className="mt-3 flex items-center border-t border-[#e0e0e0] pt-3">
+              <button
+                type="button"
+                className="flex items-center gap-1 text-[12px] font-medium text-[#004299] hover:underline"
+                onClick={() => toggleBreakdown("adjustments")}
+              >
                 <span>View Breakdown</span>
                 <ChevronDown className="size-4" />
               </button>
@@ -272,16 +632,25 @@ export function PaymentsPage() {
           </div>
 
           {/* Minus Symbol */}
-          <div className="bg-white content-stretch flex flex-col items-center justify-center rounded-[12px] shrink-0 size-[16px]">
-            <div className="bg-[#7e7e7e] h-[2px] shrink-0 w-[8px]" />
+          <div className="flex size-[16px] shrink-0 flex-col content-stretch items-center justify-center rounded-[12px] bg-white">
+            <div className="h-[2px] w-[8px] shrink-0 bg-[#7e7e7e]" />
           </div>
 
           {/* Deductions Card */}
-          <div className="bg-[rgba(235,87,87,0.06)] rounded-[12px] p-5 flex flex-col flex-1">
+          <div
+            ref={deductionsCardRef}
+            className={`relative flex flex-1 flex-col rounded-[12px] bg-[#FEF7F7] p-5 ${
+              summaryBreakdown === "deductions" ? "ring-2 ring-inset ring-[#004299]/40" : ""
+            }`}
+          >
             <span className="text-[14px] text-[#7e7e7e]">Deductions</span>
             <span className="text-[20px] font-semibold text-[#101010]">₹4,000</span>
-            <div className="border-t border-[#e0e0e0] pt-3 mt-3 flex items-center">
-              <button className="flex items-center gap-1 text-[12px] text-[#004299] font-medium hover:underline">
+            <div className="mt-3 flex items-center border-t border-[#e0e0e0] pt-3">
+              <button
+                type="button"
+                className="flex items-center gap-1 text-[12px] font-medium text-[#004299] hover:underline"
+                onClick={() => toggleBreakdown("deductions")}
+              >
                 <span>View Breakdown</span>
                 <ChevronDown className="size-4" />
               </button>
@@ -289,17 +658,17 @@ export function PaymentsPage() {
           </div>
 
           {/* Equals Symbol */}
-          <div className="bg-white content-stretch flex flex-col items-center justify-center gap-[2px] rounded-[12px] shrink-0 size-[16px]">
-            <div className="bg-[#7e7e7e] h-[1.33px] shrink-0 w-[8px]" />
-            <div className="bg-[#7e7e7e] h-[1.33px] shrink-0 w-[8px]" />
+          <div className="flex size-[16px] shrink-0 flex-col content-stretch items-center justify-center gap-[2px] rounded-[12px] bg-white">
+            <div className="h-[1.33px] w-[8px] shrink-0 bg-[#7e7e7e]" />
+            <div className="h-[1.33px] w-[8px] shrink-0 bg-[#7e7e7e]" />
           </div>
 
           {/* Settlement Processed Card */}
-          <div className="bg-[rgba(39,174,95,0.06)] rounded-[12px] p-5 flex flex-col flex-1">
+          <div className="flex flex-1 flex-col rounded-[12px] bg-[rgba(39,174,95,0.06)] p-5">
             <span className="text-[14px] text-[#7e7e7e]">Settlement Processed</span>
             <span className="text-[20px] font-semibold text-[#101010]">₹5,10,850.60</span>
-            <div className="border-t border-[#e0e0e0] pt-3 mt-3 flex items-center">
-              <button className="flex items-center gap-1 text-[12px] text-[#004299] font-medium hover:underline">
+            <div className="mt-3 flex items-center border-t border-[#e0e0e0] pt-3">
+              <button type="button" className="flex items-center gap-1 text-[12px] font-medium text-[#004299] hover:underline">
                 <span>View Details</span>
                 <ChevronRight className="size-4" />
               </button>
@@ -307,14 +676,14 @@ export function PaymentsPage() {
           </div>
 
           {/* Plus Symbol */}
-          <div className="bg-white content-stretch flex items-center justify-center rounded-[12px] shrink-0 size-[16px] relative">
-            <div className="bg-[#7e7e7e] h-[1.33px] absolute w-[8px]" />
-            <div className="bg-[#7e7e7e] w-[1.33px] absolute h-[8px]" />
+          <div className="relative flex size-[16px] shrink-0 items-center justify-center rounded-[12px] bg-white content-stretch">
+            <div className="absolute h-[1.33px] w-[8px] bg-[#7e7e7e]" />
+            <div className="absolute h-[8px] w-[1.33px] bg-[#7e7e7e]" />
           </div>
 
           {/* Available for Settlement Card - Primary */}
-          <div className="bg-[#EFF8FD] rounded-[12px] p-5 flex flex-col flex-1">
-            <span className="text-[14px] text-[#7e7e7e] truncate">Available for Settlement</span>
+          <div className="flex flex-1 flex-col rounded-[12px] bg-[#EFF8FD] p-5">
+            <span className="truncate text-[14px] text-[#7e7e7e]">Available for Settlement</span>
             <span className="text-[20px] font-semibold text-[#101010]">₹4,00,000</span>
             <PrimaryButton size="small" type="button" fullWidth className="mt-2">
               Settle Now
@@ -373,6 +742,29 @@ export function PaymentsPage() {
 
         <Pagination currentPage={1} totalPages={32} />
       </div>
+
+      <Overlay
+        visible={!!summaryBreakdown}
+        strength="weak"
+        className="!z-[100]"
+        onClose={() => {
+          setSummaryBreakdown(null);
+          setRefundSubOpen(false);
+        }}
+      >
+        {summaryBreakdown && breakdownAnchor ? (
+          <PaymentsSummaryExpandedPanel
+            active={summaryBreakdown}
+            anchor={breakdownAnchor}
+            refundSubOpen={refundSubOpen}
+            setRefundSubOpen={setRefundSubOpen}
+            onClose={() => {
+              setSummaryBreakdown(null);
+              setRefundSubOpen(false);
+            }}
+          />
+        ) : null}
+      </Overlay>
 
       {/* Payment Detail Drawer */}
       <PaymentDetailDrawer

@@ -15,10 +15,26 @@ alwaysApply: false
 | UI Actions | `size-6` | 24×24 | `0 0 24 24` | Buttons, toolbars, utility |
 | Product Illustration | `size-10` | 40×40 | `0 0 32 32` | Device/service cards |
 | Promo / Feature tile | `size-10`–`size-12` | 40–48 | varies | Connect Plus, auth page cards |
-| Inline Small | `size-4` | 16×16 | `0 0 24 24` | Chevrons, copy, status, checkbox internals |
+| Inline Small | `size-4` | 16×16 | `0 0 24 24` | Chevrons, copy, status, checkbox internals, **inline `Info` / help / disclosure** (see below) |
 | Inline Medium | `size-5` | 20×20 | `0 0 24 24` | Status icons, search, action card icons, row actions |
 | Inline Tiny | `size-3.5` | 14×14 | `0 0 24 24` | Shadcn checkbox check glyph, CTA arrows |
 | Unread dot | `size-2` | 8×8 | — | Notification unread indicator |
+
+## Informational icons (`Info`, `HelpCircle`, similar)
+
+Use this pattern whenever the glyph explains data, opens a hint, or toggles a compact disclosure **inline** with labels, filters, tables, or summary rows (same class of UI as Lucide `Info`, `HelpCircle`, `CircleHelp`).
+
+| Property | Spec |
+|---|---|
+| **Rendered size** | **16×16 px** — Tailwind `size-4` on the `<svg>` (or Lucide component `className="size-4"`) |
+| **ViewBox** | Typically `0 0 24 24` (Lucide / outline set); scale via `className`, not `width`/`height` attrs |
+| **Color** | Parent `text-[#004299]` (primary / interactive per *Icon Colors*); strokes use `currentColor` |
+| **Accessibility** | Icon-only or ambiguous controls: `aria-label` (and `aria-expanded` when toggling) on the **button** |
+| **Touch** | Prefer wrapping hit area with `p-1` / `min-h-9 min-w-9` if the layout is dense; the **glyph** stays 16×16 |
+
+**Similar use cases** (same 16×16 rule): compact “learn more” / disclosure chevrons paired with primary text already use **Inline Small**; any **small circled letter or help mark** beside copy in forms, filters, or data rows should match this row, not **Inline Medium**.
+
+**Exception:** A **section or drawer title row** that uses the icon as a lead graphic beside a heading may document a larger size in that component’s `.mdc` (e.g. `payment-limit-drawer.mdc` uses `size-5` for the “Current status” row). Default for **inline hints next to data** remains **16×16**.
 
 ## Icon Sources (Priority Order)
 
@@ -60,13 +76,13 @@ The `Icons` registry object is exported but **not imported** by any other file.
 | **Actions widget** | `AlertCircle`, `CreditCard`, `Shield`, `Smartphone` | `size-5` | `text-destructive` / `text-chart-3` |
 | **Payments / Settlements** | `ChevronDown`, `ChevronRight` (pagination) | `size-4` | `currentColor` |
 | **Reports** | `ChevronDown`, `ChevronRight` | `size-4` | `currentColor` |
-| **Settings** | `Info` | `size-[18px]` | `text-[#004299]` |
+| **Settings** | `Info` | `size-4` (16×16) | `text-[#004299]` — align with *Informational icons* |
 | **Login** | `Lock`, `ArrowRight`, `QrCode`, `Eye`, `EyeOff` | `size-5` | `currentColor` |
 | **Auth popup** | `CreditCard`, `Building2`, `Link2`, `Bell`, `ArrowRight` | `size-5` | `currentColor` |
 | **Connect Plus** | `CheckCircle`, `ShieldCheck`, `ArrowRight`, `MessageCircle`, `Sparkles` | `size-5`–`size-12` | various |
 | **My Services** | `ChevronRight`, `ArrowRight` | `size-4`–`size-5` | `currentColor` |
 | **Payment Pages builder** | `Plus`, `Minus`, `Eye`, `Save`, `Monitor`, `Smartphone`, `Maximize`, `ZoomIn`, `ZoomOut`, `GripVertical`, `Trash2`, `ChevronUp`, `ChevronDown`, `X`, `Upload`, `Image`, `Video`, `Type`, `ToggleLeft`, `ArrowRight` | `size-4`–`size-5` | `currentColor` |
-| **Drawers / Popups** | `X`, `Copy`, `RotateCcw`, `Clock`, `Info`, `CheckCircle` | `size-4`–`size-5` | `currentColor` |
+| **Drawers / Popups** | `X`, `Copy`, `RotateCcw`, `Clock`, `Info`, `CheckCircle` | `size-4` for inline `Info`; other actions `size-4`–`size-5` | `currentColor`; inline `Info` → parent `text-[#004299]` |
 | **UI kit (shadcn)** | `CheckIcon`, `XIcon`, `ChevronRightIcon`, `PanelLeftIcon`, etc. | `size-3.5`–`size-4` | `currentColor` |
 
 ### Imported SVGs (`src/imports/`)
@@ -182,6 +198,7 @@ function ProductIcon() {
 
 ### DO
 - Use `currentColor` for all stroke/fill (except `white` body fills and documented brand exceptions)
+- Use **`size-4` (16×16)** for inline **`Info` / help / disclosure** icons and the same class of glyphs (see *Informational icons*)
 - Use `viewBox` for scalability — never set fixed `width`/`height` in SVG attrs
 - Size via Tailwind: `className="size-6"` (not inline `width`/`height`)
 - Use `fill="none"` on root `<svg>`
@@ -195,6 +212,6 @@ function ProductIcon() {
 - Mix icon sizing conventions within the same context
 - Use raster `<image>` inside SVGs
 - Add `width`/`height` attrs to `<svg>` — use `className`
-- Create icons < `size-5` for touch targets (except inline decorative indicators)
+- Create icons < `size-5` for touch targets (except inline decorative indicators and **documented** 16×16 informational icons — wrap with padding/min size for hit area when needed)
 - Use Lucide when matching icon exists in `Icons.tsx`
 - Import from the `Icons` registry object — use direct named exports instead

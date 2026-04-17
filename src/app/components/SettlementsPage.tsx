@@ -8,6 +8,7 @@ import SuccessSmall from "../../imports/SuccessSmall";
 import { Pagination } from "./Pagination";
 
 const settlementSearchOptions = [
+  { label: "Select Filter", value: "select" },
   { label: "UTR", value: "utr" },
   { label: "Date", value: "date" },
   { label: "Amount", value: "amount" },
@@ -166,10 +167,7 @@ export function SettlementsPage() {
           </div>
 
           <div className="flex w-full flex-1 flex-col gap-3 px-5 py-5 sm:flex-row sm:items-center sm:justify-end md:h-full md:w-auto md:flex-1">
-            <SearchWithDropdown
-              options={settlementSearchOptions}
-              defaultOption="utr"
-            />
+            <SearchWithDropdown options={settlementSearchOptions} defaultOption="select" />
             <SecondaryButton type="button" icon={<Download className="size-5" strokeWidth={2} />}>
               Download
             </SecondaryButton>

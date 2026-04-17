@@ -11,16 +11,16 @@ Component: `src/app/components/SearchWithDropdown.tsx`
 
 ## Container
 - `bg-white border border-[#e0e0e0] rounded-lg h-[40px]`
-- Default width: `w-[560px]`
-- Overflow: `overflow-hidden`
+- Default width (all modules): `w-full max-w-[560px]`
+- Outer: `overflow-hidden`; dropdown parent: `overflow-visible` so the menu is not clipped
 - Alignment: `ml-auto` (pushes to right)
 
 ## Left Section (Type Dropdown)
 - Trigger: transparent bg, `hover:bg-[#EBEBEB]`, open `bg-[#EBEBEB]`, `h-[40px]`, `px-3 py-2` (filter-toolbar hover — same as `filter-dropdown.mdc`)
 - Text: `text-[14px] font-semibold text-[#101010]`, `whitespace-nowrap`
 - Chevron: `size-4`, rotates 180deg when open
-- Options: Transaction ID, Order ID, Refund ID, RRN
-- Dropdown menu: `bg-white border rounded-lg shadow-lg w-[180px] z-10`
+- Options: page-specific (e.g. Refunds: **Select Filter**, Transaction ID, Promocode, Order ID, Customer ID, Response Code). First option uses `value: "select"` as sentinel.
+- Dropdown menu: `bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[200px] z-50`; list `divide-y divide-[#e0e0e0]`; `max-h-[min(280px,50vh)] overflow-y-auto` when many options
 
 ## Divider
 - `h-full w-[1px] bg-[#e0e0e0]`
@@ -29,10 +29,10 @@ Component: `src/app/components/SearchWithDropdown.tsx`
 - Container: `flex-1 flex items-center px-3`
 - Search icon: `size-5 text-[#7e7e7e] mr-2`
 - Input: `flex-1 bg-transparent text-[14px] font-semibold text-[#101010]`
-- Placeholder: `text-[#7e7e7e]`, dynamic based on selected filter
+- Placeholder: `text-[#7e7e7e]`, dynamic: when filter is `select` → **Enter search value**; otherwise **Search {selected label}** (or explicit `placeholder` prop)
 
 ## Behavior
 - Click outside closes dropdown
 - Selecting option updates filter + closes dropdown
-- Placeholder updates dynamically
+- Placeholder updates dynamically; trigger label for `select` is **Select Filter** (title case)
 - This is a standalone search — does NOT use `TextField`

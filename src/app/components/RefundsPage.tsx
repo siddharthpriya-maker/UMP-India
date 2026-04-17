@@ -55,10 +55,12 @@ function FilterLabel({
 }
 
 const searchFieldOptions = [
-  { label: "Select filter", value: "select" },
-  { label: "Refund ID", value: "refund_id" },
+  { label: "Select Filter", value: "select" },
+  { label: "Transaction ID", value: "transaction_id" },
+  { label: "Promocode", value: "promocode" },
   { label: "Order ID", value: "order_id" },
-  { label: "RRN", value: "rrn" },
+  { label: "Customer ID", value: "customer_id" },
+  { label: "Response Code", value: "response_code" },
 ];
 
 export function RefundsPage() {
@@ -230,12 +232,7 @@ export function RefundsPage() {
           </div>
 
           <div className="flex w-full flex-1 items-center justify-end px-5 py-5 md:h-full md:w-auto">
-            <SearchWithDropdown
-              options={searchFieldOptions}
-              defaultOption="select"
-              placeholder="Enter Search Value"
-              width="w-full max-w-[560px]"
-            />
+            <SearchWithDropdown options={searchFieldOptions} defaultOption="select" />
           </div>
         </FilterBar>
 

@@ -34,8 +34,8 @@ export const OVERVIEW_CARD_COLORS = {
  */
 export const PAYMENT_SUMMARY_COLORS = {
   collections: "#F3F8FE", // Light blue (lighter strip)
-  adjustments: "#FEF7F7", // Light pink/red
-  deductions: "rgba(235,87,87,0.06)", // Red tint, softer
+  adjustments: "#FEF7F7", // Light pink — shared with Deductions
+  deductions: "#FEF7F7", // Same solid surface as Adjustments (no alpha tint)
   settlementProcessed: "rgba(39,174,95,0.06)", // Green tint, softer
   availableForSettlement: "#EFF8FD", // Sky blue, lighter
 };

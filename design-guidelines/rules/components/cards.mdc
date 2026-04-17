@@ -10,7 +10,7 @@ alwaysApply: false
 
 ```ts
 OVERVIEW_CARD_COLORS = { payments: "#F5FBFE", settlement: "#F0FDF4", refunds: "#FEF2F2" }
-PAYMENT_SUMMARY_COLORS = { collections: "#F3F8FE", adjustments: "#FEF7F7", deductions: "rgba(235,87,87,0.06)", settlementProcessed: "rgba(39,174,95,0.06)", availableForSettlement: "#EFF8FD" }
+PAYMENT_SUMMARY_COLORS = { collections: "#F3F8FE", adjustments: "#FEF7F7", deductions: "#FEF7F7", settlementProcessed: "rgba(39,174,95,0.06)", availableForSettlement: "#EFF8FD" }
 ACTION_CARD_COLORS = { P0: "#ffebef" (60% default → 100% hover), P1: "#fff8e1" (same) }
 NOTIFICATION_CARD_COLORS = { read: "#fafafa", unread: "#F5F9FE" }
 ```
@@ -83,7 +83,7 @@ Radius & padding constants:
 |---|---|
 | Collections | `bg-[#F3F8FE]` |
 | Adjustments | `bg-[#FEF7F7]` |
-| Deductions | `bg-[rgba(235,87,87,0.06)]` |
+| Deductions | `bg-[#FEF7F7]` (same surface as Adjustments — solid, not tinted alpha) |
 | Settlement Processed | `bg-[rgba(39,174,95,0.06)]` |
 | Available for Settlement | `bg-[#EFF8FD]` |
 
