@@ -173,28 +173,34 @@ export function PaymentPagesPage() {
             Create Page
           </button>
         </div>
-        <div className="w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]" />
 
-        {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-[15px] md:gap-5 items-start md:items-center">
+        {/* Filters — flush top/left strip (same pattern as Payments) */}
+        <div className="overflow-visible rounded-[12px] bg-[#fafafa] p-0">
+        <div className="flex flex-col gap-0 md:flex-row md:items-stretch">
           {/* Status filter */}
-          <div className="flex flex-col gap-[1px]">
+          <div
+            ref={statusRef}
+            className={`flex w-full flex-col gap-[1px] px-5 py-5 transition-colors hover:bg-[#EBEBEB] md:h-full md:w-auto md:rounded-bl-[12px] md:rounded-tl-[12px] ${
+              isStatusOpen ? "relative z-30 bg-[#EBEBEB]" : ""
+            }`}
+          >
             <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold">STATUS</span>
-            <div className="relative" ref={statusRef}>
+            <div className="relative">
               <button
-                className={`flex items-center gap-2 text-[14px] text-[#101010] font-semibold hover:bg-[#f5f9fe] transition-colors ${isStatusOpen ? "bg-[#f5f9fe]" : ""}`}
+                type="button"
+                className="flex items-center gap-2 text-[14px] text-[#101010] font-semibold"
                 onClick={() => setIsStatusOpen(!isStatusOpen)}
               >
                 <span>{statusFilter}</span>
                 <ChevronDown className={`size-4 transition-transform ${isStatusOpen ? "rotate-180" : ""}`} />
               </button>
               {isStatusOpen && (
-                <div className="absolute top-full left-0 mt-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[140px] z-10">
+                <div className="absolute bottom-full left-0 mb-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[140px] z-50">
                   <div className="py-1">
                     {["All", "Active", "Expired", "Draft"].map((opt) => (
                       <button
                         key={opt}
-                        className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
+                        className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors"
                         onClick={() => { setStatusFilter(opt); setIsStatusOpen(false); }}
                       >
                         {opt}
@@ -207,23 +213,29 @@ export function PaymentPagesPage() {
           </div>
 
           {/* Date filter */}
-          <div className="flex flex-col gap-[1px]">
+          <div
+            ref={dateRef}
+            className={`flex w-full flex-col gap-[1px] px-5 py-5 transition-colors hover:bg-[#EBEBEB] md:h-full md:w-auto ${
+              isDateOpen ? "relative z-30 bg-[#EBEBEB]" : ""
+            }`}
+          >
             <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold">DATE</span>
-            <div className="relative" ref={dateRef}>
+            <div className="relative">
               <button
-                className={`flex items-center gap-2 text-[14px] text-[#101010] font-semibold hover:bg-[#f5f9fe] transition-colors ${isDateOpen ? "bg-[#f5f9fe]" : ""}`}
+                type="button"
+                className="flex items-center gap-2 text-[14px] text-[#101010] font-semibold"
                 onClick={() => setIsDateOpen(!isDateOpen)}
               >
                 <span>{dateFilter}</span>
                 <ChevronDown className={`size-4 transition-transform ${isDateOpen ? "rotate-180" : ""}`} />
               </button>
               {isDateOpen && (
-                <div className="absolute top-full left-0 mt-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[160px] z-10">
+                <div className="absolute bottom-full left-0 mb-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[160px] z-50">
                   <div className="py-1">
                     {["All Time", "Today", "Last 7 Days", "Last 30 Days"].map((opt) => (
                       <button
                         key={opt}
-                        className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
+                        className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors"
                         onClick={() => { setDateFilter(opt); setIsDateOpen(false); }}
                       >
                         {opt}
@@ -236,7 +248,8 @@ export function PaymentPagesPage() {
           </div>
 
           {/* Search */}
-          <div className="ml-auto flex items-center bg-white border border-[#e0e0e0] rounded-lg h-[40px] w-[320px] overflow-hidden">
+          <div className="flex w-full flex-1 items-center justify-end px-5 py-5 md:h-full md:w-auto md:flex-1">
+            <div className="flex h-[40px] w-full max-w-[320px] flex-row items-center overflow-hidden rounded-lg border border-[#e0e0e0] bg-white md:max-w-none md:shrink-0 md:grow md:basis-[320px]">
             <div className="flex items-center px-3">
               <Search className="size-5 text-[#7e7e7e]" />
             </div>
@@ -247,33 +260,33 @@ export function PaymentPagesPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-1 h-full text-[14px] text-[#101010] placeholder:text-[#7e7e7e] outline-none bg-transparent pr-3"
             />
+            </div>
           </div>
         </div>
-
-        <div className="w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]" />
+        </div>
       </div>
 
       <div className="flex flex-col gap-0">
         {/* Table */}
         <div className="overflow-x-auto border border-[#e0e0e0] rounded-[12px]">
           <div className="min-w-[800px]">
-            {/* Header */}
-            <div className="grid grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr] px-6 py-3 border-b border-[#e0e0e0]">
-            <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">Page Name</span>
-            <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">URL</span>
-            <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">Created</span>
-            <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">Status</span>
-            <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] text-right">Payments</span>
-            <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] text-right">Actions</span>
+            {/* Listing column header — #EBEBEB bar + primary dark labels */}
+            <div className="grid grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr] bg-[#EBEBEB] px-6 py-3 border-b border-[#e0e0e0]">
+            <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px]">Page Name</span>
+            <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px]">URL</span>
+            <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px]">Created</span>
+            <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px]">Status</span>
+            <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] text-right">Payments</span>
+            <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] text-right">Actions</span>
           </div>
 
-          {/* Rows */}
+          {/* Rows: zebra #fff / #fafafa, no row borders (same as Reports) */}
           {filteredPages.map((page, idx) => (
             <div
               key={page.id}
-              className={`grid grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr] px-6 py-4 hover:bg-[#f5f9fe] transition-colors items-center ${
-                idx < filteredPages.length - 1 ? "border-b border-[#e0e0e0]" : ""
-              }`}
+              className={`grid grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr] px-6 py-4 transition-colors items-center ${
+                idx % 2 === 0 ? "bg-white" : "bg-[#fafafa]"
+              } hover:bg-[#f5f9fe]`}
             >
               <div className="flex flex-col">
                 <span className="text-[14px] text-[#101010] leading-[24px] font-semibold">{page.name}</span>

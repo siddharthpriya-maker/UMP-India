@@ -59,7 +59,8 @@
 | Muted foreground | `#7e7e7e` | Labels, descriptions |
 | Border | `#e0e0e0` | Dividers, inputs, cards |
 | Background | `#ffffff` | Page surfaces |
-| Surface L3 | `#fafafa` | Table headers, subtle fills, notification read bg |
+| Surface L3 | `#fafafa` | Zebra / subtle fills, notification read bg |
+| Listing column header | `#EBEBEB` | Bar behind in-table column titles; labels use `#101010` |
 | Offset weak | `#f5f9fe` | Search, row hover, light panels |
 | Sidebar BG | `#e7f1f8` | L1/L2 nav |
 | Disabled BG | `#ebebeb` | Disabled controls |
@@ -89,7 +90,8 @@
 | Card title (h3) | `text-[18px] font-semibold text-[#101010]` |
 | Body / UI default | `text-[14px]` (weights per context) |
 | Labels / meta | `text-[12px] text-[#7e7e7e]` |
-| Section header strip | `text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold` |
+| Filter / field label (above table) | `text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold` |
+| Listing column header (in-table row) | `bg-[#EBEBEB]` + `text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold` |
 | Caption | `text-[10px]` uppercase where specified |
 | Sidebar L1 label | `text-[10px]` |
 | Metric card amount | `text-[32px] font-semibold` |
@@ -111,7 +113,7 @@
 - **16:9 product frame:** App shell (sidebar + header + main) is letterboxed in the largest 16:9 rectangle; classes `.app-product-letterbox` / `.app-product-frame`.
 - **Main scroll:** `flex-1 min-h-0 overflow-y-auto` on `.shell-main-canvas`; max-width `1440px` centered; sidebar inner stack scrolls independently.
 - **Page container (standard):** `flex flex-col gap-4 md:gap-6 bg-white min-h-full px-[32px] pt-[12px] pb-[32px]`. Exception: Settings uses `pt-[20px]`.
-- **Edge-to-edge separator:** `w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]`.
+- **Edge-to-edge separator:** `w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]` (use where a full-bleed rule is intended; **Payments**, **Settlements**, and **Payment Pages** list filters use an inset `rounded-[12px] bg-[#fafafa] p-0` strip with **no** bleed lines above/below; filter columns use **flush** hover fill (`#EBEBEB`) to the strip edges with uniform **`px-5 py-5`** on every segment and **`gap-0`** between columns (no vertical divider) — see `layout.mdc` and `filter-dropdown.mdc`.
 - **Dashboard surface:** `bg-[var(--surface-level-3,#fafafa)] p-8 rounded-tl-[32px] rounded-tr-[32px]`.
 - **Responsive:** Mobile-first; common grids `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`, stacks `flex-col sm:flex-row`.
 
@@ -229,10 +231,10 @@ Follow dedicated `.mdc` files: `tabs.mdc`, `pagination.mdc`, `filter-dropdown.md
 
 ## 9. Tables & data
 
-- Container: `overflow-x-auto border border-[#e0e0e0] rounded-[12px]`; inner `min-w-[700px]`–`min-w-[960px]` depending on page.
+- Container: `overflow-x-auto border border-[#e0e0e0] rounded-[12px]`; inner `min-w-[700px]`–`min-w-[960px]` depending on page. **Inside a bordered card:** do not pad the whole card (`p-6`) around the grid — keep the list flush to the card stroke; optional h2 uses horizontal + top padding only (see `table.mdc`).
 - **Grid-based** rows (not `<table>`) unless legacy exception documented.
-- Header: uppercase `text-[12px] font-semibold text-[#7e7e7e]`, bottom border.
-- Rows: `text-[14px] text-[#101010]`, `hover:bg-[#f5f9fe]`, optional vertical separators (`border-r`) per variant.
+- Column header row: `bg-[#EBEBEB]`, uppercase `text-[12px] font-semibold text-[#101010]`, `border-b border-[#e0e0e0]` to the first data row.
+- Rows: zebra `bg-white` / `bg-[#fafafa]` by index, `text-[14px] text-[#101010]`, `hover:bg-[#f5f9fe]`; no `border-b` between data rows; vertical separators (`border-r`) only where the Settings-style variant applies.
 - Status chips: Active/Success `text-[#21c179] bg-[#e3f6ec]`, Failed/Expired `text-[#fd5154] bg-[#ffebef]`, Draft/Pending `text-[#7e7e7e] bg-[#fafafa]`.
 - Copy controls: `CopyIcon` `size-4` with parent `text-[#004299]`.
 

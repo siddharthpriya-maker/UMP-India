@@ -33,10 +33,11 @@ All colors must use CSS variables from `/src/styles/theme.css` or the semantic t
 | Muted Foreground | `#7e7e7e` | `var(--muted-foreground)` | Labels, descriptions, placeholders |
 | Border | `#e0e0e0` | `var(--border)` | Borders, dividers, separators |
 | Background | `#ffffff` | `var(--background)` | Page backgrounds |
-| Surface Level 3 | `#fafafa` | `var(--surface-level-3)` | Table headers, card sub-sections |
+| Surface Level 3 | `#fafafa` | `var(--surface-level-3)` | Zebra row fills, card sub-sections, subtle panels |
+| Listing column header | `#EBEBEB` | — | First row inside bordered listings (Payments, Settlements, Reports, Payment Pages, Settings instruments); pair with **Foreground** `#101010` for column titles |
 | Offset Weak | `#f5f9fe` | — | Search bars, input hover, subtle BG |
 | Sidebar BG | `#e7f1f8` | — | L1/L2 navigation background |
-| Disabled BG | `#ebebeb` | — | Disabled buttons, disabled inputs |
+| Disabled BG | `#ebebeb` | — | Disabled buttons, disabled inputs (same hex as listing header; usage differs) |
 | Disabled Text | `#acacac` | — | Disabled text content |
 
 ## Chart Colors

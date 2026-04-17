@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
-import { PrimaryButton } from "./Button";
+import { PrimaryButton, SecondaryButton } from "./Button";
 import { Pagination } from "./Pagination";
 import {
   MailOutlinedIcon,
@@ -120,33 +120,25 @@ export function ReportsPage() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  const reportCard = "rounded-[12px] border border-[#e0e0e0] bg-white";
+
   return (
-    <div className="flex flex-col bg-white min-h-full pt-[12px] pb-[32px]">
-      {/* Page Title */}
+    <div className="flex min-h-full flex-col bg-white pb-8 pt-3">
       <div className="px-[32px] pb-4">
         <h1 className="text-[32px] font-semibold text-[#101010]">Reports</h1>
       </div>
 
-      {/* Top Separator — full-width edge-to-edge */}
-      <div className="w-full h-[1px] bg-[#e0e0e0]" />
+      <div className="flex flex-col gap-4 px-[32px]">
+        {/* Top: report type menu + configuration (two cards, no separators) */}
+        <div className="flex min-h-[320px] flex-col gap-4 lg:flex-row lg:items-stretch">
+          <div className={`shrink-0 lg:w-[260px] ${reportCard} overflow-hidden p-3`}>
+            <ReportMenu
+              selectedCategory={selectedCategory}
+              onSelectCategory={setSelectedCategory}
+            />
+          </div>
 
-      {/* Report Config Section: menu + vertical divider + config area
-          Stretches from left edge to right edge so the vertical separator
-          seamlessly connects to the horizontal separators above and below. */}
-      <div className="flex min-h-[320px]">
-        {/* Left: Report Menu — touches left edge */}
-        <div className="w-[240px] shrink-0">
-          <ReportMenu
-            selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
-          />
-        </div>
-
-        {/* Vertical Separator — touches both horizontal separators */}
-        <div className="w-[1px] bg-[#e0e0e0] self-stretch" />
-
-        {/* Right: Report Config Area */}
-        <div className="flex-1 px-8 py-5 flex flex-col gap-5">
+          <div className={`flex min-h-0 min-w-0 flex-1 flex-col gap-5 p-6 ${reportCard}`}>
           {/* Header row: title + manage settings */}
           <div className="flex items-start justify-between">
             <div className="flex flex-col gap-3">
@@ -225,45 +217,41 @@ export function ReportsPage() {
             </SecondaryButton>
           </div>
         </div>
-      </div>
+        </div>
 
-      {/* Bottom Separator — standard guideline separator */}
-      <div className="w-full h-[1px] bg-[#e0e0e0]" />
+        {/* Recently Generated Reports — card = listing only; pagination sits below outside the card */}
+        <div className="flex min-w-0 flex-col gap-0">
+        <div className={`flex min-w-0 flex-col overflow-hidden ${reportCard}`}>
+        <h2 className="text-[20px] font-medium text-[#101010] px-6 pt-6 pb-4">Recently Generated Reports</h2>
 
-      {/* Recently Generated Reports */}
-      <div className="flex flex-col gap-4 px-[32px] pt-6">
-        <h2 className="text-[20px] font-medium text-[#101010]">Recently Generated Reports</h2>
-
-        <div className="flex flex-col gap-0">
-          {/* Table */}
-          <div className="overflow-x-auto border border-[#e0e0e0] rounded-[12px]">
+          <div className="overflow-x-auto">
             <div className="min-w-[900px]">
-            {/* Table Header */}
-            <div className="grid grid-cols-[180px_1fr_200px_180px_160px] gap-4 px-6 py-3 border-b border-[#e0e0e0]">
-              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">
+            {/* Listing header — #EBEBEB bar + primary dark text */}
+            <div className="grid grid-cols-[180px_1fr_200px_180px_160px] gap-4 bg-[#EBEBEB] px-6 py-3">
+              <span className="text-[12px] font-semibold uppercase tracking-[0.6px] leading-[16px] text-[#101010] whitespace-nowrap">
                 Report Generation Date
               </span>
-              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">
+              <span className="text-[12px] font-semibold uppercase tracking-[0.6px] leading-[16px] text-[#101010]">
                 Report Type
               </span>
-              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">
+              <span className="text-[12px] font-semibold uppercase tracking-[0.6px] leading-[16px] text-[#101010]">
                 Duration
               </span>
-              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">
+              <span className="text-[12px] font-semibold uppercase tracking-[0.6px] leading-[16px] text-[#101010] whitespace-nowrap">
                 Selected Sub-Merchants
               </span>
-              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] text-right">
+              <span className="text-right text-[12px] font-semibold uppercase tracking-[0.6px] leading-[16px] text-[#101010]">
                 Actions
               </span>
             </div>
 
-            {/* Table Rows */}
+            {/* Rows: zebra #fff / #fafafa, no row borders */}
             {mockRecentReports.map((report, index) => (
               <div
                 key={report.id}
-                className={`grid grid-cols-[180px_1fr_200px_180px_160px] gap-4 px-6 py-4 hover:bg-[#f5f9fe] transition-colors items-center ${
-                  index < mockRecentReports.length - 1 ? "border-b border-[#e0e0e0]" : ""
-                }`}
+                className={`grid grid-cols-[180px_1fr_200px_180px_160px] gap-4 px-6 py-4 transition-colors items-center ${
+                  index % 2 === 0 ? "bg-white" : "bg-[#fafafa]"
+                } hover:bg-[#f5f9fe]`}
               >
                 <span className="text-[14px] text-[#101010] leading-[24px]">
                   {report.generationDate}
@@ -280,7 +268,7 @@ export function ReportsPage() {
                   {report.duration}
                 </span>
 
-                <span className="text-[14px] text-[#004299] leading-[24px]">
+                <span className="text-[14px] text-[#101010] leading-[24px]">
                   {report.selectedSubMerchants}
                 </span>
 
@@ -311,13 +299,14 @@ export function ReportsPage() {
             ))}
             </div>
           </div>
+        </div>
 
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPrevious={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            onNext={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-          />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPrevious={() => setCurrentPage((p) => Math.max(1, p - 1))}
+          onNext={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+        />
         </div>
       </div>
     </div>

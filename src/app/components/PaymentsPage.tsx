@@ -90,27 +90,31 @@ export function PaymentsPage() {
       <div className="flex flex-col gap-4">
         <h1 className="text-[32px] font-semibold text-[#101010]">Payments</h1>
 
-        {/* Top Separator */}
-        <div className="w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]" />
-
-        {/* Filters Row */}
-        <div className="flex flex-col md:flex-row gap-[15px] md:gap-5 items-start md:items-center">
-          {/* Date Filter */}
-          <div className="flex flex-col gap-[1px]">
+        {/* Filters — strip flush top/left (p-0); row height matches strip; each filter hover fills strip height */}
+        <div className="overflow-visible rounded-[12px] bg-[#fafafa] p-0">
+        <div className="flex flex-col gap-0 md:flex-row md:items-stretch">
+          {/* Date Filter — py-5 matches pl-5 so inset feels even vs summary cards */}
+          <div
+            ref={dateDropdownRef}
+            className={`flex w-full flex-col gap-[1px] px-5 py-5 transition-colors hover:bg-[#EBEBEB] md:h-full md:w-auto md:rounded-bl-[12px] md:rounded-tl-[12px] ${
+              isDateDropdownOpen ? "relative z-30 bg-[#EBEBEB]" : ""
+            }`}
+          >
             <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold">DATE</span>
-            <div className="relative" ref={dateDropdownRef}>
+            <div className="relative">
               <button
-                className={`flex items-center gap-2 text-[14px] text-[#101010] font-semibold hover:bg-[#f5f9fe] transition-colors ${isDateDropdownOpen ? "bg-[#f5f9fe]" : ""}`}
+                type="button"
+                className="flex items-center gap-2 text-[14px] text-[#101010] font-semibold"
                 onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
               >
                 <span>{dateFilter}</span>
                 <ChevronDown className={`size-4 transition-transform ${isDateDropdownOpen ? "rotate-180" : ""}`} />
               </button>
               {isDateDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[180px] z-10">
+                <div className="absolute bottom-full left-0 mb-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[180px] z-50">
                   <div className="py-1">
                     <button
-                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
+                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors"
                       onClick={() => {
                         setDateFilter("Today");
                         setIsDateDropdownOpen(false);
@@ -119,7 +123,7 @@ export function PaymentsPage() {
                       Today
                     </button>
                     <button
-                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
+                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors"
                       onClick={() => {
                         setDateFilter("Yesterday");
                         setIsDateDropdownOpen(false);
@@ -128,7 +132,7 @@ export function PaymentsPage() {
                       Yesterday
                     </button>
                     <button
-                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
+                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors"
                       onClick={() => {
                         setDateFilter("Last 7 Days");
                         setIsDateDropdownOpen(false);
@@ -137,7 +141,7 @@ export function PaymentsPage() {
                       Last 7 Days
                     </button>
                     <button
-                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
+                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors"
                       onClick={() => {
                         setDateFilter("Custom Range");
                         setIsDateDropdownOpen(false);
@@ -152,21 +156,27 @@ export function PaymentsPage() {
           </div>
 
           {/* Status Filter */}
-          <div className="flex flex-col gap-[1px]">
+          <div
+            ref={statusDropdownRef}
+            className={`flex w-full flex-col gap-[1px] px-5 py-5 transition-colors hover:bg-[#EBEBEB] md:h-full md:w-auto ${
+              isStatusDropdownOpen ? "relative z-30 bg-[#EBEBEB]" : ""
+            }`}
+          >
             <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold">STATUS</span>
-            <div className="relative" ref={statusDropdownRef}>
+            <div className="relative">
               <button
-                className={`flex items-center gap-2 text-[14px] text-[#101010] font-semibold hover:bg-[#f5f9fe] transition-colors ${isStatusDropdownOpen ? "bg-[#f5f9fe]" : ""}`}
+                type="button"
+                className="flex items-center gap-2 text-[14px] text-[#101010] font-semibold"
                 onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
               >
                 <span>{statusFilter}</span>
                 <ChevronDown className={`size-4 transition-transform ${isStatusDropdownOpen ? "rotate-180" : ""}`} />
               </button>
               {isStatusDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[140px] z-10">
+                <div className="absolute bottom-full left-0 mb-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[140px] z-50">
                   <div className="py-1">
                     <button
-                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
+                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors"
                       onClick={() => {
                         setStatusFilter("All");
                         setIsStatusDropdownOpen(false);
@@ -175,7 +185,7 @@ export function PaymentsPage() {
                       All
                     </button>
                     <button
-                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
+                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors"
                       onClick={() => {
                         setStatusFilter("Success");
                         setIsStatusDropdownOpen(false);
@@ -184,7 +194,7 @@ export function PaymentsPage() {
                       Success
                     </button>
                     <button
-                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
+                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors"
                       onClick={() => {
                         setStatusFilter("Pending");
                         setIsStatusDropdownOpen(false);
@@ -193,7 +203,7 @@ export function PaymentsPage() {
                       Pending
                     </button>
                     <button
-                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
+                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors"
                       onClick={() => {
                         setStatusFilter("Failed");
                         setIsStatusDropdownOpen(false);
@@ -207,17 +217,15 @@ export function PaymentsPage() {
             </div>
           </div>
 
-          {/* Search Widget */}
-          <div className="ml-auto">
+          {/* Search Widget — py-5 matches filter columns */}
+          <div className="flex w-full flex-1 items-center justify-end px-5 py-5 md:h-full md:w-auto">
             <SearchWithDropdown
               options={searchOptions}
               defaultOption="transaction_id"
             />
           </div>
         </div>
-
-        {/* Bottom Separator */}
-        <div className="w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]" />
+        </div>
       </div>
 
       {/* Payments Summary Section */}
@@ -321,25 +329,25 @@ export function PaymentsPage() {
         {/* Transactions Table */}
         <div className="overflow-x-auto border border-[#e0e0e0] rounded-[12px]">
           <div className="min-w-[800px]">
-            {/* Table Header */}
-            <div className="grid grid-cols-[90px_1fr_110px_130px_140px_130px_40px] gap-8 px-6 py-3 border-b border-[#e0e0e0]">
-              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">Time</span>
-              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">Customer Name</span>
-              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Payment Option</span>
-              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Transaction ID</span>
-              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Collection Mode</span>
-              <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] text-right whitespace-nowrap">Amount Collected</span>
+            {/* Table header — #EBEBEB bar + primary dark labels */}
+            <div className="grid grid-cols-[90px_1fr_110px_130px_140px_130px_40px] gap-8 bg-[#EBEBEB] px-6 py-3 border-b border-[#e0e0e0]">
+              <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px]">Time</span>
+              <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px]">Customer Name</span>
+              <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Payment Option</span>
+              <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Transaction ID</span>
+              <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Collection Mode</span>
+              <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] text-right whitespace-nowrap">Amount Collected</span>
               <span></span>
             </div>
 
-            {/* Table Rows */}
+            {/* Rows: zebra #fff / #fafafa, no row borders (same as Reports) */}
             {mockTransactions.map((transaction, index) => (
               <div
                 key={transaction.id}
                 onClick={() => setSelectedTransaction(transaction)}
-                className={`grid grid-cols-[90px_1fr_110px_130px_140px_130px_40px] gap-8 px-6 py-4 hover:bg-[#f5f9fe] transition-colors cursor-pointer items-center ${
-                  index < mockTransactions.length - 1 ? "border-b border-[#e0e0e0]" : ""
-                }`}
+                className={`grid grid-cols-[90px_1fr_110px_130px_140px_130px_40px] gap-8 px-6 py-4 transition-colors cursor-pointer items-center ${
+                  index % 2 === 0 ? "bg-white" : "bg-[#fafafa]"
+                } hover:bg-[#f5f9fe]`}
               >
                 <div className="flex items-center gap-3">
                   <div className="size-5 shrink-0">

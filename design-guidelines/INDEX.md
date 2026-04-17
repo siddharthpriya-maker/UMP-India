@@ -1,5 +1,7 @@
 # Design guidelines — file index
 
+**New project or handoff:** read **[README.md](./README.md)** first (copy pack, Cursor setup, compliance workflow).
+
 All paths below are relative to the **`design-guidelines/`** folder (same directory as this file).
 
 ## Summary

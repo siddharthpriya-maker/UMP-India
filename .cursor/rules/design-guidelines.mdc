@@ -1,13 +1,17 @@
 ---
-description: Paytm merchant UI — portable pack at design-guidelines/ (OVERVIEW + rules). Use for design-token work, new screens, or when @-mentioning the visual system.
-globs: design-guidelines/**/*
+description: UMP merchant UI — tokens, layout, components; use when editing dashboard UI or design-guidelines specs.
+globs: src/app/**/*.tsx,design-guidelines/**/*
 alwaysApply: false
 ---
 
-# Design guidelines pack
+# Design guidelines (scoped)
 
-- **Start:** `design-guidelines/OVERVIEW.md` (summary, tokens, components).
-- **Reuse in other repos:** copy the whole `design-guidelines/` folder; read `design-guidelines/README.md`.
-- **Granular rules:** `design-guidelines/rules/**/*.mdc` (buttons, tables, sidebar, layout, …).
+Do **not** duplicate token tables here — use the linked specs.
 
-Engineering policy and refactors still live under `.ai/core/`. Product module framing: `.ai/projects/merchant-dashboard.md`.
+1. **`@design-guidelines/OVERVIEW.md`** — principles, tokens overview, layout, component index.
+2. **`@design-guidelines/INDEX.md`** — pick the right `rules/**/*.mdc` for the surface (buttons, tables, sidebar, etc.).
+3. **`@design-guidelines/README.md`** — onboarding when copying the pack to another repo.
+
+Engineering refactors still follow **`@.ai/core/refactor-policy.md`**.
+
+Project rule format (frontmatter, globs, rule types): [cursor.com/docs/rules](https://cursor.com/docs/rules).

@@ -9,19 +9,24 @@ alwaysApply: false
 This is the default filter design for ALL modules unless specifically requested otherwise.
 
 ## Design Principles
-- **Vertical layout**: label on top, selected value below
-- **No border on trigger**: clean, borderless button
-- **Minimal spacing**: 1px gap between label and value
-- **Hover BG**: `#f5f9fe`
+- **Vertical layout**: label on top, selected value + chevron below (one logical filter).
+- **No border on trigger**: clean, borderless **button**; hover “card” is on the **wrapper** around label + trigger (filter chrome `#EBEBEB`, not listing row `#f5f9fe`).
+- **Minimal spacing**: `gap-[1px]` between label and value row inside the unit.
+- **Hover / open fill (filter chrome only)**: `#EBEBEB` (`transition-colors`) — distinct from listing row hover `#f5f9fe`.
 
-## Filter Row Spacing
-- Desktop: `gap-5` (20px) between filters
-- Mobile: `gap-[15px]` (15px)
-- Search widget: `ml-auto` to push right
+## Filter strip container (`#fafafa` card)
+- `rounded-[12px] bg-[#fafafa] p-0 overflow-visible` — do **not** use `overflow-hidden` here or dropdown panels clip; **no** extra padding on the strip shell
+- Inner row: `flex flex-col gap-0 md:flex-row md:items-stretch` — **no** gap between adjacent filter columns, **no** `border-l` / `border-t`; every segment uses the same **`px-5 py-5`**
 
-```tsx
-<div className="flex flex-col md:flex-row gap-[15px] md:gap-5 items-start md:items-center">
-```
+## Filter unit (label + trigger — one hover target)
+Treat each dropdown (DATE, STATUS, DURATION, etc.) as a single column:
+- Wrapper: `flex w-full flex-col gap-[1px] px-5 py-5 transition-colors hover:bg-[#EBEBEB] md:h-full md:w-auto` + `bg-[#EBEBEB]` when open; first column on desktop: `md:rounded-tl-[12px] md:rounded-bl-[12px]` to meet the strip’s left corners
+- **Same horizontal inset everywhere:** **`px-5 py-5`** on every filter column and on the search/actions tail (matches summary cards’ **`p-5`** rhythm)
+- Put **`ref` for click-outside** on the wrapper; when open add **`relative z-30`** on the wrapper so the menu stacks above sibling columns
+- Inner: `relative` > `button` with `flex items-center gap-2 text-[14px] text-[#101010] font-semibold` only (no extra `pl-*` on label / `relative` — padding lives on the wrapper)
+
+## Search / actions tail (same strip)
+- Sibling wrapper: `flex w-full flex-1 px-5 py-5 md:h-full` + `items-center justify-end` (+ optional `gap-3` for multiple controls); **no** divider borders
 
 ## Visual Styling
 
@@ -36,46 +41,33 @@ text-[14px] text-[#101010] font-semibold
 ```
 
 ### Trigger Button
-- `flex items-center gap-2`
-- No border/background
-- Hover: `hover:bg-[#f5f9fe]`
-- Active: `bg-[#f5f9fe]` when open
+- `type="button"`, `flex items-center gap-2`, no background (wrapper owns hover/open fill)
 - Chevron: `size-4`, `rotate-180` when open
 
 ### Dropdown Menu
-- `absolute top-full left-0 mt-1`
+- `absolute bottom-full left-0 mb-1` (opens **up** so it is not clipped by the strip or content below) + `z-50`
 - `bg-white border border-[#e0e0e0] rounded-lg shadow-lg z-10`
 - Width varies: Date = 180px, Status = 140px
 
 ### Dropdown Options
 - `w-full text-left px-4 py-2 text-[14px] text-[#101010]`
-- `hover:bg-[#f5f9fe] transition-colors`
+- `hover:bg-[#EBEBEB] transition-colors`
 
-## Complete Pattern
+## Complete Pattern (inside strip row)
 ```tsx
-<div className="flex flex-col gap-[1px]">
+<div
+  ref={dropdownRef}
+  className={`flex w-full flex-col gap-[1px] px-5 py-5 transition-colors hover:bg-[#EBEBEB] md:h-full md:w-auto md:rounded-tl-[12px] md:rounded-bl-[12px] ${isOpen ? "bg-[#EBEBEB]" : ""}`}
+>
   <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold">
     FILTER NAME
   </span>
-  <div className="relative" ref={dropdownRef}>
-    <button
-      className={`flex items-center gap-2 text-[14px] text-[#101010] font-semibold hover:bg-[#f5f9fe] transition-colors ${isOpen ? "bg-[#f5f9fe]" : ""}`}
-      onClick={() => setIsOpen(!isOpen)}
-    >
+  <div className="relative">
+    <button type="button" className="flex items-center gap-2 text-[14px] text-[#101010] font-semibold" onClick={() => setIsOpen(!isOpen)}>
       <span>{selectedValue}</span>
       <ChevronDown className={`size-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
     </button>
-    {isOpen && (
-      <div className="absolute top-full left-0 mt-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[180px] z-10">
-        <div className="py-1">
-          {options.map(opt => (
-            <button key={opt} className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors" onClick={() => { setSelectedValue(opt); setIsOpen(false); }}>
-              {opt}
-            </button>
-          ))}
-        </div>
-      </div>
-    )}
+    {/* …menu */}
   </div>
 </div>
 ```

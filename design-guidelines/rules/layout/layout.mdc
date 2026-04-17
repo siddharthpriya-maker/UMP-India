@@ -75,7 +75,7 @@ Reports uses `w-full h-[1px] bg-[#e0e0e0]` (no bleed) for its top-level dividers
 - Section gaps: `gap-4 md:gap-6`
 - Card grid gaps: `gap-4` or `gap-6`
 - Summary card strip: `gap-1` (4px) between cards + operator symbols
-- Filter row gaps: `gap-5` (20px desktop), `gap-[15px]` (mobile)
+- Filter strip row: `gap-0` between segments (no border dividers)
 - Dashboard surface section: `gap-4 md:gap-6 lg:gap-8`
 
 ## Scrollbar Styling
@@ -178,8 +178,8 @@ useEffect(() => {
 
 - Container: `flex flex-col gap-4 md:gap-6 bg-[#ffffff] min-h-full px-[32px] pt-[12px] pb-[32px]`
 - Title: `text-[32px] font-semibold`
-- Bleed separators: `w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]`
-- Filters row: `flex flex-col md:flex-row gap-[15px] md:gap-5`
+- **No** bleed separators around the filter strip (title flows into summary via page `gap` only).
+- Filters: `rounded-[12px] bg-[#fafafa] p-0 overflow-visible` (menus must not clip); row `flex-col gap-0 md:flex-row md:items-stretch`; every segment **`px-5 py-5`**, `#EBEBEB` hover on wrappers; search tail same padding, **no** `border-l` / `border-t` (`filter-dropdown.mdc`)
   - Left: DATE dropdown + STATUS dropdown
   - Right (`ml-auto`): `SearchWithDropdown`
 - Summary strip: `flex items-center gap-1`
@@ -190,8 +190,8 @@ useEffect(() => {
 - Table: `overflow-x-auto border border-[#e0e0e0] rounded-[12px]`
   - Inner min-width: `min-w-[800px]`
   - Grid: `grid-cols-[90px_1fr_110px_130px_140px_130px_40px] gap-8`
-  - Headers: uppercase `text-[12px] tracking-[0.6px]`
-  - Rows: `hover:bg-[#f5f9fe]` with status chips and `CopyIcon`
+  - Column header row: `bg-[#EBEBEB]`, labels `text-[12px] uppercase tracking-[0.6px] font-semibold text-[#101010]`
+  - Rows: zebra `bg-white` / `bg-[#fafafa]`, `hover:bg-[#f5f9fe]`, no row `border-b`; status chips and `CopyIcon`
 - Pagination: `flex items-center justify-between`
 - Drawer: `PaymentDetailDrawer` for row click
 
@@ -203,13 +203,13 @@ useEffect(() => {
 
 - Container: `px-[32px] pt-[12px] pb-[32px]`
 - Title: `text-[32px] font-semibold` "Settlements"
-- Bleed separators: same calc pattern as Payments
-- Filters row:
+- **No** bleed separators around the filter strip (same as Payments).
+- Filters: same strip pattern as Payments (`p-0`, `gap-0` row, `px-5 py-5` on DURATION + actions tail, no dividers)
   - Left: DURATION dropdown
   - Right (`ml-auto flex gap-3`): `SearchWithDropdown` + Download button
 - Content: `flex flex-col gap-6`, date-grouped sections
   - Date group header: `h3` uppercase
-  - Table per group: `min-w-[960px]`, `grid-cols-[280px_1fr_140px_120px_120px_140px_40px] gap-8`
+  - Table per group: `min-w-[960px]`, `grid-cols-[280px_1fr_140px_120px_120px_140px_40px] gap-8`; column header row `bg-[#EBEBEB]` + primary dark labels; data rows zebra + hover, no row `border-b`
 - Pagination at bottom
 - No summary cards on this page
 
@@ -232,8 +232,7 @@ useEffect(() => {
     - Note box: `rounded-[8px] bg-[#fff4e0] px-4 py-3 max-w-[720px]`
     - Filters: `flex flex-wrap gap-6 items-end`
     - Generate button
-- Recent reports section: `px-[32px] pt-6 gap-4`
-  - Table: `min-w-[900px]`, `grid-cols-[180px_1fr_200px_180px_160px] gap-4`
+- Recent reports section: outer `px-[32px] pt-6`; inner **card** must not use blanket `p-6` around the table (stroke flush with list). Card: `overflow-hidden` + `reportCard`; optional h2 “Recently Generated Reports” with `px-6 pt-6 pb-4` only; table `min-w-[900px]`, `grid-cols-[180px_1fr_200px_180px_160px] gap-4`; listing column header `bg-[#EBEBEB]` + `text-[#101010]`; rows zebra + hover, no row `border-b`; **Pagination below the card** (`flex flex-col gap-0` wrapper), not inside the stroke
   - Failed status: uses `FailedFilledRedIcon` from `Icons.tsx`
 - Pagination with controlled page state
 
@@ -257,7 +256,7 @@ useEffect(() => {
   - CTA: PrimaryButton "Upgrade Account"
   - Footer: `h-px` divider + `px-6 py-3` with warning `text-[12px] text-[#ff9d00]`
 - Secondary tabs: QR | Card Machine | Payment Links
-- Instruments table: `grid-cols-[1fr_1.5fr_0.5fr]` with `border-r` vertical separators
+- Instruments table: `grid-cols-[1fr_1.5fr_0.5fr]` with `border-r` vertical separators; header row `bg-[#EBEBEB]` + primary dark column titles; data rows zebra + hover, no row `border-b` between instruments
   - Charges column: all `font-weight: 400` (NEVER `font-semibold`)
   - Tiered pricing: `flex flex-col gap-1`, tier label `text-[#7e7e7e]`, tier value `text-[#101010]`
   - Free: `text-[#21c179]`
@@ -281,9 +280,9 @@ useEffect(() => {
 ### List View (default)
 - Container: `flex flex-col gap-4 md:gap-6 bg-[#ffffff] min-h-full px-[32px] pt-[12px] pb-[32px]`
 - Title row: "Payment Pages" + "Create Page" PrimaryButton
-- Bleed separators
-- Filters: STATUS dropdown + DATE dropdown + search `w-[320px] h-[40px]`
-- Table: `min-w-[800px]`, `grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr]`
+- **No** bleed separators around the filter strip (same as Payments).
+- Filters: same strip pattern as Payments; search field remains `h-[40px]` inside the right tail wrapper
+- Table: `min-w-[800px]`, `grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr]`; column header row `bg-[#EBEBEB]` + primary dark labels; rows zebra + hover, no row `border-b`
   - Status chips: Active `text-[#21c179] bg-[#e3f6ec]`, Expired `text-[#fd5154] bg-[#ffebef]`, Draft `text-[#7e7e7e] bg-[#fafafa]`
   - Actions: kebab menu (Share, Download QR, Edit, Expire/Reactivate, Delete)
 - Pagination
@@ -411,4 +410,4 @@ useEffect(() => {
 - DO use CSS variables from theme.css
 - DO provide hover states for all interactive elements
 - DO ensure mobile responsiveness
-- DO use edge-to-edge separators with `calc(100%+64px)` pattern in padded pages
+- DO use edge-to-edge separators with `calc(100%+64px)` pattern in padded pages **where a full-bleed rule is intended** — not around the Payments / Settlements / Payment Pages filter rows (those use the inset `#fafafa` card).

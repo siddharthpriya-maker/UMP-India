@@ -16,7 +16,7 @@ Component: `src/app/components/SearchWithDropdown.tsx`
 - Alignment: `ml-auto` (pushes to right)
 
 ## Left Section (Type Dropdown)
-- Trigger: transparent bg, `hover:bg-[#f5f9fe]`, `h-[40px]`, `px-3 py-2`
+- Trigger: transparent bg, `hover:bg-[#EBEBEB]`, open `bg-[#EBEBEB]`, `h-[40px]`, `px-3 py-2` (filter-toolbar hover — same as `filter-dropdown.mdc`)
 - Text: `text-[14px] font-semibold text-[#101010]`, `whitespace-nowrap`
 - Chevron: `size-4`, rotates 180deg when open
 - Options: Transaction ID, Order ID, Refund ID, RRN

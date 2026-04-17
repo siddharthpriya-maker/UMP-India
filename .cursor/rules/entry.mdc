@@ -1,31 +1,27 @@
 ---
-description: Router — merchant dashboard AI instructions under .ai; no design drift without scoped approval
+description: UMP India — routes Agent to .ai policy and design-guidelines; refactor-policy governs UI/behaviour changes.
 alwaysApply: true
 ---
 
-# Cursor rules entry
+# Project rules (entry)
 
-Use **`.ai/`** as the modular instruction system. Start here:
+Use **`@`-references** instead of pasting long excerpts. Modular sources:
 
-| Path | Responsibility |
-|------|----------------|
-| `.ai/core/refactor-policy.md` | **Canonical** frozen UI/behaviour/API vs allowed safe refactors |
-| `.ai/core/rules.md` | Cross-cutting engineering habits (orchestration, extraction) |
-| `.ai/projects/merchant-dashboard.md` | This product: merchant dashboard, **sidebar modules**, stack |
-| **`design-guidelines/`** (root) | **UMP visual system** — `OVERVIEW.md` + `rules/**/*.mdc` (portable; copy folder to other products) |
-| `.ai/projects/ump-design-guidelines.md` | **Stub** → points at `design-guidelines/` |
-| `.ai/skills/build-dashboard-module.md` | Patterns for **any** sidebar module (overview, data, actions, ops, detail) |
-| `.ai/prompts/safe-restructure.md` | Pasteable prompt: safe refactors only |
-| `.ai/prompts/concept-guidelines.md` | Product framing: clarity, workflow, density — **no** redesign-by-default |
+| Concern | Open |
+|--------|------|
+| Frozen UI / API vs safe refactors | `@.ai/core/refactor-policy.md` |
+| Engineering habits | `@.ai/core/rules.md` |
+| Product + sidebar + stack | `@.ai/projects/merchant-dashboard.md` |
+| Visual system summary | `@design-guidelines/OVERVIEW.md` |
+| Spec index (`rules/**/*.mdc`) | `@design-guidelines/INDEX.md` |
+| Pack handoff / new repo | `@design-guidelines/README.md` |
+| Design stub (legacy links) | `@.ai/projects/ump-design-guidelines.md` |
+| Module patterns (Agent Skill) | `@.cursor/skills/build-dashboard-module/SKILL.md` |
+| Subagents (delegated specialists) | `.cursor/agents/*.md` — index `@.cursor/agents/README.md`, reference `@.cursor/docs/subagents.md` |
+| Prompts | `@.ai/prompts/safe-restructure.md`, `@.ai/prompts/concept-guidelines.md` |
 
-## Enforcement
+**Guards:** Instruction-only work → do **not** edit `src/`. Granular design rules do **not** override `@.ai/core/refactor-policy.md`.
 
-Work that touches UI or behaviour: follow **`.ai/core/refactor-policy.md`**. Do not restate exceptions here.
+**Scoped UI rule:** `.cursor/rules/design-guidelines.mdc` (applies when `src/app` or `design-guidelines` files are in context).
 
-## Product code guard
-
-Do **not** modify `src/` when the task is limited to instruction / tooling / `.cursor` / `.ai` layout only.
-
-## Design tokens & components
-
-**Granular `.mdc` specs** live under **`design-guidelines/rules/`** (same pack as `OVERVIEW.md`). Optional Cursor router: **`.cursor/rules/design-guidelines.mdc`**. Use for **explicit** design/token work; they do not override the refactor policy.
+Rule types, globs, and `AGENTS.md`: [cursor.com/docs/rules](https://cursor.com/docs/rules). **Agent Skills** (this repo: `.cursor/skills/`): [cursor.com/docs/skills](https://cursor.com/docs/skills). **Subagents** (this repo: `.cursor/agents/`): [cursor.com/docs/subagents](https://cursor.com/docs/subagents).

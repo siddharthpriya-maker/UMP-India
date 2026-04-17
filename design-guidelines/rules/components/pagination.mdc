@@ -9,7 +9,8 @@ alwaysApply: false
 Reusable component: `src/app/components/Pagination.tsx`
 
 ## Container
-- Flex: `flex items-center gap-4 bg-white py-[24px] px-0` (no horizontal inset — aligns with the listing frame; page already uses `px-[32px]`)
+- Flex: `flex items-center gap-4 bg-white py-[24px] px-0` (no horizontal inset on the component — on full-page listings the page already uses `px-[32px]`)
+- **Listing inside a bordered card (e.g. Reports):** keep `<Pagination />` **below** the card, not inside it — sibling layout: `flex flex-col gap-0` → card (title + table only) → pagination (`table.mdc`).
 - Height: 80px (from vertical padding + 32px-tall buttons)
 - No separator by default — if a top border is needed, add it on the parent
 - **Listing + pagination:** wrap the table and `<Pagination />` in `flex flex-col gap-0` so the page-level `gap-4 md:gap-6` does not insert space between the table and the bar

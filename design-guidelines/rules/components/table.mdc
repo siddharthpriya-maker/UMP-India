@@ -6,24 +6,38 @@ alwaysApply: false
 
 # Table / Listing
 
-## Container
+## Container (standalone on page)
 - `overflow-x-auto border border-[#e0e0e0] rounded-[12px]`
 - Inner min-width wrapper: `min-w-[700px]` or `min-w-[800px]`
 - Layout: CSS Grid with `grid-cols-[...]`
 
-## Header Row
-- Border: `border-b border-[#e0e0e0]`
-- Text: `text-[12px] uppercase tracking-[0.6px] font-semibold text-[#7e7e7e] leading-[16px]`
+## List inside a bordered card (optional section title)
+Use when the listing sits inside an outer **card** (`rounded-[12px] border border-[#e0e0e0] bg-white`) with or without an **h2** above the grid.
+
+- **Do not** wrap the whole card in `p-6` — that creates a visible gap between the card stroke and the listing header/rows.
+- Card shell: `flex flex-col overflow-hidden rounded-[12px] border border-[#e0e0e0] bg-white` (`overflow-hidden` keeps horizontal scroll corners inside the radius).
+- **With title:** `h2` uses `px-6 pt-6 pb-4` (and usual title typography). Listing starts immediately under the title — no `gap` between title block and scroll region if you rely on `pb-4` alone.
+- **Without title:** omit the `h2`; first child is `overflow-x-auto` with the grid (header row still full-bleed to the card’s left/right edges).
+- Grid rows keep **horizontal** `px-6` on the row for cell alignment.
+- **Pagination:** place **outside** the bordered card, directly below the listing wrapper (`flex flex-col gap-0` — card first, then `<Pagination />`). Page horizontal padding aligns the bar with the rest of the screen (same as Payments / Settlements).
+
+## Header Row (listing column titles)
+- Background: `bg-[#EBEBEB]` on the full header grid row
+- Border: `border-b border-[#e0e0e0]` between header and first data row
+- Text: `text-[12px] uppercase tracking-[0.6px] font-semibold text-[#101010] leading-[16px]` (primary / foreground — not muted `#7e7e7e`)
 - Whitespace: `whitespace-nowrap` for multi-word headers
 
+**Note:** Filter field labels above the table (e.g. DATE, STATUS) stay `text-[#7e7e7e]` — only the **in-table column header row** uses this bar + dark text pattern.
+
 ## Data Rows
+- **Zebra:** alternate `bg-white` and `bg-[#fafafa]` by row index (`index % 2`)
+- **No horizontal borders** between data rows — outer listing container keeps `border border-[#e0e0e0]`
 - Cells: `text-[14px] text-[#101010] leading-[24px]`
 - Whitespace: `whitespace-nowrap`
 - Font weight: regular; `font-semibold` for amounts
-- Hover: `hover:bg-[#f5f9fe] transition-colors`
+- Hover: `hover:bg-[#f5f9fe] transition-colors` (overrides zebra while hovered)
 - Cursor: `cursor-pointer` for clickable rows
 - Alignment: `items-center`
-- Last row: NO bottom border (container border suffices)
 
 ## Column Spacing
 - Gap: `gap-8` (32px)
@@ -36,25 +50,25 @@ alwaysApply: false
 ## Variant: Without Vertical Separators
 Padding on the grid ROW, no cell borders.
 ```tsx
-<div className="grid grid-cols-[...] border-b border-[#e0e0e0] px-6 py-3">
-  <span>Header A</span>
-  <span>Header B</span>
+<div className="grid grid-cols-[...] gap-8 bg-[#EBEBEB] px-6 py-3 border-b border-[#e0e0e0]">
+  <span className="text-[12px] font-semibold uppercase tracking-[0.6px] leading-[16px] text-[#101010]">Header A</span>
+  <span className="text-[12px] font-semibold uppercase tracking-[0.6px] leading-[16px] text-[#101010]">Header B</span>
 </div>
-<div className="grid grid-cols-[...] px-6 py-4 hover:bg-[#f5f9fe]">
+<div className={`grid grid-cols-[...] px-6 py-4 transition-colors ${index % 2 === 0 ? "bg-white" : "bg-[#fafafa]"} hover:bg-[#f5f9fe]`}>
   <div>Cell A</div>
   <div>Cell B</div>
 </div>
 ```
 
 ## Variant: With Vertical Separators
-Padding on individual CELLS, `border-r` on each cell except last.
+Padding on individual CELLS, `border-r` on each cell except last. Apply `bg-[#EBEBEB]` on the header grid container; header cell text `text-[#101010]` with uppercase 12px semibold tracking.
 ```tsx
-<div className="grid grid-cols-[...] border-b border-[#e0e0e0]">
-  <p className="px-6 py-3 border-r border-[#e0e0e0]">Header A</p>
-  <p className="px-6 py-3 border-r border-[#e0e0e0]">Header B</p>
-  <p className="px-6 py-3">Header C</p>
+<div className="grid grid-cols-[...] border-b border-[#e0e0e0] bg-[#EBEBEB]">
+  <p className="px-6 py-3 border-r border-[#e0e0e0] text-[12px] font-semibold uppercase tracking-[0.6px] leading-[16px] text-[#101010]">Header A</p>
+  <p className="px-6 py-3 border-r border-[#e0e0e0] text-[12px] font-semibold uppercase tracking-[0.6px] leading-[16px] text-[#101010]">Header B</p>
+  <p className="px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.6px] leading-[16px] text-right text-[#101010]">Header C</p>
 </div>
-<div className="grid grid-cols-[...] hover:bg-[#f5f9fe] border-b border-[#e0e0e0]">
+<div className={`grid grid-cols-[...] transition-colors ${index % 2 === 0 ? "bg-white" : "bg-[#fafafa]"} hover:bg-[#f5f9fe]`}>
   <div className="px-6 py-4 border-r border-[#e0e0e0]">Cell A</div>
   <div className="px-6 py-4 border-r border-[#e0e0e0]">Cell B</div>
   <div className="px-6 py-4">Cell C</div>
@@ -68,6 +82,6 @@ Padding on individual CELLS, `border-r` on each cell except last.
 
 ## Rules
 - DO use CSS Grid — not flexbox or `<table>`
-- DO keep last row without `border-b`
+- DO use zebra rows + hover; do **not** add `border-b` between data rows in the borderless listing variant
 - DO NOT use short inline `<div>` dividers — use cell `border-r`
 - DO NOT put `px-6` on grid rows when using vertical separators

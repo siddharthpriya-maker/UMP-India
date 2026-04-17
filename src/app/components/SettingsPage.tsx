@@ -4,6 +4,7 @@ import { PrimaryButton, TertiaryButton } from "./Button";
 import { PrimaryTabs } from "./Tabs";
 import { SecondaryTabs } from "./Tabs";
 import { DesignInProgress } from "./DesignInProgress";
+import { AccountDetailsContent } from "./AccountDetailsContent";
 import { UPIIcon } from "./Icons";
 
 interface PaymentInstrument {
@@ -265,29 +266,28 @@ function PaymentSettingsContent() {
       {/* Payment Instruments Table */}
       <div className="overflow-x-auto border border-[#e0e0e0] rounded-[12px]">
         <div className="min-w-[700px]">
-          {/* Table Header */}
-          <div className="grid grid-cols-[1fr_1.5fr_0.5fr] border-b border-[#e0e0e0]">
-            <p className="text-[12px] uppercase tracking-[0.6px] font-semibold text-[#7e7e7e] leading-[16px] px-6 py-3 border-r border-[#e0e0e0]">
+          {/* Table header — #EBEBEB bar + primary dark labels */}
+          <div className="grid grid-cols-[1fr_1.5fr_0.5fr] border-b border-[#e0e0e0] bg-[#EBEBEB]">
+            <p className="text-[12px] uppercase tracking-[0.6px] font-semibold text-[#101010] leading-[16px] px-6 py-3 border-r border-[#e0e0e0]">
               Payment Instrument
             </p>
-            <p className="text-[12px] uppercase tracking-[0.6px] font-semibold text-[#7e7e7e] leading-[16px] px-6 py-3 border-r border-[#e0e0e0]">
+            <p className="text-[12px] uppercase tracking-[0.6px] font-semibold text-[#101010] leading-[16px] px-6 py-3 border-r border-[#e0e0e0]">
               Charges
             </p>
-            <p className="text-[12px] uppercase tracking-[0.6px] font-semibold text-[#7e7e7e] leading-[16px] text-right px-6 py-3">
+            <p className="text-[12px] uppercase tracking-[0.6px] font-semibold text-[#101010] leading-[16px] text-right px-6 py-3">
               Status
             </p>
           </div>
 
           {/* Table Rows */}
           {paymentInstruments.map((instrument, index) => {
-            const isLastRow = index === paymentInstruments.length - 1;
-            const borderClass = !isLastRow ? "border-b border-[#e0e0e0]" : "";
+            const rowTint = index % 2 === 0 ? "bg-white" : "bg-[#fafafa]";
 
             if (instrument.name === "Rupay Credit Card via UPI") {
               return (
                 <div
                   key={index}
-                  className={`grid grid-cols-[1fr_1.5fr_0.5fr] grid-rows-[auto_1px_auto] hover:bg-[#f5f9fe] transition-colors ${borderClass}`}
+                  className={`grid grid-cols-[1fr_1.5fr_0.5fr] grid-rows-[auto_1px_auto] transition-colors ${rowTint} hover:bg-[#f5f9fe]`}
                 >
                   {/* Payment Instrument — merged cell spanning both sub-rows */}
                   <div className="row-span-3 flex items-center gap-3 px-6 py-4 border-r border-[#e0e0e0]">
@@ -337,7 +337,7 @@ function PaymentSettingsContent() {
             return (
               <div
                 key={index}
-                className={`grid grid-cols-[1fr_1.5fr_0.5fr] hover:bg-[#f5f9fe] transition-colors ${borderClass}`}
+                className={`grid grid-cols-[1fr_1.5fr_0.5fr] transition-colors ${rowTint} hover:bg-[#f5f9fe]`}
               >
                 {/* Payment Instrument */}
                 <div className="flex items-center gap-3 px-6 py-4 border-r border-[#e0e0e0]">
@@ -409,7 +409,7 @@ export function SettingsPage() {
       case "payout_settings":
         return <DesignInProgress pageName="Payout Settings" />;
       case "account_details":
-        return <DesignInProgress pageName="Account Details" />;
+        return <AccountDetailsContent />;
       case "notifications":
         return <DesignInProgress pageName="Notifications" />;
       default:

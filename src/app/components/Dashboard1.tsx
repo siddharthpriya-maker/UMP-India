@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowRight, Clock, ChevronDown } from "lucide-react";
+import { useNavigate } from "react-router";
+import { ChevronDown } from "lucide-react";
 import imgTataCLiQ from "../../imports/tata-cliq-logo";
 import Payments from "../../imports/Payments-41-36";
 import Settlement from "../../imports/Settlement";
 import Refunds from "../../imports/Refunds";
 
 export function Dashboard1() {
+  const navigate = useNavigate();
   const [dateRange, setDateRange] = useState("Today, 24 Jan");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -92,14 +94,18 @@ export function Dashboard1() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {/* Payments Card */}
-          <div className="bg-[#F5FBFE] rounded-[20px] p-5 flex flex-col gap-3">
+          {/* Shared overview card motion: subtle lift + scale, soft shadow; hover fill slightly richer */}
+          {/* Payments Card — opens Payments */}
+          <button
+            type="button"
+            onClick={() => navigate("/payments")}
+            className="bg-[#F5FBFE] hover:bg-[#E8F3FC] rounded-[20px] p-5 flex flex-col gap-3 w-full min-w-0 text-left cursor-pointer shadow-[0_1px_3px_rgba(16,16,16,0.05)] transition-[background-color,transform,box-shadow] duration-[600ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:scale-[1.006] hover:shadow-[0_8px_22px_-8px_rgba(16,16,16,0.1)] motion-reduce:transition-colors motion-reduce:duration-300 motion-reduce:hover:translate-y-0 motion-reduce:hover:scale-100 motion-reduce:hover:shadow-[0_1px_3px_rgba(16,16,16,0.05)] active:translate-y-0 active:scale-[1] active:duration-300 active:ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004299] focus-visible:ring-offset-2"
+          >
             <div className="flex items-start justify-between">
               <div className="flex flex-col gap-2">
                 <p className="text-sm text-muted-foreground">Payments</p>
                 <div className="flex items-center gap-2">
                   <p className="text-foreground text-[32px]">₹90,00,000</p>
-                  <ArrowRight className="size-5 text-foreground" />
                 </div>
               </div>
               <div className="bg-[var(--background,#ffffff)] rounded-[var(--radius-200,16px)] p-0 flex items-center justify-center">
@@ -116,16 +122,19 @@ export function Dashboard1() {
                 <p className="text-xs text-muted-foreground">Success Rate</p>
               </div>
             </div>
-          </div>
+          </button>
 
-          {/* Settlement Card */}
-          <div className="bg-[#F0FDF4] rounded-[20px] p-5 flex flex-col gap-3">
+          {/* Settlement Card — opens Settlements */}
+          <button
+            type="button"
+            onClick={() => navigate("/settlements")}
+            className="bg-[#F0FDF4] hover:bg-[#E3F6E9] rounded-[20px] p-5 flex flex-col gap-3 w-full min-w-0 text-left cursor-pointer shadow-[0_1px_3px_rgba(16,16,16,0.05)] transition-[background-color,transform,box-shadow] duration-[600ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:scale-[1.006] hover:shadow-[0_8px_22px_-8px_rgba(16,16,16,0.1)] motion-reduce:transition-colors motion-reduce:duration-300 motion-reduce:hover:translate-y-0 motion-reduce:hover:scale-100 motion-reduce:hover:shadow-[0_1px_3px_rgba(16,16,16,0.05)] active:translate-y-0 active:scale-[1] active:duration-300 active:ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004299] focus-visible:ring-offset-2"
+          >
             <div className="flex items-start justify-between">
               <div className="flex flex-col gap-2">
                 <p className="text-sm text-muted-foreground">Settlement</p>
                 <div className="flex items-center gap-2">
                   <p className="text-foreground text-[32px]">₹79,00,000</p>
-                  <ArrowRight className="size-5 text-foreground" />
                 </div>
               </div>
               <div className="bg-[var(--background,#ffffff)] rounded-[var(--radius-200,16px)] p-0 flex items-center justify-center">
@@ -142,16 +151,19 @@ export function Dashboard1() {
                 <p className="text-xs text-muted-foreground">Scheduled</p>
               </div>
             </div>
-          </div>
+          </button>
 
-          {/* Refunds Card */}
-          <div className="bg-[#FEF2F2] rounded-[20px] p-5 flex flex-col gap-3">
+          {/* Refunds Card — opens Refunds */}
+          <button
+            type="button"
+            onClick={() => navigate("/refunds")}
+            className="bg-[#FEF2F2] hover:bg-[#FCE4E4] rounded-[20px] p-5 flex flex-col gap-3 w-full min-w-0 text-left cursor-pointer shadow-[0_1px_3px_rgba(16,16,16,0.05)] transition-[background-color,transform,box-shadow] duration-[600ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:scale-[1.006] hover:shadow-[0_8px_22px_-8px_rgba(16,16,16,0.1)] motion-reduce:transition-colors motion-reduce:duration-300 motion-reduce:hover:translate-y-0 motion-reduce:hover:scale-100 motion-reduce:hover:shadow-[0_1px_3px_rgba(16,16,16,0.05)] active:translate-y-0 active:scale-[1] active:duration-300 active:ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004299] focus-visible:ring-offset-2"
+          >
             <div className="flex items-start justify-between">
               <div className="flex flex-col gap-2">
                 <p className="text-sm text-muted-foreground">Refunds</p>
                 <div className="flex items-center gap-2">
                   <p className="text-foreground text-[32px]">₹10,000</p>
-                  <ArrowRight className="size-5 text-foreground" />
                 </div>
               </div>
               <div className="bg-[var(--background,#ffffff)] rounded-[var(--radius-200,16px)] p-0 flex items-center justify-center">
@@ -164,7 +176,7 @@ export function Dashboard1() {
                 <p className="text-xs text-muted-foreground">Payments</p>
               </div>
             </div>
-          </div>
+          </button>
         </div>
       </div>
     </div>

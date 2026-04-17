@@ -62,8 +62,9 @@ export function Button({
   const variantStyles = {
     primary: "bg-[#004299] text-white enabled:hover:bg-[#012A72]",
     secondary:
-      "border border-[#004299] text-[#004299] enabled:hover:bg-[#e7f1f8] enabled:hover:border-[#012A72] enabled:hover:text-[#012A72]",
-    tertiary: "bg-[#e7f1f8] text-[#004299] enabled:hover:bg-[#f5f9fe] enabled:hover:text-[#012A72]",
+      "border border-[#004299] bg-white text-[#004299] enabled:hover:bg-[#e7f1f8] enabled:hover:border-[#012A72] enabled:hover:text-[#012A72]",
+    tertiary:
+      "bg-[#e7f1f8] text-[#004299] enabled:hover:bg-[#e7f1f8] enabled:hover:text-[#012A72]",
   };
 
   const sizeStyles = {

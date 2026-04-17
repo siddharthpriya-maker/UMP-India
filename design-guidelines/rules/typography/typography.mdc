@@ -42,10 +42,16 @@ Use explicit pixel values in Tailwind (`text-[Npx]`). Never use Tailwind's named
 - Compact: `leading-[16px]` for labels, `leading-[20px]` for buttons, `leading-[24px]` for row data
 - Large: `leading-[40px]` for hero amounts
 
-## Section Header Labels
-Uppercase labels used in tables, filters, and drawer section headers:
+## Uppercase 12px labels
+
+**Filter / meta / drawer section headers** (muted):
 ```
 text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold
+```
+
+**In-table listing column titles** (on `#EBEBEB` bar — see `components/table.mdc`):
+```
+text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px]
 ```
 
 ## Rules

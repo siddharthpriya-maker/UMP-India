@@ -8,7 +8,7 @@ interface ReportMenuProps {
 
 export function ReportMenu({ selectedCategory, onSelectCategory }: ReportMenuProps) {
   return (
-    <nav className="flex flex-col gap-0.5 py-1 px-2" aria-label="Report types">
+    <nav className="flex flex-col gap-1 p-0" aria-label="Report types">
       {REPORT_CATEGORIES.map((cat) => {
         const isActive = cat.id === selectedCategory;
         return (
@@ -16,8 +16,8 @@ export function ReportMenu({ selectedCategory, onSelectCategory }: ReportMenuPro
             key={cat.id}
             type="button"
             onClick={() => onSelectCategory(cat.id)}
-            className={`flex w-full items-center justify-between rounded-[12px] py-3 pl-6 pr-3 text-left transition-colors ${
-              isActive ? "bg-[#e0f5fd] font-bold" : "font-medium hover:bg-[#fafafa]"
+            className={`flex w-full items-center justify-between gap-2 rounded-[12px] px-3 py-3 text-left transition-colors ${
+              isActive ? "bg-[#e0f5fd] font-bold" : "font-normal hover:bg-[#fafafa]"
             }`}
           >
             <span className="text-[14px] leading-[24px] text-[#101010]">{cat.label}</span>

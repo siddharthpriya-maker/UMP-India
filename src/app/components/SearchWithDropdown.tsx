@@ -59,13 +59,15 @@ export function SearchWithDropdown({
 
   return (
     <div
-      className={`flex items-center bg-white border border-[#e0e0e0] rounded-lg h-[40px] ${width} overflow-hidden`}
+      className={`relative flex items-center bg-white border border-[#e0e0e0] rounded-lg h-[40px] ${width} overflow-visible ${
+        isDropdownOpen ? "z-30" : "z-0"
+      }`}
     >
       {/* Dropdown Selector */}
       <div className="relative flex items-center" ref={dropdownRef}>
         <button
-          className={`flex items-center gap-2 text-[14px] text-[#101010] px-3 py-2 hover:bg-[#f5f9fe] h-[40px] transition-colors whitespace-nowrap ${
-            isDropdownOpen ? "bg-[#f5f9fe]" : ""
+          className={`flex items-center gap-2 text-[14px] text-[#101010] px-3 py-2 hover:bg-[#EBEBEB] h-[40px] transition-colors whitespace-nowrap ${
+            isDropdownOpen ? "bg-[#EBEBEB]" : ""
           }`}
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
@@ -77,13 +79,13 @@ export function SearchWithDropdown({
           />
         </button>
         {isDropdownOpen && (
-          <div className="absolute top-full left-0 mt-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[180px] z-10">
+          <div className="absolute bottom-full left-0 mb-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[180px] z-50">
             <div className="py-1">
               {options.map((option) => (
                 <button
                   key={option.value}
-                  className={`w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors ${
-                    selectedOption === option.value ? "bg-[#f5f9fe] font-semibold" : ""
+                  className={`w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors ${
+                    selectedOption === option.value ? "bg-[#EBEBEB] font-semibold" : ""
                   }`}
                   onClick={() => handleOptionSelect(option.value)}
                 >

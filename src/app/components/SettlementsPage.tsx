@@ -101,27 +101,31 @@ export function SettlementsPage() {
       <div className="flex flex-col gap-4">
         <h1 className="text-[32px] font-semibold text-[#101010]">Settlements</h1>
 
-        {/* Top Separator */}
-        <div className="w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]" />
-
-        {/* Filters Row — duration + search widget (same pattern as Payments) */}
-        <div className="flex flex-col md:flex-row gap-[15px] md:gap-5 items-start md:items-center">
+        {/* Filters — flush top/left strip; full-height filter hovers (same pattern as Payments) */}
+        <div className="overflow-visible rounded-[12px] bg-[#fafafa] p-0">
+        <div className="flex flex-col gap-0 md:flex-row md:items-stretch">
           {/* Duration Filter */}
-          <div className="flex flex-col gap-[1px]">
+          <div
+            ref={durationDropdownRef}
+            className={`flex w-full flex-col gap-[1px] px-5 py-5 transition-colors hover:bg-[#EBEBEB] md:h-full md:w-auto md:rounded-bl-[12px] md:rounded-tl-[12px] ${
+              isDurationDropdownOpen ? "relative z-30 bg-[#EBEBEB]" : ""
+            }`}
+          >
             <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold">DURATION</span>
-            <div className="relative" ref={durationDropdownRef}>
+            <div className="relative">
               <button
-                className={`flex items-center gap-2 text-[14px] text-[#101010] font-semibold hover:bg-[#f5f9fe] transition-colors ${isDurationDropdownOpen ? "bg-[#f5f9fe]" : ""}`}
+                type="button"
+                className="flex items-center gap-2 text-[14px] text-[#101010] font-semibold"
                 onClick={() => setIsDurationDropdownOpen(!isDurationDropdownOpen)}
               >
                 <span>{durationFilter}</span>
                 <ChevronDown className={`size-4 transition-transform ${isDurationDropdownOpen ? "rotate-180" : ""}`} />
               </button>
               {isDurationDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[180px] z-10">
+                <div className="absolute bottom-full left-0 mb-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg w-[180px] z-50">
                   <div className="py-1">
                     <button
-                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
+                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors"
                       onClick={() => {
                         setDurationFilter("Daily");
                         setIsDurationDropdownOpen(false);
@@ -130,7 +134,7 @@ export function SettlementsPage() {
                       Daily
                     </button>
                     <button
-                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
+                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors"
                       onClick={() => {
                         setDurationFilter("Weekly");
                         setIsDurationDropdownOpen(false);
@@ -139,7 +143,7 @@ export function SettlementsPage() {
                       Weekly
                     </button>
                     <button
-                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
+                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors"
                       onClick={() => {
                         setDurationFilter("Monthly");
                         setIsDurationDropdownOpen(false);
@@ -148,7 +152,7 @@ export function SettlementsPage() {
                       Monthly
                     </button>
                     <button
-                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
+                      className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#EBEBEB] transition-colors"
                       onClick={() => {
                         setDurationFilter("Custom Range");
                         setIsDurationDropdownOpen(false);
@@ -162,7 +166,7 @@ export function SettlementsPage() {
             </div>
           </div>
 
-          <div className="ml-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+          <div className="flex w-full flex-1 flex-col gap-3 px-5 py-5 sm:flex-row sm:items-center sm:justify-end md:h-full md:w-auto md:flex-1">
             <SearchWithDropdown
               options={settlementSearchOptions}
               defaultOption="utr"
@@ -172,9 +176,7 @@ export function SettlementsPage() {
             </SecondaryButton>
           </div>
         </div>
-
-        {/* Bottom Separator */}
-        <div className="w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]" />
+        </div>
       </div>
 
       <div className="flex flex-col gap-0">
@@ -190,24 +192,24 @@ export function SettlementsPage() {
             {/* Settlements for this date */}
             <div className="overflow-x-auto border border-[#e0e0e0] rounded-[12px]">
               <div className="min-w-[960px]">
-                {/* Table Header */}
-                <div className="grid grid-cols-[280px_1fr_140px_120px_120px_140px_40px] gap-8 px-6 py-3 border-b border-[#e0e0e0]">
-                  <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px]">Time</span>
-                  <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">No. of Payments</span>
-                  <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap text-right">Collection Amount</span>
-                  <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap text-right">Investment</span>
-                  <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap text-right">Deduction</span>
-                  <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap text-right">Net Amount</span>
+                {/* Table header — #EBEBEB bar + primary dark labels */}
+                <div className="grid grid-cols-[280px_1fr_140px_120px_120px_140px_40px] gap-8 bg-[#EBEBEB] px-6 py-3 border-b border-[#e0e0e0]">
+                  <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px]">Time</span>
+                  <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">No. of Payments</span>
+                  <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap text-right">Collection Amount</span>
+                  <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap text-right">Investment</span>
+                  <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap text-right">Deduction</span>
+                  <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap text-right">Net Amount</span>
                   <span></span>
                 </div>
 
-                {/* Table Rows */}
+                {/* Rows: zebra #fff / #fafafa, no row borders (same as Reports) */}
                 {dateGroup.settlements.map((settlement, index) => (
                   <div
                     key={settlement.id}
-                    className={`grid grid-cols-[280px_1fr_140px_120px_120px_140px_40px] gap-8 px-6 py-4 hover:bg-[#f5f9fe] transition-colors cursor-pointer items-center ${
-                      index < dateGroup.settlements.length - 1 ? "border-b border-[#e0e0e0]" : ""
-                    }`}
+                    className={`grid grid-cols-[280px_1fr_140px_120px_120px_140px_40px] gap-8 px-6 py-4 transition-colors cursor-pointer items-center ${
+                      index % 2 === 0 ? "bg-white" : "bg-[#fafafa]"
+                    } hover:bg-[#f5f9fe]`}
                     onClick={() => handleRowClick(settlement.id)}
                   >
                     {/* Time Column with Status */}

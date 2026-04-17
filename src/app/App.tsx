@@ -62,6 +62,7 @@ function AppShell() {
                   <Route path="/settings" element={<SettingsPage />} />
                   <Route path="/refunds" element={<DesignInProgress pageName="Refunds" />} />
                   <Route path="/reports" element={<ReportsPage />} />
+                  <Route path="/report" element={<Navigate to="/reports" replace />} />
                   <Route path="/accept-payments" element={<DesignInProgress pageName="Accept Payments" />} />
                   <Route path="/payment-links" element={<DesignInProgress pageName="Payment Links" />} />
                   <Route path="/payment-pages" element={<PaymentPagesPage />} />

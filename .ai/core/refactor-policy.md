@@ -2,7 +2,7 @@
 
 **Canonical enforcement** for “safe refactor vs frozen UI/behaviour.” Other docs **point here** instead of repeating the full list.
 
-**Also read:** `.ai/core/rules.md`, `.ai/skills/build-dashboard-module.md`, `.ai/projects/merchant-dashboard.md`, `.ai/prompts/concept-guidelines.md`.
+**Also read:** `.ai/core/rules.md`, `.cursor/skills/build-dashboard-module/SKILL.md`, `.ai/projects/merchant-dashboard.md`, `.ai/prompts/concept-guidelines.md`.
 
 ---
 

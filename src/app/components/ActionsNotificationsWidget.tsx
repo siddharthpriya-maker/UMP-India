@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { AlertCircle, CreditCard, Shield, Smartphone } from "lucide-react";
-import { SecondaryTabs } from "./Tabs";
 
 type TabType = "actions" | "notifications";
 
@@ -161,15 +160,32 @@ export function ActionsNotificationsWidget() {
     <div className="bg-white rounded-2xl flex flex-col">
       {/* Tabs - Fixed Header */}
       <div className="shrink-0 p-[24px]">
-        <SecondaryTabs
-          tabs={[
-            { label: `Actions (${actionItems.length})`, value: "actions" },
-            { label: `Notifications (${notifications.length})`, value: "notifications" },
-          ]}
-          activeTab={activeTab}
-          onTabChange={(value) => setActiveTab(value as TabType)}
-          variant="flat"
-        />
+        <div className="flex items-center gap-4">
+          {(
+            [
+              { label: `Actions (${actionItems.length})`, value: "actions" as const },
+              { label: `Notifications (${notifications.length})`, value: "notifications" as const },
+            ] as const
+          ).map((tab) => {
+            const isActive = activeTab === tab.value;
+            return (
+              <button
+                key={tab.value}
+                type="button"
+                onClick={() => setActiveTab(tab.value)}
+                className={`flex h-[32px] min-w-0 items-center justify-center rounded-[8px] px-3 py-1 text-[14px] leading-[20px] transition-colors ${
+                  isActive
+                    ? "bg-[#004299] font-semibold text-white"
+                    : tab.value === "actions"
+                      ? "bg-[#f5f9fe] font-normal text-[#101010] hover:bg-[#e0f5fd]"
+                      : "bg-[#f5f9fe] font-normal text-[#101010] hover:bg-[#f5f9fe]"
+                }`}
+              >
+                <span className="whitespace-nowrap">{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Scrollable Content Area */}
@@ -180,7 +196,11 @@ export function ActionsNotificationsWidget() {
             {actionItems.map((item) => (
               <div
                 key={item.id}
-                className={`relative p-4 transition-colors ${ item.priority === "P0" ? "bg-[#ffebef]/60 hover:bg-[#ffebef]" : "bg-[#fff8e1]/60 hover:bg-[#fff8e1]" } rounded-[16px]`}
+                className={`relative rounded-[16px] p-4 transition-colors ${
+                  item.priority === "P0"
+                    ? "bg-[#ffebef]/60 hover:bg-[#ffebef] hover:shadow-sm"
+                    : "bg-[#fff8e1]/60 hover:bg-[#fff8e1] hover:shadow-sm"
+                }`}
               >
                 <div className="flex items-start gap-3">
                   {/* Content */}
@@ -216,7 +236,11 @@ export function ActionsNotificationsWidget() {
             {notifications.map((notification) => (
               <div
                 key={notification.id}
-                className={`hover:bg-accent/50 transition-colors cursor-pointer ${ !notification.isRead ? "bg-[#F5F9FE]" : "bg-[#F5F9FE]" } p-[16px] rounded-[16px] bg-[#fafafa]`}
+                className={`cursor-pointer rounded-[16px] p-[16px] transition-colors ${
+                  notification.isRead
+                    ? "bg-[#fafafa] hover:bg-[#f5f9fe]"
+                    : "bg-[#F5F9FE] hover:bg-[#e7f1f8]"
+                }`}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex flex-col gap-1 flex-1 min-w-0">
