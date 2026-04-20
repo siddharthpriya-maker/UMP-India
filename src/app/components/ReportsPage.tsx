@@ -6,10 +6,10 @@ import {
   MailOutlinedIcon,
   DownloadOutlinedIcon,
   LinkIcon,
-  SettingIcon,
   FailedFilledRedIcon,
 } from "./Icons";
 import { ReportMenu } from "./ReportMenu";
+import { FilterBar } from "./FilterBar";
 
 type ReportConfig = {
   title: string;
@@ -139,73 +139,71 @@ export function ReportsPage() {
           </div>
 
           <div className={`flex min-h-0 min-w-0 flex-1 flex-col gap-5 p-6 ${reportCard}`}>
-          {/* Header row: title + manage settings */}
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col gap-3">
-              <h2 className="text-[20px] font-medium text-[#101010]">{config.title}</h2>
-              <div
-                className="rounded-[8px] bg-[#fff4e0] px-4 py-3 max-w-[720px]"
-                role="note"
-              >
-                <p className="text-[14px] font-semibold text-[#101010] leading-[20px] mb-1">Please note</p>
-                <p className="text-[14px] text-[#7e7e7e] leading-[24px]">{config.note}</p>
-              </div>
-            </div>
-
-            <SecondaryButton
-              size="medium"
-              type="button"
-              icon={<SettingIcon className="size-5" />}
-              className="shrink-0 whitespace-nowrap"
-            >
-              Manage report settings
-            </SecondaryButton>
+          <div className="flex flex-col gap-2">
+            <h2 className="text-[20px] font-medium text-[#101010]">{config.title}</h2>
+            <p className="text-[14px] leading-[20px] text-[#7e7e7e]" role="note">
+              <span className="font-semibold text-[#101010]">Please note </span>
+              {config.note}
+            </p>
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap gap-6 items-end" ref={filterDropdownRef}>
-            {config.filters.map((filter, idx) => (
-              <div key={filter.label} className="flex flex-col gap-[2px]">
-                <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold">
-                  {filter.label}
-                </span>
-                <div className="relative">
-                  <button
-                    className={`flex items-center gap-2 text-[14px] text-[#101010] font-semibold hover:bg-[#f5f9fe] rounded px-1 py-0.5 transition-colors ${
-                      openFilterIndex === idx ? "bg-[#f5f9fe]" : ""
-                    }`}
-                    onClick={() => setOpenFilterIndex(openFilterIndex === idx ? null : idx)}
-                  >
-                    <span>{filterValues[filter.label] || filter.default}</span>
-                    <ChevronDown className={`size-4 transition-transform ${openFilterIndex === idx ? "rotate-180" : ""}`} />
-                  </button>
-                  {openFilterIndex === idx && (
-                    <div className="absolute top-full left-0 mt-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg min-w-[200px] z-10">
-                      <div className="py-1">
-                        {filter.options.map((opt) => (
-                          <button
-                            key={opt}
-                            className="w-full text-left px-4 py-2 text-[14px] text-[#101010] hover:bg-[#f5f9fe] transition-colors"
-                            onClick={() => {
-                              setFilterValues({ ...filterValues, [filter.label]: opt });
-                              setOpenFilterIndex(null);
-                            }}
-                          >
-                            {opt}
-                          </button>
-                        ))}
+          {/* Filters — same FilterBar shell as Payments / Settlements */}
+          <div ref={filterDropdownRef}>
+            <FilterBar>
+              {config.filters.map((filter, idx) => (
+                <div
+                  key={filter.label}
+                  className={`flex w-full flex-col gap-[1px] px-5 py-5 transition-colors hover:bg-[#EBEBEB] md:h-full md:w-auto ${
+                    idx === 0 ? "md:rounded-bl-[12px] md:rounded-tl-[12px]" : ""
+                  } ${openFilterIndex === idx ? "relative z-30 bg-[#EBEBEB]" : ""}`}
+                >
+                  <span className="text-[12px] text-[#7e7e7e] uppercase tracking-[0.6px] font-semibold">
+                    {filter.label}
+                  </span>
+                  <div className="relative min-w-0">
+                    <button
+                      type="button"
+                      className="flex max-w-full items-center gap-2 text-left text-[14px] font-semibold text-[#101010]"
+                      onClick={() => setOpenFilterIndex(openFilterIndex === idx ? null : idx)}
+                    >
+                      <span className="min-w-0 truncate">{filterValues[filter.label] || filter.default}</span>
+                      <ChevronDown
+                        className={`size-4 shrink-0 transition-transform ${openFilterIndex === idx ? "rotate-180" : ""}`}
+                      />
+                    </button>
+                    {openFilterIndex === idx && (
+                      <div className="absolute left-0 top-full z-50 mt-1 min-w-[200px] rounded-lg border border-[#e0e0e0] bg-white shadow-lg">
+                        <div className="py-1">
+                          {filter.options.map((opt) => (
+                            <button
+                              key={opt}
+                              type="button"
+                              className="w-full px-4 py-2 text-left text-[14px] text-[#101010] transition-colors hover:bg-[#EBEBEB]"
+                              onClick={() => {
+                                setFilterValues({ ...filterValues, [filter.label]: opt });
+                                setOpenFilterIndex(null);
+                              }}
+                            >
+                              {opt}
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
 
-          {/* Add Multiple Filters */}
-          <button className="text-[14px] text-[#004299] font-medium hover:text-[#009de5] transition-colors self-start">
-            +Add Multiple Filters
-          </button>
+              <div className="flex w-full flex-1 items-center px-5 py-5 md:h-full md:w-auto md:flex-1 md:justify-end">
+                <button
+                  type="button"
+                  className="text-[14px] font-medium text-[#004299] transition-colors hover:text-[#009de5]"
+                >
+                  +Add Multiple Filters
+                </button>
+              </div>
+            </FilterBar>
+          </div>
 
           {/* Action Buttons */}
           <div className="flex items-center gap-3 mt-auto pt-2">

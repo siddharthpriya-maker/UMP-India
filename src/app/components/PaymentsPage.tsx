@@ -126,20 +126,22 @@ function summaryBreakdownMeta(key: SummaryBreakdownKey): {
 
 type BreakdownAnchorRect = { top: number; left: number; width: number; height: number };
 
-/** Figma Frame 1261156551 — 320×228, padding 12×20, inner column gap 12px, row gap 4px, shadow, blue tint on white */
+/** Expanded breakdown: fixed width; height hugs content (capped to viewport below anchor). */
 const PANEL_W = 320;
-const PANEL_H = 228;
 const collectionsFigmaRows: {
   label: string;
   amount: string;
+  /** Parenthetical count (e.g. transactions); muted, separate from currency amount. */
+  count?: string;
   labelClass?: string;
   amountClass: string;
   info?: boolean;
 }[] = [
   {
     label: "Payments",
-    amount: "(1145) ₹9,12,950.60",
-    amountClass: "text-[14px] font-normal leading-[20px] text-[#7e7e7e]",
+    count: "(1145)",
+    amount: "₹9,12,950.60",
+    amountClass: "text-[14px] font-semibold leading-[20px] text-[#101010]",
   },
   {
     label: "Tip",
@@ -213,7 +215,8 @@ function PaymentsSummaryExpandedPanel({
   const vh = typeof window !== "undefined" ? window.innerHeight : 800;
   const margin = 16;
   const panelLeft = Math.min(anchor.left, vw - PANEL_W - margin);
-  const panelTop = Math.min(anchor.top, vh - PANEL_H - margin);
+  const panelTop = anchor.top;
+  const maxPanelHeight = Math.max(120, vh - anchor.top - margin);
 
   const collectionsBg: CSSProperties =
     active === "collections"
@@ -234,10 +237,10 @@ function PaymentsSummaryExpandedPanel({
           left: panelLeft,
           top: panelTop,
           width: PANEL_W,
-          height: PANEL_H,
+          maxHeight: maxPanelHeight,
           ...collectionsBg,
         }}
-        className={`pointer-events-auto z-[1] flex h-full w-full flex-col items-stretch gap-3 overflow-hidden rounded-[12px] px-5 py-3 shadow-[0_0_10px_rgba(0,0,0,0.15)] ${
+        className={`pointer-events-auto z-[1] flex min-h-0 flex-col items-stretch gap-3 overflow-hidden rounded-[12px] p-5 shadow-[0_0_10px_rgba(0,0,0,0.15)] ${
           active === "collections" ? "" : meta.surface
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -254,7 +257,7 @@ function PaymentsSummaryExpandedPanel({
 
         <div className="h-px w-full shrink-0 bg-[#e0e0e0]" />
 
-        <div className="flex min-h-0 w-full flex-1 flex-col gap-1 overflow-y-auto">
+        <div className="flex min-h-0 w-full flex-1 flex-col gap-1 overflow-y-auto overscroll-contain">
             {active === "collections"
               ? collectionsFigmaRows.map((row) => (
                   <div
@@ -269,7 +272,7 @@ function PaymentsSummaryExpandedPanel({
                     >
                       {row.label}
                     </span>
-                    <div className="flex justify-end gap-1">
+                    <div className="flex items-baseline justify-end gap-2">
                       {row.info && (
                         <button
                           ref={reversalInfoBtnRef}
@@ -285,7 +288,12 @@ function PaymentsSummaryExpandedPanel({
                           <Info className="size-4" strokeWidth={2} />
                         </button>
                       )}
-                      <span className={`tabular-nums ${row.amountClass}`}>{row.amount}</span>
+                      {row.count != null && (
+                        <span className="shrink-0 tabular-nums text-[12px] font-normal leading-[16px] text-[#101010]">
+                          {row.count}
+                        </span>
+                      )}
+                      <span className={`shrink-0 tabular-nums ${row.amountClass}`}>{row.amount}</span>
                     </div>
                   </div>
                 ))

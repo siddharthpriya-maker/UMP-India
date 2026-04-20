@@ -233,10 +233,10 @@ useEffect(() => {
     - Active: `bg-[#e0f5fd] font-bold`
     - Menu items: Payment Report, Settlement Report, UTR Reconciliation, GST Report
   - **Vertical separator:** `w-[1px] bg-[#e0e0e0]`
-  - **Right — Config:** `flex-1 px-8 py-5 flex flex-col gap-5`
-    - Note box: `rounded-[8px] bg-[#fff4e0] px-4 py-3 max-w-[720px]`
-    - Filters: `flex flex-wrap gap-6 items-end`
-    - Generate button
+  - **Right — Config:** `flex-1 p-6 flex flex-col gap-5` (card)
+    - Report title (`h2`), then **one line**: `Please note` (`text-[14px] font-semibold text-[#101010]`) immediately followed by note copy (`text-[#7e7e7e]`, same line) — **no** tinted callout card; **no** “Manage report settings” CTA
+    - Filters: **`FilterBar`** — same shell as Payments / Settlements (`#fafafa`, `rounded-[12px]`); inner row `px-5 py-5` per filter column, `hover:bg-[#EBEBEB]`, first column `md:rounded-tl-[12px] md:rounded-bl-[12px]`; dropdown panels `z-50`; tail: **+Add Multiple Filters** (`md:flex-1 md:justify-end`)
+    - Generate + Send to Email buttons
 - Recent reports section: outer `px-[32px] pt-6`; inner **card** must not use blanket `p-6` around the table (stroke flush with list). Card: `overflow-hidden` + `reportCard`; optional h2 “Recently Generated Reports” with `px-6 pt-6 pb-4` only; table `min-w-[900px]`, `grid-cols-[180px_1fr_200px_180px_160px] gap-4`; listing column header `bg-[#EBEBEB]` + `text-[#101010]`; rows zebra + hover, no row `border-b`; **Pagination below the card** (`flex flex-col gap-0` wrapper), not inside the stroke
   - Failed status: uses `FailedFilledRedIcon` from `Icons.tsx`
 - Pagination with controlled page state
