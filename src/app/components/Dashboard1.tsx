@@ -1,40 +1,36 @@
-import { useMemo } from "react";
 import { useNavigate } from "react-router";
 import imgTataCLiQ from "../../imports/tata-cliq-logo";
 import Payments from "../../imports/Payments-41-36";
 import Settlement from "../../imports/Settlement";
 import Refunds from "../../imports/Refunds";
-import {
-  computeBusinessOverviewMetrics,
-  formatInrRupees,
-  type OverviewSelection,
-} from "../data/businessOverviewDataset";
+import { formatInrRupees } from "../data/businessOverviewDataset";
 import { useAnimatedNumber } from "../hooks/useAnimatedNumber";
 import { BusinessOverviewDateRangePicker } from "./BusinessOverviewDateRangePicker";
+import { useMerchantReporting } from "../context/MerchantReportingContext";
 
-export interface Dashboard1Props {
-  overviewSelection: OverviewSelection;
-  onOverviewSelectionChange: (next: OverviewSelection) => void;
-}
-
-export function Dashboard1({ overviewSelection, onOverviewSelectionChange }: Dashboard1Props) {
+export function Dashboard1() {
   const navigate = useNavigate();
+  const {
+    businessOverviewDateSelection,
+    setBusinessOverviewDateSelection,
+    paymentsPageSummary,
+  } = useMerchantReporting();
 
-  const overviewMetrics = useMemo(
-    () => computeBusinessOverviewMetrics(overviewSelection),
-    [overviewSelection],
+  const overview = paymentsPageSummary.overview;
+
+  const animPaymentsRupees = useAnimatedNumber(
+    Math.round(paymentsPageSummary.collectionsTotalRupees),
   );
-
-  const animPaymentsRupees = useAnimatedNumber(overviewMetrics.paymentsTotalRupees);
-  const animPaymentsCount = useAnimatedNumber(overviewMetrics.paymentsCount);
-  const animSuccessTenths = useAnimatedNumber(Math.round(overviewMetrics.successRatePercent * 10));
-  const animSettlementRupees = useAnimatedNumber(overviewMetrics.settlementTotalRupees);
-  const animRefundsRupees = useAnimatedNumber(overviewMetrics.refundsTotalRupees);
-  const animRefundsCount = useAnimatedNumber(overviewMetrics.refundsPaymentCount);
+  const animPaymentsCount = useAnimatedNumber(paymentsPageSummary.paymentsCount);
+  const animSuccessTenths = useAnimatedNumber(Math.round(overview.successRatePercent * 10));
+  const animSettlementRupees = useAnimatedNumber(
+    Math.round(paymentsPageSummary.settlementProcessedRupees),
+  );
+  const animRefundsRupees = useAnimatedNumber(Math.round(overview.refundsTotalRupees));
+  const animRefundsCount = useAnimatedNumber(overview.refundsPaymentCount);
 
   return (
     <div className="bg-white p-4 md:p-6 lg:p-8 flex flex-col gap-4 md:gap-6">
-      {/* Business Header */}
       <div className="flex flex-col sm:flex-row items-start justify-between w-full gap-4">
         <div className="flex flex-col gap-3">
           <h1 className="font-medium leading-tight lg:leading-[48px] text-foreground text-[42px]">Tata cliq</h1>
@@ -47,20 +43,17 @@ export function Dashboard1({ overviewSelection, onOverviewSelectionChange }: Das
         </div>
       </div>
 
-      {/* Business Overview */}
       <div className="flex flex-col gap-4 md:gap-6">
         <div className="flex flex-row items-center gap-2 h-[40px]">
           <h2 className="text-[20px] font-medium leading-[24px] text-foreground">Business Overview</h2>
           <BusinessOverviewDateRangePicker
-            selection={overviewSelection}
-            onSelectionChange={onOverviewSelectionChange}
+            selection={businessOverviewDateSelection}
+            onSelectionChange={setBusinessOverviewDateSelection}
             variant="default"
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {/* Shared overview card motion: subtle lift + scale, soft shadow; hover fill slightly richer */}
-          {/* Payments Card — opens Payments */}
           <button
             type="button"
             onClick={() => navigate("/payments")}
@@ -95,7 +88,6 @@ export function Dashboard1({ overviewSelection, onOverviewSelectionChange }: Das
             </div>
           </button>
 
-          {/* Settlement Card — opens Settlements */}
           <button
             type="button"
             onClick={() => navigate("/settlements")}
@@ -126,7 +118,6 @@ export function Dashboard1({ overviewSelection, onOverviewSelectionChange }: Das
             </div>
           </button>
 
-          {/* Refunds Card — opens Refunds */}
           <button
             type="button"
             onClick={() => navigate("/refunds")}

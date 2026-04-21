@@ -145,7 +145,7 @@ useEffect(() => {
 
 **Files:** `Dashboard.tsx` → `Dashboard1.tsx` + `Dashboard2.tsx`
 
-**Date filters:** Business Overview, Payment Summary, and Payment Sources each use the same **preset + custom range** control (`BusinessOverviewDateRangePicker`) but **separate** `OverviewSelection` state so changing one does not change the others.
+**Date filters (Home):** **Payment Summary** and **Payment Sources** each have their own `OverviewSelection` in `Dashboard.tsx` → `Dashboard2` (independent pickers and chart data). **Business Overview** uses `MerchantReportingProvider` (`src/app/context/MerchantReportingContext.tsx`): same period and `OverviewSelection` as **`/payments` DATE** so overview cards and Payments summary stay aligned.
 
 ### Dashboard1 — Business Overview
 - Container: `bg-white p-4 md:p-6 lg:p-8 flex flex-col gap-4 md:gap-6`

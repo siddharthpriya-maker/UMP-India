@@ -19,12 +19,8 @@ import { FilterBar } from "./FilterBar";
 import { Pagination } from "./Pagination";
 import { Overlay } from "./Overlay";
 import SuccessSmall from "../../imports/SuccessSmall";
-import {
-  computePaymentsPageSummary,
-  formatInrRupeesPrecise,
-  type OverviewSelection,
-  type PaymentsPageSummaryComputed,
-} from "../data/businessOverviewDataset";
+import { formatInrRupeesPrecise, type PaymentsPageSummaryComputed } from "../data/businessOverviewDataset";
+import { useMerchantReporting } from "../context/MerchantReportingContext";
 import {
   formatOverviewDate,
   labelForSelection,
@@ -406,10 +402,11 @@ function PaymentsSummaryExpandedPanel({
 }
 
 export function PaymentsPage() {
-  const [paymentsDateSelection, setPaymentsDateSelection] = useState<OverviewSelection>({
-    kind: "quick",
-    preset: "today",
-  });
+  const {
+    businessOverviewDateSelection,
+    setBusinessOverviewDateSelection,
+    paymentsPageSummary: paymentSummary,
+  } = useMerchantReporting();
   const [paymentsDatePanel, setPaymentsDatePanel] = useState<"presets" | "custom">("presets");
   const [statusFilter, setStatusFilter] = useState("Success");
   const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
@@ -425,11 +422,9 @@ export function PaymentsPage() {
   const adjustmentsCardRef = useRef<HTMLDivElement>(null);
   const deductionsCardRef = useRef<HTMLDivElement>(null);
 
-  const paymentRangeLabel = useMemo(() => labelForSelection(paymentsDateSelection), [paymentsDateSelection]);
-
-  const paymentSummary = useMemo(
-    () => computePaymentsPageSummary(paymentsDateSelection),
-    [paymentsDateSelection],
+  const paymentRangeLabel = useMemo(
+    () => labelForSelection(businessOverviewDateSelection),
+    [businessOverviewDateSelection],
   );
 
   useEffect(() => {
@@ -507,12 +502,12 @@ export function PaymentsPage() {
   ];
 
   const applyPaymentsDatePreset = (preset: PaymentsDatePresetQuick) => {
-    setPaymentsDateSelection({ kind: "quick", preset });
+    setBusinessOverviewDateSelection({ kind: "quick", preset });
     setIsDateDropdownOpen(false);
   };
 
   const handlePaymentsCustomRangeConfirm = (from: Date, to: Date) => {
-    setPaymentsDateSelection({ kind: "custom", from, to });
+    setBusinessOverviewDateSelection({ kind: "custom", from, to });
     setPaymentsDatePanel("presets");
     setIsDateDropdownOpen(false);
   };

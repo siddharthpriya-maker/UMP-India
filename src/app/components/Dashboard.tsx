@@ -5,19 +5,13 @@ import { ActivationSuccessPopup } from "./ActivationSuccessPopup";
 import { PaymentLimitDrawer } from "./PaymentLimitDrawer";
 import type { OverviewSelection } from "../data/businessOverviewDataset";
 
+const defaultHomeChartSelection: OverviewSelection = { kind: "quick", preset: "today" };
+
 export function Dashboard() {
-  const [businessOverviewSelection, setBusinessOverviewSelection] = useState<OverviewSelection>({
-    kind: "quick",
-    preset: "today",
-  });
-  const [paymentSummarySelection, setPaymentSummarySelection] = useState<OverviewSelection>({
-    kind: "quick",
-    preset: "today",
-  });
-  const [paymentSourcesSelection, setPaymentSourcesSelection] = useState<OverviewSelection>({
-    kind: "quick",
-    preset: "today",
-  });
+  const [paymentSummarySelection, setPaymentSummarySelection] =
+    useState<OverviewSelection>(defaultHomeChartSelection);
+  const [paymentSourcesSelection, setPaymentSourcesSelection] =
+    useState<OverviewSelection>(defaultHomeChartSelection);
   const [showActivation, setShowActivation] = useState(() => {
     const seen = sessionStorage.getItem("activation_popup_seen");
     return !seen;
@@ -36,10 +30,7 @@ export function Dashboard() {
 
   return (
     <div className="flex w-full min-h-full flex-col bg-[var(--background,#ffffff)]">
-      <Dashboard1
-        overviewSelection={businessOverviewSelection}
-        onOverviewSelectionChange={setBusinessOverviewSelection}
-      />
+      <Dashboard1 />
       <Dashboard2
         paymentSummarySelection={paymentSummarySelection}
         onPaymentSummarySelectionChange={setPaymentSummarySelection}

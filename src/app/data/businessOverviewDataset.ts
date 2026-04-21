@@ -2,6 +2,10 @@
  * Synthetic business overview numbers for the merchant dashboard.
  * Each calendar month has an 8-digit INR payment total (10,000,000–99,999,999),
  * split across days with deterministic “shape” (weekday vs weekend).
+ *
+ * **App shell:** `MerchantReportingContext` holds **Business Overview** `OverviewSelection` (same as
+ * `/payments` DATE) and memoized `computeBusinessOverviewMetrics` / `computePaymentsPageSummary`.
+ * Home **Payment Summary** and **Payment Sources** use separate selections in `Dashboard.tsx`.
  */
 
 export type OverviewQuickPreset = "today" | "yesterday" | "thisWeek" | "thisMonth";

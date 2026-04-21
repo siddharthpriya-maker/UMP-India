@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { Download } from "lucide-react";
 import {
   ComposedChart,
@@ -24,9 +24,96 @@ import {
 import { labelForSelection } from "../lib/businessOverviewRangeLabels";
 import { BusinessOverviewDateRangePicker } from "./BusinessOverviewDateRangePicker";
 
+export type Dashboard2Props = {
+  paymentSummarySelection: OverviewSelection;
+  onPaymentSummarySelectionChange: (next: OverviewSelection) => void;
+  paymentSourcesSelection: OverviewSelection;
+  onPaymentSourcesSelectionChange: (next: OverviewSelection) => void;
+};
+
+/** Payment Sources donut: clockwise sweep when the date filter changes (Recharts sector animation). */
+const PAYMENT_SOURCES_PIE_CW_MS = 500;
+
 const PAYMENT_SUMMARY_RESET_MS = 420;
+/** Bar height animation — line L→R draw starts only after this (kept in sync with `<Bar animationDuration>`). */
 const PAYMENT_SUMMARY_BAR_ANIM_MS = 400;
-const PAYMENT_SUMMARY_LINE_ANIM_MS = 450;
+/** Recharts default line morph — disabled so stroke-dash “draw” owns motion */
+const PAYMENT_SUMMARY_LINE_MORPH_MS = 0;
+/** Left-to-right stroke reveal for the count line (ms), runs after bars finish */
+const PAYMENT_SUMMARY_LINE_DRAW_MS = 1800;
+
+/** CSS `cubic-bezier(0.25, 0.1, 0.25, 1)` — X = time, Y = draw progress (matches previous transition feel). */
+const BEZIER_X1 = 0.25;
+const BEZIER_Y1 = 0.1;
+const BEZIER_X2 = 0.25;
+const BEZIER_Y2 = 1;
+
+function cubicBezierComponent(t: number, p0: number, p1: number, p2: number, p3: number): number {
+  const u = 1 - t;
+  return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3;
+}
+
+/** Maps linear clock `u` in [0,1] to eased draw progress in [0,1]. */
+function easePaymentLineDraw(u: number): number {
+  if (u <= 0) return 0;
+  if (u >= 1) return 1;
+  let lo = 0;
+  let hi = 1;
+  for (let i = 0; i < 12; i++) {
+    const mid = (lo + hi) * 0.5;
+    const x = cubicBezierComponent(mid, 0, BEZIER_X1, BEZIER_X2, 1);
+    if (x < u) lo = mid;
+    else hi = mid;
+  }
+  const T = (lo + hi) * 0.5;
+  return cubicBezierComponent(T, 0, BEZIER_Y1, BEZIER_Y2, 1);
+}
+
+/** Arc length along `path` closest to dot center (px). */
+function arcLengthClosestToPoint(path: SVGPathElement, px: number, py: number, totalLen: number): number {
+  const step = Math.max(2, totalLen / 200);
+  let bestS = 0;
+  let bestD = Infinity;
+  for (let s = 0; s <= totalLen; s += step) {
+    const pt = path.getPointAtLength(s);
+    const d = (pt.x - px) ** 2 + (pt.y - py) ** 2;
+    if (d < bestD) {
+      bestD = d;
+      bestS = s;
+    }
+  }
+  const refine = step;
+  for (let s = Math.max(0, bestS - refine); s <= Math.min(totalLen, bestS + refine); s += 0.5) {
+    const pt = path.getPointAtLength(s);
+    const d = (pt.x - px) ** 2 + (pt.y - py) ** 2;
+    if (d < bestD) {
+      bestD = d;
+      bestS = s;
+    }
+  }
+  return bestS;
+}
+
+function queryPaymentLineDotCircles(root: HTMLElement): SVGCircleElement[] {
+  return Array.from(root.querySelectorAll<SVGCircleElement>(".recharts-line-dots circle"));
+}
+
+function setLineDotsHidden(root: HTMLElement, hidden: boolean) {
+  queryPaymentLineDotCircles(root).forEach((c) => {
+    if (hidden) c.style.opacity = "0";
+    else c.style.removeProperty("opacity");
+  });
+}
+
+function computeDotArcLengths(path: SVGPathElement, circles: SVGCircleElement[], totalLen: number): number[] {
+  if (circles.length === 0) return [];
+  return circles.map((c) => {
+    const cx = Number(c.getAttribute("cx"));
+    const cy = Number(c.getAttribute("cy"));
+    if (!Number.isFinite(cx) || !Number.isFinite(cy)) return 0;
+    return arcLengthClosestToPoint(path, cx, cy, totalLen);
+  });
+}
 
 function selectionKey(s: OverviewSelection): string {
   if (s.kind === "quick") return `q:${s.preset}`;
@@ -37,11 +124,14 @@ function zeroSeries(points: HomePaymentDayPoint[]): HomePaymentDayPoint[] {
   return points.map((p) => ({ ...p, amount: 0, count: 0 }));
 }
 
-export interface Dashboard2Props {
-  paymentSummarySelection: OverviewSelection;
-  onPaymentSummarySelectionChange: (next: OverviewSelection) => void;
-  paymentSourcesSelection: OverviewSelection;
-  onPaymentSourcesSelectionChange: (next: OverviewSelection) => void;
+function seriesHasVisibleCountLine(series: HomePaymentDayPoint[]): boolean {
+  return series.length > 0 && series.some((p) => p.count > 0);
+}
+
+function resetLineStrokeDraw(path: SVGPathElement) {
+  path.style.transition = "none";
+  path.removeAttribute("stroke-dasharray");
+  path.removeAttribute("stroke-dashoffset");
 }
 
 export function Dashboard2({
@@ -55,6 +145,21 @@ export function Dashboard2({
     [paymentSummarySelection],
   );
 
+  const paymentSourcesData = useMemo(
+    () => computePaymentSourceBreakdown(paymentSourcesSelection),
+    [paymentSourcesSelection],
+  );
+
+  const paymentSourcesPieReducedMotion = useSyncExternalStore(
+    (onStoreChange) => {
+      const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+      mq.addEventListener("change", onStoreChange);
+      return () => mq.removeEventListener("change", onStoreChange);
+    },
+    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () => false,
+  );
+
   const [paymentChartDisplaySeries, setPaymentChartDisplaySeries] = useState<HomePaymentDayPoint[]>(
     () => paymentSeries,
   );
@@ -66,6 +171,121 @@ export function Dashboard2({
     raf1: null,
     raf2: null,
   });
+
+  const paymentSummaryChartRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const root = paymentSummaryChartRef.current;
+    if (!root) return;
+
+    const reduceMotion =
+      typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let rafOuter = 0;
+    let rafInner = 0;
+    let lineDrawRaf = 0;
+    let lineRevealAfterBarsTimer: ReturnType<typeof setTimeout> | null = null;
+
+    rafOuter = requestAnimationFrame(() => {
+      rafInner = requestAnimationFrame(() => {
+        const path = root.querySelector<SVGPathElement>("path.recharts-line-curve");
+        if (!path) return;
+
+        if (!seriesHasVisibleCountLine(paymentChartDisplaySeries)) {
+          resetLineStrokeDraw(path);
+          setLineDotsHidden(root, false);
+          return;
+        }
+
+        if (reduceMotion) {
+          resetLineStrokeDraw(path);
+          setLineDotsHidden(root, false);
+          return;
+        }
+
+        const len = path.getTotalLength();
+        if (!Number.isFinite(len) || len <= 0) return;
+
+        // Hide line + green dots until bar animation completes; then rAF-draw line and reveal dots in path order.
+        resetLineStrokeDraw(path);
+        path.setAttribute("stroke-dasharray", String(len));
+        path.setAttribute("stroke-dashoffset", String(len));
+        void path.getBoundingClientRect();
+        setLineDotsHidden(root, true);
+
+        lineRevealAfterBarsTimer = setTimeout(() => {
+          lineRevealAfterBarsTimer = null;
+          const p = root.querySelector<SVGPathElement>("path.recharts-line-curve");
+          if (!p || !seriesHasVisibleCountLine(paymentChartDisplaySeries)) {
+            setLineDotsHidden(root, false);
+            return;
+          }
+          const L = p.getTotalLength();
+          if (!Number.isFinite(L) || L <= 0) {
+            setLineDotsHidden(root, false);
+            return;
+          }
+
+          resetLineStrokeDraw(p);
+          p.setAttribute("stroke-dasharray", String(L));
+          p.setAttribute("stroke-dashoffset", String(L));
+
+          let circles = queryPaymentLineDotCircles(root);
+          let arcLengths =
+            circles.length > 0 ? computeDotArcLengths(p, circles, L) : ([] as number[]);
+
+          const start = performance.now();
+
+          const tick = (now: number) => {
+            if (circles.length === 0) {
+              circles = queryPaymentLineDotCircles(root);
+              if (circles.length > 0) arcLengths = computeDotArcLengths(p, circles, L);
+            }
+
+            const elapsed = now - start;
+            const u = Math.min(1, elapsed / PAYMENT_SUMMARY_LINE_DRAW_MS);
+            const prog = easePaymentLineDraw(u);
+            const offset = L * (1 - prog);
+            const visible = L - offset;
+
+            p.setAttribute("stroke-dashoffset", String(offset));
+
+            if (circles.length > 0 && arcLengths.length === circles.length) {
+              circles.forEach((c, i) => {
+                const target = arcLengths[i] ?? 0;
+                c.style.opacity = visible + 0.75 >= target ? "1" : "0";
+              });
+            }
+
+            if (u < 1) {
+              lineDrawRaf = requestAnimationFrame(tick);
+            } else {
+              lineDrawRaf = 0;
+              p.setAttribute("stroke-dashoffset", "0");
+              circles.forEach((c) => {
+                c.style.removeProperty("opacity");
+              });
+            }
+          };
+
+          lineDrawRaf = requestAnimationFrame(tick);
+        }, PAYMENT_SUMMARY_BAR_ANIM_MS);
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(rafOuter);
+      cancelAnimationFrame(rafInner);
+      cancelAnimationFrame(lineDrawRaf);
+      if (lineRevealAfterBarsTimer != null) {
+        clearTimeout(lineRevealAfterBarsTimer);
+        lineRevealAfterBarsTimer = null;
+      }
+      const path = root.querySelector<SVGPathElement>("path.recharts-line-curve");
+      if (path) resetLineStrokeDraw(path);
+      setLineDotsHidden(root, false);
+    };
+  }, [paymentChartDisplaySeries]);
 
   useEffect(() => {
     const key = selectionKey(paymentSummarySelection);
@@ -128,15 +348,7 @@ export function Dashboard2({
     return clearTimers;
   }, [paymentSummarySelection, paymentSeries]);
 
-  const paymentSourcesData = useMemo(
-    () => computePaymentSourceBreakdown(paymentSourcesSelection),
-    [paymentSourcesSelection],
-  );
-
-  const chartRangeCaption = useMemo(
-    () => labelForSelection(paymentSummarySelection),
-    [paymentSummarySelection],
-  );
+  const chartRangeCaption = labelForSelection(paymentSummarySelection);
 
   const formatYAxis = (value: number) => {
     if (value >= 100000) {
@@ -167,7 +379,8 @@ export function Dashboard2({
                 Download Report
               </SecondaryButton>
             </div>
-            <ResponsiveContainer width="100%" height={280}>
+            <div ref={paymentSummaryChartRef} className="relative w-full min-h-[280px]">
+              <ResponsiveContainer width="100%" height={280}>
               <ComposedChart data={paymentChartDisplaySeries} margin={{ top: 10, right: 30, left: -20, bottom: 5 }}>
                 <defs>
                   <linearGradient id="colorLine" x1="0" y1="0" x2="0" y2="1">
@@ -200,6 +413,7 @@ export function Dashboard2({
                   tickLine={false}
                 />
                 <Tooltip
+                  cursor={{ stroke: "rgba(21, 118, 219, 0.35)", strokeWidth: 1 }}
                   contentStyle={{
                     backgroundColor: "white",
                     border: "1px solid #e0e0e0",
@@ -240,13 +454,29 @@ export function Dashboard2({
                   stroke="#21C179"
                   name="No of Payments"
                   strokeWidth={2}
-                  dot={{ fill: "#21C179", r: 3 }}
-                  isAnimationActive
-                  animationDuration={PAYMENT_SUMMARY_LINE_ANIM_MS}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  dot={{
+                    fill: "#21C179",
+                    r: 3,
+                    stroke: "#ffffff",
+                    strokeWidth: 1,
+                    className: "cursor-pointer",
+                  }}
+                  activeDot={{
+                    r: 6,
+                    fill: "#21C179",
+                    stroke: "#ffffff",
+                    strokeWidth: 2,
+                    className: "cursor-pointer",
+                  }}
+                  isAnimationActive={PAYMENT_SUMMARY_LINE_MORPH_MS > 0}
+                  animationDuration={PAYMENT_SUMMARY_LINE_MORPH_MS}
                   animationEasing="ease-in-out"
                 />
               </ComposedChart>
             </ResponsiveContainer>
+            </div>
             <div className="flex items-center justify-between ml-[0px] mr-[60px] mt-[0px] mb-[0px]">
               <div className="text-sm text-muted-foreground px-[60px] py-[0px] min-w-0 truncate">
                 {chartRangeCaption}
@@ -284,6 +514,7 @@ export function Dashboard2({
                 <ResponsiveContainer width="100%" height={300} className="md:!h-[350px]">
                   <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
                     <Pie
+                      key={selectionKey(paymentSourcesSelection)}
                       data={paymentSourcesData}
                       cx="50%"
                       cy="50%"
@@ -291,6 +522,12 @@ export function Dashboard2({
                       outerRadius={127}
                       paddingAngle={2}
                       dataKey="value"
+                      startAngle={90}
+                      endAngle={-270}
+                      isAnimationActive={!paymentSourcesPieReducedMotion}
+                      animationBegin={0}
+                      animationDuration={PAYMENT_SOURCES_PIE_CW_MS}
+                      animationEasing="ease-out"
                       className="md:!innerRadius-[101] md:!outerRadius-[152] lg:!innerRadius-[101] lg:!outerRadius-[177]"
                     >
                       {paymentSourcesData.map((entry) => (
