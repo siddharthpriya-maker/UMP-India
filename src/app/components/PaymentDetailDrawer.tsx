@@ -1,4 +1,5 @@
-import { Copy, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
+import { CopyIcon } from "./Icons";
 import {
   RightDrawer,
   DrawerHeader,
@@ -10,6 +11,9 @@ import {
   DrawerCard,
   DrawerCardRow,
 } from "./RightDrawer";
+
+/** Paytm Business / merchant help — opens in a new tab from drawer header. */
+const MERCHANT_HELP_CENTER_HREF = "https://help.paytm.com/hc/en-us";
 
 interface PaymentTransaction {
   id: number;
@@ -55,7 +59,12 @@ export function PaymentDetailDrawer({
       <DrawerHeader
         onClose={onClose}
         actions={
-          <a href="#" className="text-[14px] text-[#00b8f5] font-semibold hover:underline">
+          <a
+            href={MERCHANT_HELP_CENTER_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[14px] font-semibold text-[#004299] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#004299]"
+          >
             Need Help?
           </a>
         }
@@ -96,9 +105,9 @@ export function PaymentDetailDrawer({
         <DrawerRow
           label="Customer ID"
           value={
-            <span className="flex items-center gap-1.5 justify-end">
-              <CopyButton text="416278990" />
-              416278990
+            <span className="inline-flex items-center justify-end gap-2">
+              <span className="text-[14px] text-[#101010]">416278990</span>
+              <CopyButton text="416278990" label="Customer ID" />
             </span>
           }
         />
@@ -112,18 +121,18 @@ export function PaymentDetailDrawer({
         <DrawerRow
           label="Order ID"
           value={
-            <span className="flex items-center gap-1.5 justify-end">
-              <CopyButton text="******123456" />
-              ******123456
+            <span className="inline-flex items-center justify-end gap-2">
+              <span className="text-[14px] text-[#101010]">******123456</span>
+              <CopyButton text="******123456" label="Order ID" />
             </span>
           }
         />
         <DrawerRow
           label="Transaction ID"
           value={
-            <span className="flex items-center gap-1.5 justify-end">
-              <CopyButton text="******278990" />
-              ******278990
+            <span className="inline-flex items-center justify-end gap-2">
+              <span className="text-[14px] text-[#101010]">******278990</span>
+              <CopyButton text="******278990" label="Transaction ID" />
             </span>
           }
         />
@@ -145,17 +154,19 @@ export function PaymentDetailDrawer({
   );
 }
 
-function CopyButton({ text }: { text: string }) {
+function CopyButton({ text, label }: { text: string; label: string }) {
   const handleCopy = () => {
     navigator.clipboard.writeText(text).catch(() => {});
   };
 
   return (
     <button
+      type="button"
       onClick={handleCopy}
-      className="text-[#00b8f5] hover:text-[#004299] transition-colors shrink-0"
+      aria-label={`Copy ${label}`}
+      className="inline-flex shrink-0 items-center justify-center text-[#004299] transition-colors hover:text-[#009de5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#004299]"
     >
-      <Copy className="size-3.5" />
+      <CopyIcon className="size-4" aria-hidden />
     </button>
   );
 }

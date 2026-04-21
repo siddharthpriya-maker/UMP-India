@@ -31,6 +31,8 @@ Use this pattern whenever the glyph explains data, opens a hint, or toggles a co
 | **Color** | Parent `text-[#004299]` (primary / interactive per *Icon Colors*); strokes use `currentColor` |
 | **Accessibility** | Icon-only or ambiguous controls: `aria-label` (and `aria-expanded` when toggling) on the **button** |
 | **Touch** | Prefer wrapping hit area with `p-1` / `min-h-9 min-w-9` if the layout is dense; the **glyph** stays 16×16 |
+| **Tooltip / detail surface** | Opens on **pointer hover** and **click** (click **toggles** when the surface is stateful). Use a **short delay** (~150–250ms) before closing on `pointerleave` so the cursor can move from the icon onto the surface. When the surface is **portaled**, attach the same cancel/schedule close logic to the **tooltip container** so it counts as part of the hover target. |
+| **Row alignment** | In tables and summary rows, wrap the control in `inline-flex items-center` (or align the row with `items-center`); keep the glyph at **16×16** (`size-4`) and use **`leading-none`** on the control if the icon sits high relative to adjacent text. |
 
 **Similar use cases** (same 16×16 rule): compact “learn more” / disclosure chevrons paired with primary text already use **Inline Small**; any **small circled letter or help mark** beside copy in forms, filters, or data rows should match this row, not **Inline Medium**.
 
@@ -50,7 +52,7 @@ Only these named exports from `Icons.tsx` are imported in `src/app/components/`:
 
 | Icon | Used in | Size | Context |
 |---|---|---|---|
-| `CopyIcon` | PaymentsPage, SettlementsPage | `size-4` | Copy control in table rows; parent `text-[#004299]` |
+| `CopyIcon` | PaymentsPage, SettlementsPage, PaymentDetailDrawer | `size-4` | Copy control in table rows / drawer value rows; parent `text-[#004299]` |
 | `CalenderOutlinedIcon` | TextField | `size-[24px]` | Date field trailing icon |
 | `UPIIcon` | SettingsPage | `size-6` | Payment instruments list (brand colors, not currentColor) |
 | `MailOutlinedIcon` | ReportsPage | `size-5` | Report row action |
@@ -170,7 +172,7 @@ function ProductIcon() {
 |---|---|
 | Device/service card | `size-10 rounded-[8px] bg-[#e0f5fd] flex items-center justify-center` |
 | Promo card / Connect Plus tile | `size-12 rounded-[12px] bg-[#e0f5fd] flex items-center justify-center` |
-| Circular (success status) | `size-10 rounded-full bg-[#e3f6ec] flex items-center justify-center` |
+| Drawer hero / detail success (no tile) | `size-10 shrink-0` wrapper, **`SuccessSmall`** fills 40×40 (e.g. `DrawerHero`, Payment limit success) |
 | Circular (shield / consent) | `size-10 rounded-[12px] bg-[#00b8f5] flex items-center justify-center` |
 | Sidebar L1 nav pill | `h-8 w-[60px] rounded-[32px]`, active `bg-[#b1e6fb]` |
 | Builder section label | badge on hover/selection with `border-[#004299]` |
@@ -205,6 +207,7 @@ function ProductIcon() {
 - Add `strokeLinecap="round"`, `strokeLinejoin="round"`
 - Wrap in bg container for card contexts
 - Check `Icons.tsx` first before adding Lucide or inline SVG
+- For **`Info` tooltips** that show extra detail: support **hover open** and **click toggle**, delayed **pointer-leave** close, and include the **tooltip panel** in the hover target when portaled (see *Informational icons* table)
 
 ### DO NOT
 - Hardcode hex in SVG paths (except documented brand icons)

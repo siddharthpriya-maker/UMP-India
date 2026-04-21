@@ -15,7 +15,6 @@ Use **`@`-references** instead of pasting long excerpts. Modular sources:
 | Visual system summary | `@design-guidelines/OVERVIEW.md` |
 | Spec index (`rules/**/*.mdc`) | `@design-guidelines/INDEX.md` |
 | Pack handoff / new repo | `@design-guidelines/README.md` |
-| Design stub (legacy links) | `@.ai/projects/ump-design-guidelines.md` |
 | Module patterns (Agent Skill) | `@.cursor/skills/build-dashboard-module/SKILL.md` |
 | Subagents (delegated specialists) | `.cursor/agents/*.md` — index `@.cursor/agents/README.md`, reference `@.cursor/docs/subagents.md` |
 | Prompts | `@.ai/prompts/safe-restructure.md`, `@.ai/prompts/concept-guidelines.md` |

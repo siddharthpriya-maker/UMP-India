@@ -111,7 +111,7 @@
 ## 4. Layout & shell
 
 - **16:9 product frame:** App shell (sidebar + header + main) is letterboxed in the largest 16:9 rectangle; classes `.app-product-letterbox` / `.app-product-frame`.
-- **Main scroll:** `flex-1 min-h-0 overflow-y-auto` on `.shell-main-canvas`; max-width `1440px` centered; sidebar inner stack scrolls independently.
+- **Main scroll:** `flex-1 min-h-0 overflow-y-auto` on `.shell-main-canvas`; **full width** of the main column; Home (Dashboard) overview and charts **scroll in one column** with the rest of the page.
 - **Page container (standard):** `flex flex-col gap-4 md:gap-6 bg-white min-h-full px-[32px] pt-[12px] pb-[32px]`. Exception: Settings uses `pt-[20px]`.
 - **Page titles:** no horizontal rule or `border-b` under the `h1` unless a module is explicitly spec’d with one (`layout.mdc` — **Page titles**).
 - **Edge-to-edge separator:** `w-[calc(100%+64px)] h-[1px] bg-[#e0e0e0] mx-[-32px]` (use where a full-bleed rule is intended; **Payments**, **Settlements**, and **Payment Pages** list filters use **`FilterBar`** (`FilterBar.tsx`): an inset `rounded-[12px] bg-[#fafafa] p-0` strip with **no** bleed lines above/below; filter columns use **flush** hover fill (`#EBEBEB`) to the strip edges with uniform **`px-5 py-5`** on every segment and **`gap-0`** between columns (no vertical divider) — see `layout.mdc` and `filter-dropdown.mdc`.

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Clock, Info, CheckCircle } from "lucide-react";
+import { Clock, Info } from "lucide-react";
+import SuccessSmall from "../../imports/SuccessSmall";
 import {
   RightDrawer,
   DrawerHeader,
@@ -86,8 +87,8 @@ export function PaymentLimitDrawer({ open, onClose }: PaymentLimitDrawerProps) {
         <DrawerHeader onClose={onClose} />
         <DrawerBody>
           <div className="flex flex-col items-center justify-center flex-1 min-h-[400px] gap-6 px-8">
-            <div className="size-16 rounded-full bg-[#e3f6ec] flex items-center justify-center">
-              <CheckCircle className="size-8 text-[#21c179]" />
+            <div className="size-10 shrink-0" aria-hidden>
+              <SuccessSmall />
             </div>
             <div className="flex flex-col items-center gap-2">
               <h2 className="text-[20px] font-bold text-[#101010] leading-[28px]">

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { ChevronDown, Link2, FileText } from "lucide-react";
 import svgPaths from "../../imports/svg-9d73oqi9lc";
-import RefundsDuo from "../../imports/RefundsDuo-41-367";
+import RefundsDuo from "../../imports/RefundsDuo";
 import SettingsDuo from "../../imports/SettingsDuo";
 import Dev from "../../imports/Dev";
 import ReportDuo from "../../imports/ReportDuo";

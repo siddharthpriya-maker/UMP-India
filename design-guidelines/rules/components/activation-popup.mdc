@@ -13,10 +13,12 @@ Appears once per session on first login via `sessionStorage`.
 - Uses `Overlay` (strong) + standard popup shell (`w-[620px] max-h-[90vh] rounded-[4px]`)
 - Scrollable content area + fixed CTA + footer bar
 
-## Hero
-- Success circle: `size-10 rounded-full bg-[#e3f6ec]`, `CheckCircle size-6 text-[#21c179]`
-- Title: `text-[20px] font-bold text-[#101010]` — "Your account is now active"
-- Subtitle: `text-[14px] text-[#7e7e7e]` — Merchant ID
+## Hero (Figma activation graphic)
+- **Row layout:** horizontal `flex items-center gap-4` — graphic is one column (`shrink-0` 63×63), headline + subtext is a second column (`flex-1 min-w-0 flex-col gap-1`) so the icon and the text block are **vertically centred** as one row (taller side sets row height).
+- **Graphic:** `src/assets/icons/activation.svg` (63×63, success mark + drop shadow) — import in `ActivationSuccessPopup` and render as `<img width={63} height={63} alt="" aria-hidden />` (decorative beside headline)
+- **No** extra tinted circle behind the asset — the SVG includes the white ring, green fill, and checkmark
+- **Headline:** `text-[20px] font-bold leading-[28px] text-[#101010]` — default: **Your account is** + **`Activated !`** in **`#21C179`** (omit `headline` prop). Optional `headline` replaces entire title (plain string).
+- **Subtext:** `text-[14px] leading-[20px] text-[#7e7e7e]` — default single line **Merchant ID:** + value from `merchantId` (default demo id). Override with `subheadline` if needed.
 
 ## Info Card (single card, line-separated sections)
 Container: `border border-[#e0e0e0] rounded-[12px] divide-y divide-[#e0e0e0]`

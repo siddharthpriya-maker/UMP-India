@@ -292,12 +292,10 @@ html {
   flex-direction: column;
 }
 
-/* Routed content: centered design column (1440 reference); scroll lives in this layer (see App.tsx). */
+/* Routed content: fills remaining width beside sidebar; scroll lives in this layer (see App.tsx). */
 .shell-main-canvas {
   width: 100%;
-  max-width: 1440px;
-  margin-left: auto;
-  margin-right: auto;
+  min-width: 0;
 }
 
 /* Loader dots pulse animation */

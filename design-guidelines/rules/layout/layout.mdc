@@ -17,7 +17,7 @@ The **entire** shell (sidebar + header + content) is drawn inside the **largest 
 | Inner chrome | `flex h-full w-full min-h-0 overflow-hidden bg-white` → **Sidebar** + column |
 | Main column | `flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden` → **Header** + **`<main>`** |
 | `<main>` | `flex min-h-0 flex-1 flex-col overflow-hidden bg-[#f5f9fe]` |
-| `.shell-main-canvas` | `min-h-0 min-w-0 flex-1 overflow-y-auto`; CSS: `width: 100%; max-width: 1440px; margin: 0 auto` |
+| `.shell-main-canvas` | `min-h-0 min-w-0 flex-1 overflow-y-auto`; CSS: `width: 100%; min-width: 0` — fills main column; single scroll for routed content (e.g. Home overview + charts scroll together) |
 
 Non-16:9 viewports show letterboxing (gray bars). Sidebar nav uses `overflow-y-auto` on its inner stack; main uses `.shell-main-canvas` for route-content scrolling.
 
@@ -144,6 +144,8 @@ useEffect(() => {
 ## L1: Home → Dashboard (`/home`)
 
 **Files:** `Dashboard.tsx` → `Dashboard1.tsx` + `Dashboard2.tsx`
+
+**Date filters:** Business Overview, Payment Summary, and Payment Sources each use the same **preset + custom range** control (`BusinessOverviewDateRangePicker`) but **separate** `OverviewSelection` state so changing one does not change the others.
 
 ### Dashboard1 — Business Overview
 - Container: `bg-white p-4 md:p-6 lg:p-8 flex flex-col gap-4 md:gap-6`

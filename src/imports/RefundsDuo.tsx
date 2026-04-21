@@ -1,4 +1,4 @@
-import svgPaths from "./svg-amrq5n33l7";
+import svgPaths from "./svg-xpuou6yokz";
 
 export default function RefundsDuo() {
   return (

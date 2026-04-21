@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, type ReactNode } from "react";
-import { ChevronDown, Download, Info, IndianRupee, RefreshCw } from "lucide-react";
+import { ChevronDown, Download, Info } from "lucide-react";
+import RefundsDuo from "../../imports/RefundsDuo";
 import { FilterBar } from "./FilterBar";
 import { SearchWithDropdown } from "./SearchWithDropdown";
 import { SecondaryButton } from "./Button";
@@ -267,9 +268,8 @@ export function RefundsPage() {
 
         <div className="flex min-h-[min(60vh,420px)] flex-col items-center justify-center gap-4 rounded-[12px] border border-[#e0e0e0] bg-white px-6 py-16">
           <div className="flex size-20 items-center justify-center rounded-full bg-[#e0f5fd]">
-            <div className="relative flex items-center justify-center">
-              <IndianRupee className="size-10 text-[#101010]" strokeWidth={1.75} />
-              <RefreshCw className="absolute -bottom-0.5 -right-0.5 size-5 text-[#004299]" strokeWidth={2} aria-hidden />
+            <div className="size-10 shrink-0 text-[#101010]" aria-hidden>
+              <RefundsDuo />
             </div>
           </div>
           <p className="max-w-md text-center text-[14px] text-[#101010]">

@@ -1,10 +1,15 @@
-import { CheckCircle, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import activationHero from "../../assets/icons/activation.svg";
 import { Overlay } from "./Overlay";
 
 interface ActivationSuccessPopupProps {
   visible: boolean;
   onClose: () => void;
   onUpgradeLimit?: () => void;
+  /** Plain headline; omit for default “Your account is **Activated !**” (green segment). */
+  headline?: string;
+  /** Line under headline; omit for `Merchant ID: …` using `merchantId`. */
+  subheadline?: string;
   merchantId?: string;
   paymentLimit?: string;
   settlementCycle?: string;
@@ -14,11 +19,18 @@ export function ActivationSuccessPopup({
   visible,
   onClose,
   onUpgradeLimit,
+  headline,
+  subheadline,
   merchantId = "MQQVCS05838368647127",
   paymentLimit = "₹50,000 / month",
   settlementCycle = "T+2 days",
 }: ActivationSuccessPopupProps) {
   if (!visible) return null;
+
+  const subtext =
+    subheadline != null && subheadline !== ""
+      ? subheadline
+      : `Merchant ID: ${merchantId}`;
 
   return (
     <Overlay visible={visible} strength="strong" onClose={onClose}>
@@ -28,17 +40,30 @@ export function ActivationSuccessPopup({
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex-1 overflow-y-auto px-8 pt-8 pb-6 flex flex-col gap-5">
-            {/* Hero */}
-            <div className="flex items-start gap-4">
-              <div className="size-10 rounded-full bg-[#e3f6ec] flex items-center justify-center shrink-0">
-                <CheckCircle className="size-6 text-[#21c179]" />
-              </div>
-              <div className="flex flex-col gap-0.5">
-                <h2 className="text-[20px] font-bold text-[#101010] leading-[28px]">
-                  Your account is now active
-                </h2>
-                <p className="text-[14px] text-[#7e7e7e]">
-                  Merchant ID: {merchantId}
+            {/* Hero — graphic + single text column, vertically centred as one row */}
+            <div className="flex items-center gap-4">
+              <img
+                src={activationHero}
+                alt=""
+                width={63}
+                height={63}
+                decoding="async"
+                className="h-[63px] w-[63px] shrink-0"
+                aria-hidden
+              />
+              <div className="flex min-w-0 flex-1 flex-col gap-1">
+                {headline ? (
+                  <h2 className="text-[20px] font-bold leading-[28px] text-[#101010]">
+                    {headline}
+                  </h2>
+                ) : (
+                  <h2 className="text-[20px] font-bold leading-[28px] text-[#101010]">
+                    Your account is{" "}
+                    <span className="text-[#21C179]">Activated !</span>
+                  </h2>
+                )}
+                <p className="text-[14px] leading-[20px] text-[#7e7e7e] tabular-nums">
+                  {subtext}
                 </p>
               </div>
             </div>

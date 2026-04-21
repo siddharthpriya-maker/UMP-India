@@ -60,7 +60,7 @@ Triggered from "Upgrade limit" button in `ActivationSuccessPopup`.
 
 ### State: Success / Review Pending
 - `DrawerHeader` (X close) + centered body
-- Success icon: `size-16 rounded-full bg-[#e3f6ec]`, `CheckCircle size-8 text-[#21c179]`
+- Success icon: **`SuccessSmall`** in a **`size-10`** wrapper only (no circle background) — same 40×40 success treatment as `DrawerHero` / `right-drawer.mdc`
 - Title: `text-[20px] font-bold` — "Verification submitted"
 - Subtitle: `text-[14px] text-[#7e7e7e]` — "All done from your side."
 - Info card: `bg-[#fafafa] rounded-[12px] px-5 py-4`, two muted lines explaining next steps

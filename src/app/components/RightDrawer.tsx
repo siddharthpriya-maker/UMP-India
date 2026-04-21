@@ -1,6 +1,7 @@
 import { useEffect, useCallback, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { X } from "lucide-react";
+import { ArrowUpRight, Clock, X, XCircle } from "lucide-react";
+import SuccessSmall from "../../imports/SuccessSmall";
 
 function getAppProductFrame(): HTMLElement | null {
   if (typeof document === "undefined") return null;
@@ -75,12 +76,14 @@ interface DrawerHeaderProps {
 
 export function DrawerHeader({ onClose, actions }: DrawerHeaderProps) {
   return (
-    <div className="flex items-center justify-between px-8 pt-5 pb-3 shrink-0">
+    <div className="flex min-h-8 items-center justify-between gap-4 px-8 pt-5 pb-3 shrink-0">
       <button
+        type="button"
         onClick={onClose}
-        className="size-8 flex items-center justify-center rounded-[4px] hover:bg-[#f5f9fe] transition-colors"
+        className="flex h-8 w-8 shrink-0 items-center justify-start text-[#101010] hover:opacity-70 transition-opacity"
+        aria-label="Close"
       >
-        <X className="size-5 text-[#101010]" />
+        <X className="size-5 shrink-0" strokeWidth={1.75} aria-hidden />
       </button>
       {actions && (
         <div className="flex items-center gap-4">
@@ -105,13 +108,6 @@ export function DrawerBody({ children }: { children: ReactNode }) {
 
 type StatusVariant = "success" | "pending" | "failed" | "submitted";
 
-const statusConfig: Record<StatusVariant, { bg: string; icon: string }> = {
-  success: { bg: "text-[#21c179]", icon: "✓" },
-  pending: { bg: "text-[#ff9d00]", icon: "⏳" },
-  failed: { bg: "text-[#fd5154]", icon: "✕" },
-  submitted: { bg: "text-[#004299]", icon: "↗" },
-};
-
 interface DrawerHeroProps {
   title: string;
   amount: string;
@@ -119,30 +115,48 @@ interface DrawerHeroProps {
   status?: StatusVariant;
 }
 
+/** All drawer hero status glyphs: 40×40px, no tile background (`icons.mdc` / UMP right drawer). */
+function DrawerHeroStatusIcon({ status }: { status: StatusVariant }) {
+  switch (status) {
+    case "success":
+      return (
+        <div className="size-10 shrink-0" aria-hidden>
+          <SuccessSmall />
+        </div>
+      );
+    case "pending":
+      return (
+        <Clock className="size-10 shrink-0 text-[#ff9d00]" aria-hidden strokeWidth={1.75} />
+      );
+    case "failed":
+      return (
+        <XCircle className="size-10 shrink-0 text-[#fd5154]" aria-hidden strokeWidth={1.75} />
+      );
+    case "submitted":
+      return (
+        <ArrowUpRight
+          className="size-10 shrink-0 text-[#004299]"
+          aria-hidden
+          strokeWidth={1.75}
+        />
+      );
+  }
+}
+
 export function DrawerHero({ title, amount, subtitle, status }: DrawerHeroProps) {
   return (
-    <div className="flex items-start justify-between px-8 pb-5">
-      <div className="flex flex-col gap-0.5">
-        <span className="text-[14px] font-semibold text-[#101010]">{title}</span>
-        <span className="text-[32px] font-bold text-[#101010] leading-[40px]">{amount}</span>
-        {subtitle && (
-          <span className="text-[12px] text-[#7e7e7e]">{subtitle}</span>
-        )}
+    <div className="flex flex-col gap-0.5 px-8 pb-5">
+      <span className="whitespace-pre-line text-[14px] font-semibold text-[#101010]">
+        {title}
+      </span>
+      <div className="flex items-center justify-between gap-4">
+        <span className="min-w-0 text-[32px] font-bold leading-[40px] text-[#101010]">
+          {amount}
+        </span>
+        {status ? <DrawerHeroStatusIcon status={status} /> : null}
       </div>
-      {status && (
-        <div
-          className={`size-10 rounded-full flex items-center justify-center text-[20px] shrink-0 ${
-            status === "success"
-              ? "bg-[#e3f6ec]"
-              : status === "pending"
-                ? "bg-[#fff4e0]"
-                : status === "failed"
-                  ? "bg-[#ffebef]"
-                  : "bg-[#e7f1f8]"
-          }`}
-        >
-          <span className={statusConfig[status].bg}>{statusConfig[status].icon}</span>
-        </div>
+      {subtitle && (
+        <span className="text-[12px] text-[#7e7e7e]">{subtitle}</span>
       )}
     </div>
   );

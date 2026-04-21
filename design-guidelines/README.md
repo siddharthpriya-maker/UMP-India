@@ -90,7 +90,6 @@ If the new repo also uses Cursor with UMP’s engineering guardrails, copy **`.a
 If you are **inside** the UMP India repository:
 
 - Canonical documentation lives at **`design-guidelines/`** (not under `.ai/core/`).
-- **`.ai/projects/ump-design-guidelines.md`** is a stub that points here for backwards compatibility.
 - **`.cursor/rules/entry.mdc`** routes agents to `.ai/` + this pack; optional router: **`.cursor/rules/design-guidelines.mdc`**. **`.cursor/skills/`** holds Agent Skills (e.g. dashboard modules).
 
 ---

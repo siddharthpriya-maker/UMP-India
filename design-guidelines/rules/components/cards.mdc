@@ -28,15 +28,15 @@ Radius & padding constants:
 - Shape: `rounded-[20px]`, padding: `p-5`
 - Layout: `flex flex-col gap-3`
 - Grid: `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6`
-- Top row: `flex items-start justify-between` — label left, illustration right
+- Top row: `flex items-start justify-between` — label + amount left, illustration right
 - Label: `text-[14px] text-muted-foreground` (semantic token)
 - Amount: `text-[32px] font-semibold text-foreground` (semantic token)
 - Illustration: in white tile `bg-[var(--background,#ffffff)] rounded-[var(--radius-200,16px)]`
-- Arrow: `ArrowRight` `size-5` — for navigation affordance
+- Arrow: `ArrowRight` `size-5` — optional navigation affordance (guidelines preview)
 - Divider: `border-t border-border pt-3` (semantic token)
 - Footer stats: two-column layout, `text-[14px]` values / `text-[12px]` labels
-- Success rate accent: `#00c853` (current implementation) — guidelines reference `#21c179`
-- Hover: none on metric cards themselves
+- Payments success rate accent: `#00c853` in dashboard code — guidelines preview may use `#21c179`
+- Hover: none on metric cards themselves (dashboard uses motion on the card shell in code)
 - No CTAs inside cards
 
 ---

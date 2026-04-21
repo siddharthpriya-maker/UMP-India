@@ -1,45 +1,36 @@
-import { useState, useRef, useEffect } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router";
-import { ChevronDown } from "lucide-react";
 import imgTataCLiQ from "../../imports/tata-cliq-logo";
 import Payments from "../../imports/Payments-41-36";
 import Settlement from "../../imports/Settlement";
 import Refunds from "../../imports/Refunds";
+import {
+  computeBusinessOverviewMetrics,
+  formatInrRupees,
+  type OverviewSelection,
+} from "../data/businessOverviewDataset";
+import { useAnimatedNumber } from "../hooks/useAnimatedNumber";
+import { BusinessOverviewDateRangePicker } from "./BusinessOverviewDateRangePicker";
 
-export function Dashboard1() {
+export interface Dashboard1Props {
+  overviewSelection: OverviewSelection;
+  onOverviewSelectionChange: (next: OverviewSelection) => void;
+}
+
+export function Dashboard1({ overviewSelection, onOverviewSelectionChange }: Dashboard1Props) {
   const navigate = useNavigate();
-  const [dateRange, setDateRange] = useState("Today, 24 Jan");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Click outside handler
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
+  const overviewMetrics = useMemo(
+    () => computeBusinessOverviewMetrics(overviewSelection),
+    [overviewSelection],
+  );
 
-    if (isDropdownOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isDropdownOpen]);
-
-  const handleDateOptionClick = (option: string) => {
-    if (option === "today") {
-      setDateRange("Today, 24 Jan");
-    } else if (option === "yesterday") {
-      setDateRange("Yesterday, 23 Jan");
-    } else if (option === "custom") {
-      // For now, just set a placeholder. You can add a date picker later
-      setDateRange("Custom Date");
-    }
-    setIsDropdownOpen(false);
-  };
+  const animPaymentsRupees = useAnimatedNumber(overviewMetrics.paymentsTotalRupees);
+  const animPaymentsCount = useAnimatedNumber(overviewMetrics.paymentsCount);
+  const animSuccessTenths = useAnimatedNumber(Math.round(overviewMetrics.successRatePercent * 10));
+  const animSettlementRupees = useAnimatedNumber(overviewMetrics.settlementTotalRupees);
+  const animRefundsRupees = useAnimatedNumber(overviewMetrics.refundsTotalRupees);
+  const animRefundsCount = useAnimatedNumber(overviewMetrics.refundsPaymentCount);
 
   return (
     <div className="bg-white p-4 md:p-6 lg:p-8 flex flex-col gap-4 md:gap-6">
@@ -60,37 +51,11 @@ export function Dashboard1() {
       <div className="flex flex-col gap-4 md:gap-6">
         <div className="flex flex-row items-center gap-2 h-[40px]">
           <h2 className="text-[20px] font-medium leading-[24px] text-foreground">Business Overview</h2>
-          <div className="relative" ref={dropdownRef}>
-            <button 
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-2 text-sm text-[#101010] bg-[#f5f9fe] rounded-lg px-3 py-1.5 hover:bg-gray-50 h-[40px]"
-            >
-              <span>{dateRange}</span>
-              <ChevronDown className={`size-4 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`} />
-            </button>
-            
-            {/* Dropdown Menu */}
-            {isDropdownOpen && (
-              <div className="absolute top-full left-0 mt-2 w-[200px] bg-white rounded-lg shadow-lg border border-border overflow-hidden z-10">
-                <button
-                  onClick={() => handleDateOptionClick("today")}
-                  className="w-full text-left px-4 py-3 text-sm text-foreground hover:bg-[#f5f9fe] transition-colors"
-                >
-                  Today
-                </button>
-                <button
-                  onClick={() => handleDateOptionClick("yesterday")}
-                  className="w-full text-left px-4 py-3 text-sm text-foreground hover:bg-[#f5f9fe] transition-colors"
-                >
-                  Yesterday
-                </button>
-                <button
-                  onClick={() => handleDateOptionClick("custom")}
-                  className="w-full text-left px-4 py-3 text-sm text-foreground hover:bg-[#f5f9fe] transition-colors"
-                >Select date</button>
-              </div>
-            )}
-          </div>
+          <BusinessOverviewDateRangePicker
+            selection={overviewSelection}
+            onSelectionChange={onOverviewSelectionChange}
+            variant="default"
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -105,7 +70,9 @@ export function Dashboard1() {
               <div className="flex flex-col gap-2">
                 <p className="text-sm text-muted-foreground">Payments</p>
                 <div className="flex items-center gap-2">
-                  <p className="text-foreground text-[32px]">₹90,00,000</p>
+                  <p className="text-foreground text-[32px] tabular-nums transition-[color] duration-300">
+                    {formatInrRupees(animPaymentsRupees)}
+                  </p>
                 </div>
               </div>
               <div className="bg-[var(--background,#ffffff)] rounded-[var(--radius-200,16px)] p-0 flex items-center justify-center">
@@ -114,11 +81,15 @@ export function Dashboard1() {
             </div>
             <div className="flex items-start justify-between pt-3 border-t border-border">
               <div>
-                <p className="text-sm text-foreground">1152</p>
+                <p className="text-sm text-foreground tabular-nums transition-[color] duration-300">
+                  {animPaymentsCount.toLocaleString("en-IN")}
+                </p>
                 <p className="text-xs text-muted-foreground">Payments</p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-[#00c853]">98%</p>
+                <p className="text-sm text-[#00c853] tabular-nums transition-[color] duration-300">
+                  {(animSuccessTenths / 10).toFixed(1)}%
+                </p>
                 <p className="text-xs text-muted-foreground">Success Rate</p>
               </div>
             </div>
@@ -134,7 +105,9 @@ export function Dashboard1() {
               <div className="flex flex-col gap-2">
                 <p className="text-sm text-muted-foreground">Settlement</p>
                 <div className="flex items-center gap-2">
-                  <p className="text-foreground text-[32px]">₹79,00,000</p>
+                  <p className="text-foreground text-[32px] tabular-nums transition-[color] duration-300">
+                    {formatInrRupees(animSettlementRupees)}
+                  </p>
                 </div>
               </div>
               <div className="bg-[var(--background,#ffffff)] rounded-[var(--radius-200,16px)] p-0 flex items-center justify-center">
@@ -163,7 +136,9 @@ export function Dashboard1() {
               <div className="flex flex-col gap-2">
                 <p className="text-sm text-muted-foreground">Refunds</p>
                 <div className="flex items-center gap-2">
-                  <p className="text-foreground text-[32px]">₹10,000</p>
+                  <p className="text-foreground text-[32px] tabular-nums transition-[color] duration-300">
+                    {formatInrRupees(animRefundsRupees)}
+                  </p>
                 </div>
               </div>
               <div className="bg-[var(--background,#ffffff)] rounded-[var(--radius-200,16px)] p-0 flex items-center justify-center">
@@ -172,7 +147,9 @@ export function Dashboard1() {
             </div>
             <div className="pt-3 border-t border-border">
               <div>
-                <p className="text-sm text-foreground">110</p>
+                <p className="text-sm text-foreground tabular-nums transition-[color] duration-300">
+                  {animRefundsCount.toLocaleString("en-IN")}
+                </p>
                 <p className="text-xs text-muted-foreground">Payments</p>
               </div>
             </div>
