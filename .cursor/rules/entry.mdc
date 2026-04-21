@@ -23,4 +23,15 @@ Use **`@`-references** instead of pasting long excerpts. Modular sources:
 
 **Scoped UI rule:** `.cursor/rules/design-guidelines.mdc` (applies when `src/app` or `design-guidelines` files are in context).
 
+## On every implementation or update
+
+Do **not** rely on memory alone for tokens, layout, or refactor boundaries — **open the relevant `@` files below** early so the first pass matches repo conventions and design.
+
+1. **Scope and safety** — If the change could affect layout, visuals, responsiveness, interactions, domain rules, or API usage, read **`@.ai/core/refactor-policy.md`** and stay within allowed lanes (or confirm wider scope before editing).
+2. **Product and stack** — For routes, merchant modules, or dashboard behaviour, read **`@.ai/projects/merchant-dashboard.md`**.
+3. **Design consistency** — For any work under `src/app/**` or `design-guidelines/**`, read **`@design-guidelines/OVERVIEW.md`** and **`@design-guidelines/INDEX.md`**, then the specific `design-guidelines/rules/**/*.mdc` specs the INDEX indicates for that surface. Reuse existing patterns, components, and tokens instead of inventing ad hoc styles.
+4. **Engineering habits** — Follow **`@.ai/core/rules.md`** (thin routes, no drive-by edits, incremental steps).
+5. **Dashboard modules / sidebar** — When the work matches that shape, follow **`@.cursor/skills/build-dashboard-module/SKILL.md`**.
+6. **Implementation depth** — Root **`.cursorrules`** defaults to complete, robust code; do not use that to override refactor-policy when the task is behaviour-preserving.
+
 Rule types, globs, and `AGENTS.md`: [cursor.com/docs/rules](https://cursor.com/docs/rules). **Agent Skills** (this repo: `.cursor/skills/`): [cursor.com/docs/skills](https://cursor.com/docs/skills). **Subagents** (this repo: `.cursor/agents/`): [cursor.com/docs/subagents](https://cursor.com/docs/subagents).

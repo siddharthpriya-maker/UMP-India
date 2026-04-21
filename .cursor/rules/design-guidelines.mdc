@@ -6,6 +6,8 @@ alwaysApply: false
 
 # Design guidelines (scoped)
 
+When these globs apply, treat **`@design-guidelines/OVERVIEW.md`** + **`@design-guidelines/INDEX.md`** + the relevant **`rules/**/*.mdc`** as **required context** (see also the always-on **`.cursor/rules/entry.mdc`** → *On every implementation or update*).
+
 Do **not** duplicate token tables here — use the linked specs.
 
 1. **`@design-guidelines/OVERVIEW.md`** — principles, tokens overview, layout, component index.

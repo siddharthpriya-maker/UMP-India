@@ -1,0 +1,23 @@
+# Cursor rules (root) — use with `.cursor/rules/entry.mdc`
+
+**Always-on project routing** lives in **`.cursor/rules/entry.mdc`** (`alwaysApply: true`). On every new change or update, follow that file’s table and **“On every implementation or update”** checklist so work pulls in **`@.ai/core/refactor-policy.md`**, **`@design-guidelines/`** (for app UI), **`@.ai/projects/merchant-dashboard.md`**, and related sources — fewer round trips, more consistent design and behaviour.
+
+---
+
+# Implementation depth (default)
+
+When writing or generating **new** code (functions, hooks, components, handlers, utilities), **default to complete, production-ready implementations**—not minimal sketches, not stubs, and not “…” placeholders unless the user explicitly asks for a skeleton or outline.
+
+## Expectations
+
+- **Whole units**: Prefer full functions, complete branches, and coherent modules over fragmented snippets that require manual stitching.
+- **Robustness**: Include sensible error handling, null/empty checks, and failure paths where they matter; validate inputs at boundaries; avoid silent catches without purpose.
+- **Types and contracts**: Use explicit types (or accurate JSDoc where the stack uses it); keep function signatures and return shapes consistent and complete.
+- **Edge cases**: Address obvious empty states, loading/async cancellation where relevant, and predictable defaults—without changing frozen UI/API behaviour when work is scoped as a safe refactor (see `.ai/core/refactor-policy.md`).
+- **Integration**: Wire imports, exports, and call sites so the code is runnable and consistent with existing patterns in this repo.
+
+## When to stay smaller
+
+If the task is explicitly a **safe refactor** or **behaviour-preserving extraction**, follow `@.ai/core/refactor-policy.md`: keep outputs equivalent; do not expand scope for “robustness” that alters product behaviour or contracts.
+
+If the user asks for **only** a plan, a diff sketch, or a minimal example, match that request instead of this default.
