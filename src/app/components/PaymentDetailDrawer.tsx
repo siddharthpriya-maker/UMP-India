@@ -15,12 +15,19 @@ import {
 /** Paytm Business / merchant help — opens in a new tab from drawer header. */
 const MERCHANT_HELP_CENTER_HREF = "https://help.paytm.com/hc/en-us";
 
-interface PaymentTransaction {
-  id: number;
+export interface PaymentTransaction {
+  id: string;
   time: string;
+  /** Calendar date for this row (e.g. "21 Apr 2026") — matches Payments date filter. */
+  dateLabel: string;
   customerName: string;
   paymentOption: string;
-  transactionId: string;
+  /** Masked display, e.g. "** 9090" */
+  transactionIdMasked: string;
+  /** Full unique id — copied to clipboard from list / drawer. */
+  transactionIdFull: string;
+  orderIdMasked: string;
+  orderIdFull: string;
   collectionMode: string;
   amount: number;
   status: string;
@@ -30,12 +37,15 @@ interface PaymentDetailDrawerProps {
   open: boolean;
   onClose: () => void;
   transaction: PaymentTransaction | null;
+  /** Fires after a successful clipboard write (e.g. show “Copied” toast). */
+  onCopied?: () => void;
 }
 
 export function PaymentDetailDrawer({
   open,
   onClose,
   transaction,
+  onCopied,
 }: PaymentDetailDrawerProps) {
   if (!transaction) return null;
 
@@ -74,7 +84,7 @@ export function PaymentDetailDrawer({
         <DrawerHero
           title={`Payment Received from\n${transaction.customerName}`}
           amount={formattedAmount}
-          subtitle={`20 Mar 2018, ${transaction.time}`}
+          subtitle={`${transaction.dateLabel}, ${transaction.time}`}
           status={statusVariant}
         />
 
@@ -84,7 +94,7 @@ export function PaymentDetailDrawer({
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <span className="text-[14px] font-semibold text-[#101010]">
-                {transaction.paymentOption} {transaction.transactionId}
+                {transaction.paymentOption} {transaction.transactionIdMasked}
               </span>
               <span className="text-[12px] text-[#7e7e7e]">HDFC Bank</span>
             </div>
@@ -107,7 +117,7 @@ export function PaymentDetailDrawer({
           value={
             <span className="inline-flex items-center justify-end gap-2">
               <span className="text-[14px] text-[#101010]">416278990</span>
-              <CopyButton text="416278990" label="Customer ID" />
+              <CopyButton text="416278990" label="Customer ID" onCopied={onCopied} />
             </span>
           }
         />
@@ -116,14 +126,14 @@ export function PaymentDetailDrawer({
         <DrawerSectionHeader>Payment Details</DrawerSectionHeader>
         <DrawerRow
           label="Payment Source"
-          value={`${transaction.paymentOption} ${transaction.transactionId}`}
+          value={`${transaction.paymentOption} ${transaction.transactionIdMasked}`}
         />
         <DrawerRow
           label="Order ID"
           value={
             <span className="inline-flex items-center justify-end gap-2">
-              <span className="text-[14px] text-[#101010]">******123456</span>
-              <CopyButton text="******123456" label="Order ID" />
+              <span className="text-[14px] text-[#101010]">{transaction.orderIdMasked}</span>
+              <CopyButton text={transaction.orderIdFull} label="Order ID" onCopied={onCopied} />
             </span>
           }
         />
@@ -131,8 +141,8 @@ export function PaymentDetailDrawer({
           label="Transaction ID"
           value={
             <span className="inline-flex items-center justify-end gap-2">
-              <span className="text-[14px] text-[#101010]">******278990</span>
-              <CopyButton text="******278990" label="Transaction ID" />
+              <span className="text-[14px] text-[#101010]">{transaction.transactionIdMasked}</span>
+              <CopyButton text={transaction.transactionIdFull} label="Transaction ID" onCopied={onCopied} />
             </span>
           }
         />
@@ -154,9 +164,17 @@ export function PaymentDetailDrawer({
   );
 }
 
-function CopyButton({ text, label }: { text: string; label: string }) {
+function CopyButton({
+  text,
+  label,
+  onCopied,
+}: {
+  text: string;
+  label: string;
+  onCopied?: () => void;
+}) {
   const handleCopy = () => {
-    navigator.clipboard.writeText(text).catch(() => {});
+    void navigator.clipboard.writeText(text).then(() => onCopied?.()).catch(() => {});
   };
 
   return (

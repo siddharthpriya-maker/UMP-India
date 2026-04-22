@@ -194,12 +194,13 @@ useEffect(() => {
   - Math operators: `16×16 shrink-0` white tiles with gray symbols
   - Order: Collections **−** Adjustments **−** Deductions **=** Settlement Processed **=** Available for Settlement
   - Last card: PrimaryButton "Settle Now" `fullWidth`
+- Listing block: `flex flex-col gap-0` → table shell → `<Pagination />` (no extra vertical gap between shell and bar)
 - Table: `overflow-x-auto border border-[#e0e0e0] rounded-[12px]`
   - Inner min-width: `min-w-[800px]`
   - Grid: `grid-cols-[90px_1fr_110px_130px_140px_130px_40px] gap-8`
-  - Column header row: `bg-[#EBEBEB]`, labels `text-[12px] uppercase tracking-[0.6px] font-semibold text-[#101010]`
+  - Column header row: `bg-[#EBEBEB] px-6 py-3 border-b border-[#e0e0e0]`, labels `text-[12px] uppercase tracking-[0.6px] font-semibold leading-[16px] text-[#101010]`; `whitespace-nowrap` on multi-word headers
   - Rows: zebra `bg-white` / `bg-[#fafafa]`, `hover:bg-[#f5f9fe]`, no row `border-b`; status chips and `CopyIcon`
-- Pagination: `flex items-center justify-between`
+- Pagination: shared `Pagination` component (`pagination.mdc`)
 - Drawer: `PaymentDetailDrawer` for row click
 
 ---
@@ -214,10 +215,11 @@ useEffect(() => {
 - Filters: **`FilterBar`** + same inner pattern as Payments (`gap-0` row, `px-5 py-5` on DURATION + actions tail, no dividers)
   - Left: DURATION dropdown
   - Right (`ml-auto flex gap-3`): `SearchWithDropdown` (same defaults + width as Payments) + Download button
+- Listing block: `flex flex-col gap-0` → date-group stack → `<Pagination />` at bottom
 - Content: `flex flex-col gap-6`, date-grouped sections
   - Date group header: `h3` uppercase
-  - Table per group: `min-w-[960px]`, `grid-cols-[280px_1fr_140px_120px_120px_140px_40px] gap-8`; column header row `bg-[#EBEBEB]` + primary dark labels; data rows zebra + hover, no row `border-b`
-- Pagination at bottom
+  - Table per group: `overflow-x-auto border border-[#e0e0e0] rounded-[12px]`; inner `min-w-[960px]`; `grid-cols-[280px_1fr_140px_120px_120px_140px_40px] gap-8`; column header row `bg-[#EBEBEB] px-6 py-3 border-b border-[#e0e0e0]` + primary dark labels (`leading-[16px]`); data rows zebra + hover, no row `border-b`
+- Pagination at bottom (outside tables)
 - No summary cards on this page
 
 ---
@@ -239,7 +241,7 @@ useEffect(() => {
     - Report title (`h2`), then **one line**: `Please note` (`text-[14px] font-semibold text-[#101010]`) immediately followed by note copy (`text-[#7e7e7e]`, same line) — **no** tinted callout card; **no** “Manage report settings” CTA
     - Filters: **`FilterBar`** — same shell as Payments / Settlements (`#fafafa`, `rounded-[12px]`); inner row `px-5 py-5` per filter column, `hover:bg-[#EBEBEB]`, first column `md:rounded-tl-[12px] md:rounded-bl-[12px]`; dropdown panels `z-50`; tail: **+Add Multiple Filters** (`md:flex-1 md:justify-end`)
     - Generate + Send to Email buttons
-- Recent reports section: outer `px-[32px] pt-6`; inner **card** must not use blanket `p-6` around the table (stroke flush with list). Card: `overflow-hidden` + `reportCard`; optional h2 “Recently Generated Reports” with `px-6 pt-6 pb-4` only; table `min-w-[900px]`, `grid-cols-[180px_1fr_200px_180px_160px] gap-4`; listing column header `bg-[#EBEBEB]` + `text-[#101010]`; rows zebra + hover, no row `border-b`; **Pagination below the card** (`flex flex-col gap-0` wrapper), not inside the stroke
+- Recent reports section: outer `px-[32px]` (with page `gap-4`); inner **card** must not use blanket `p-6` around the table (stroke flush with list). Card: `overflow-hidden` + `reportCard`; optional h2 “Recently Generated Reports” with `px-6 pt-6 pb-4` only; scroll region `overflow-x-auto`; table `min-w-[900px]`, `grid-cols-[180px_1fr_200px_180px_160px] gap-8`; listing column header `bg-[#EBEBEB] px-6 py-3 border-b border-[#e0e0e0]` + `text-[#101010]` (`leading-[16px]`); rows zebra + hover, no row `border-b`; **Pagination below the card** (`flex flex-col gap-0` wrapper), not inside the stroke
   - Failed status: uses `FailedFilledRedIcon` from `Icons.tsx`
 - Pagination with controlled page state
 
@@ -289,7 +291,8 @@ useEffect(() => {
 - Title row: "Payment Pages" + "Create Page" PrimaryButton
 - **No** bleed separators around the filter strip (same as Payments).
 - Filters: **`FilterBar`** + same inner pattern as Payments; search field remains `h-[40px]` inside the right tail wrapper
-- Table: `min-w-[800px]`, `grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr]`; column header row `bg-[#EBEBEB]` + primary dark labels; rows zebra + hover, no row `border-b`
+- Listing block: `flex flex-col gap-0` → bordered table → `<Pagination />`
+- Table: `overflow-x-auto border border-[#e0e0e0] rounded-[12px]`; inner `min-w-[800px]`; `grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr] gap-8`; column header row `bg-[#EBEBEB] px-6 py-3 border-b border-[#e0e0e0]` + primary dark labels (`leading-[16px]`); rows zebra + hover, no row `border-b`
   - Status chips: Active `text-[#21c179] bg-[#e3f6ec]`, Expired `text-[#fd5154] bg-[#ffebef]`, Draft `text-[#7e7e7e] bg-[#fafafa]`
   - Actions: kebab menu (Share, Download QR, Edit, Expire/Reactivate, Delete)
 - Pagination

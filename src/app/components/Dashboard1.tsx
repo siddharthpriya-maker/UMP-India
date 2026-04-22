@@ -3,7 +3,7 @@ import imgTataCLiQ from "../../imports/tata-cliq-logo";
 import Payments from "../../imports/Payments-41-36";
 import Settlement from "../../imports/Settlement";
 import Refunds from "../../imports/Refunds";
-import { formatInrRupees } from "../data/businessOverviewDataset";
+import { formatInrRupees, formatInrRupeesPrecise } from "../data/businessOverviewDataset";
 import { useAnimatedNumber } from "../hooks/useAnimatedNumber";
 import { BusinessOverviewDateRangePicker } from "./BusinessOverviewDateRangePicker";
 import { useMerchantReporting } from "../context/MerchantReportingContext";
@@ -19,9 +19,9 @@ export function Dashboard1() {
   const overview = paymentsPageSummary.overview;
 
   const animPaymentsRupees = useAnimatedNumber(
-    Math.round(paymentsPageSummary.collectionsTotalRupees),
+    Math.round(paymentsPageSummary.paymentsPrincipalRupees),
   );
-  const animPaymentsCount = useAnimatedNumber(paymentsPageSummary.paymentsCount);
+  const paymentsCountDisplay = paymentsPageSummary.paymentsCount.toLocaleString("en-IN");
   const animSuccessTenths = useAnimatedNumber(Math.round(overview.successRatePercent * 10));
   const animSettlementRupees = useAnimatedNumber(
     Math.round(paymentsPageSummary.settlementProcessedRupees),
@@ -64,7 +64,7 @@ export function Dashboard1() {
                 <p className="text-sm text-muted-foreground">Payments</p>
                 <div className="flex items-center gap-2">
                   <p className="text-foreground text-[32px] tabular-nums transition-[color] duration-300">
-                    {formatInrRupees(animPaymentsRupees)}
+                    {formatInrRupeesPrecise(animPaymentsRupees)}
                   </p>
                 </div>
               </div>
@@ -75,7 +75,7 @@ export function Dashboard1() {
             <div className="flex items-start justify-between pt-3 border-t border-border">
               <div>
                 <p className="text-sm text-foreground tabular-nums transition-[color] duration-300">
-                  {animPaymentsCount.toLocaleString("en-IN")}
+                  {paymentsCountDisplay}
                 </p>
                 <p className="text-xs text-muted-foreground">Payments</p>
               </div>

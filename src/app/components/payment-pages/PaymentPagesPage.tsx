@@ -246,9 +246,9 @@ export function PaymentPagesPage() {
             </div>
           </div>
 
-          {/* Search */}
+          {/* Search — fixed max width (no flex-grow) so it does not span the full FilterBar tail */}
           <div className="flex w-full flex-1 items-center justify-end px-5 py-5 md:h-full md:w-auto md:flex-1">
-            <div className="flex h-[40px] w-full max-w-[320px] flex-row items-center overflow-hidden rounded-lg border border-[#e0e0e0] bg-white md:max-w-none md:shrink-0 md:grow md:basis-[320px]">
+            <div className="flex h-[40px] w-full max-w-[260px] shrink-0 flex-row items-center overflow-hidden rounded-lg border border-[#e0e0e0] bg-white md:w-[280px] md:max-w-[280px]">
             <div className="flex items-center px-3">
               <Search className="size-5 text-[#7e7e7e]" />
             </div>
@@ -269,38 +269,40 @@ export function PaymentPagesPage() {
         <div className="overflow-x-auto border border-[#e0e0e0] rounded-[12px]">
           <div className="min-w-[800px]">
             {/* Listing column header — #EBEBEB bar + primary dark labels */}
-            <div className="grid grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr] bg-[#EBEBEB] px-6 py-3 border-b border-[#e0e0e0]">
-            <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px]">Page Name</span>
-            <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px]">URL</span>
-            <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px]">Created</span>
-            <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px]">Status</span>
-            <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] text-right">Payments</span>
-            <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] text-right">Actions</span>
+            <div className="grid grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr] gap-8 bg-[#EBEBEB] px-6 py-3 border-b border-[#e0e0e0]">
+            <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Page Name</span>
+            <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">URL</span>
+            <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Created</span>
+            <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Status</span>
+            <span className="text-right text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Payments</span>
+            <span className="text-right text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Actions</span>
           </div>
 
           {/* Rows: zebra #fff / #fafafa, no row borders (same as Reports) */}
           {filteredPages.map((page, idx) => (
             <div
               key={page.id}
-              className={`grid grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr] px-6 py-4 transition-colors items-center ${
+              className={`grid grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.8fr_0.4fr] gap-8 px-6 py-4 transition-colors items-center ${
                 idx % 2 === 0 ? "bg-white" : "bg-[#fafafa]"
               } hover:bg-[#f5f9fe]`}
             >
-              <div className="flex flex-col">
-                <span className="text-[14px] text-[#101010] leading-[24px] font-semibold">{page.name}</span>
+              <div className="flex min-w-0 flex-col">
+                <span className="text-[14px] text-[#101010] leading-[24px] font-semibold whitespace-nowrap">{page.name}</span>
               </div>
-              <span className="text-[14px] text-[#004299] leading-[24px] truncate hover:underline cursor-pointer">
+              <span className="min-w-0 text-[14px] text-[#004299] leading-[24px] truncate hover:underline cursor-pointer">
                 {page.urlPath}
               </span>
-              <span className="text-[14px] text-[#101010] leading-[24px]">{page.createdAt}</span>
+              <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{page.createdAt}</span>
               <div>
                 <span className={`inline-flex px-2.5 py-0.5 rounded-full text-[12px] font-semibold ${statusConfig[page.status].textClass} ${statusConfig[page.status].bgClass}`}>
                   {statusConfig[page.status].label}
                 </span>
               </div>
-              <div className="text-right">
-                <span className="text-[14px] text-[#101010] leading-[24px]">{page.totalPayments.toLocaleString("en-IN")}</span>
-                <p className="text-[12px] text-[#7e7e7e]">₹{page.totalAmount.toLocaleString("en-IN")}</p>
+              <div className="text-right whitespace-nowrap">
+                <span className="text-[14px] text-[#101010] leading-[24px] font-semibold tabular-nums">
+                  {page.totalPayments.toLocaleString("en-IN")}
+                </span>
+                <p className="text-[12px] text-[#7e7e7e] tabular-nums">₹{page.totalAmount.toLocaleString("en-IN")}</p>
               </div>
               <div className="flex justify-end relative" ref={openMenuId === page.id ? menuRef : undefined}>
                 <button

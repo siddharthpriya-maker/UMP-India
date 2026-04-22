@@ -233,8 +233,9 @@ Follow dedicated `.mdc` files: `tabs.mdc`, `pagination.mdc`, `filter-dropdown.md
 ## 9. Tables & data
 
 - Container: `overflow-x-auto border border-[#e0e0e0] rounded-[12px]`; inner `min-w-[700px]`–`min-w-[960px]` depending on page. **Inside a bordered card:** do not pad the whole card (`p-6`) around the grid — keep the list flush to the card stroke; optional h2 uses horizontal + top padding only (see `table.mdc`).
-- **Grid-based** rows (not `<table>`) unless legacy exception documented.
-- Column header row: `bg-[#EBEBEB]`, uppercase `text-[12px] font-semibold text-[#101010]`, `border-b border-[#e0e0e0]` to the first data row.
+- **Grid-based** rows (not `<table>`) unless legacy exception documented. **Column gutter:** `gap-8` on header and body grids for Payments-style merchant listings (Reports recent list, Payment Pages, Settlements).
+- **Listing + pagination:** wrap the bordered listing and `<Pagination />` in `flex flex-col gap-0` so the page `gap-*` does not separate the table from the bar.
+- Column header row: `bg-[#EBEBEB]`, uppercase `text-[12px] font-semibold leading-[16px] text-[#101010]`, `border-b border-[#e0e0e0]` to the first data row.
 - Rows: zebra `bg-white` / `bg-[#fafafa]` by index, `text-[14px] text-[#101010]`, `hover:bg-[#f5f9fe]`; no `border-b` between data rows; vertical separators (`border-r`) only where the Settings-style variant applies.
 - Status chips: Active/Success `text-[#21c179] bg-[#e3f6ec]`, Failed/Expired `text-[#fd5154] bg-[#ffebef]`, Draft/Pending `text-[#7e7e7e] bg-[#fafafa]`.
 - Copy controls: `CopyIcon` `size-4` with parent `text-[#004299]`.

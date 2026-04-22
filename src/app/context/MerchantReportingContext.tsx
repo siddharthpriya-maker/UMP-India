@@ -16,8 +16,8 @@ import {
 
 export type MerchantReportingContextValue = {
   /**
-   * Same period as **Business Overview** on Home and **DATE** on `/payments`.
-   * Payment Summary / Payment Sources on Home use separate state (see `Dashboard.tsx`).
+   * Same period as **Business Overview** on Home, **Payment Summary** chart on Home,
+   * and **DATE** on `/payments`. Payment Sources on Home uses separate state (see `Dashboard.tsx`).
    */
   businessOverviewDateSelection: OverviewSelection;
   setBusinessOverviewDateSelection: (next: OverviewSelection) => void;

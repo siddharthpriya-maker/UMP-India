@@ -192,38 +192,28 @@ export function ActionsNotificationsWidget() {
       <div className="overflow-y-auto px-5 pb-5 max-h-[400px] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-gray-400">
         {/* Actions Tab Content */}
         {activeTab === "actions" && (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
             {actionItems.map((item) => (
               <div
                 key={item.id}
-                className={`relative rounded-[16px] p-4 transition-colors ${
-                  item.priority === "P0"
-                    ? "bg-[#ffebef]/60 hover:bg-[#ffebef] hover:shadow-sm"
-                    : "bg-[#fff8e1]/60 hover:bg-[#fff8e1] hover:shadow-sm"
-                }`}
+                className="relative cursor-pointer rounded-[16px] bg-[#fafafa] p-[16px] transition-colors hover:bg-[#f5f9fe]"
               >
                 <div className="flex items-start gap-3">
                   {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-foreground mb-1 text-[14px]">
+                  <div className="min-w-0 flex-1">
+                    <h4 className="mb-1 text-[14px] font-semibold text-foreground">
                       {item.title}
                     </h4>
-                    <p className="text-muted-foreground mb-2 text-[12px]">
+                    <p className="mb-2 text-[12px] text-muted-foreground">
                       <span className="font-bold text-foreground">{item.amount}</span> at risk — {item.impact}
                     </p>
-                    <a href="#" className="text-[#004299] hover:underline font-semibold text-[12px]">
+                    <a href="#" className="text-[12px] font-semibold text-[#004299] hover:underline">
                       {item.ctaText}
                     </a>
                   </div>
 
-                  {/* Icon */}
-                  <div
-                    className={`shrink-0 ${
-                      item.priority === "P0" ? "text-destructive" : "text-chart-3"
-                    }`}
-                  >
-                    {getIcon(item.icon)}
-                  </div>
+                  {/* Icon — neutral, same family as notification list */}
+                  <div className="shrink-0 text-[#7e7e7e]">{getIcon(item.icon)}</div>
                 </div>
               </div>
             ))}

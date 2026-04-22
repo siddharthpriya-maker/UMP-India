@@ -14,12 +14,18 @@ import { ChevronDown, ChevronUp, Download, RefreshCw, ChevronRight, Info } from 
 import { CopyIcon } from "./Icons";
 import { PrimaryButton, SecondaryButton, TertiaryButton } from "./Button";
 import { SearchWithDropdown } from "./SearchWithDropdown";
-import { PaymentDetailDrawer } from "./PaymentDetailDrawer";
+import { PaymentDetailDrawer, type PaymentTransaction } from "./PaymentDetailDrawer";
 import { FilterBar } from "./FilterBar";
 import { Pagination } from "./Pagination";
 import { Overlay } from "./Overlay";
 import SuccessSmall from "../../imports/SuccessSmall";
-import { formatInrRupeesPrecise, type PaymentsPageSummaryComputed } from "../data/businessOverviewDataset";
+import {
+  computeHomePaymentDailySeries,
+  formatInrRupeesPrecise,
+  type HomePaymentDayPoint,
+  type OverviewSelection,
+  type PaymentsPageSummaryComputed,
+} from "../data/businessOverviewDataset";
 import { useMerchantReporting } from "../context/MerchantReportingContext";
 import {
   formatOverviewDate,
@@ -29,49 +35,89 @@ import {
 import { useAnimatedNumber } from "../hooks/useAnimatedNumber";
 import { BusinessOverviewCustomDateRange } from "./BusinessOverviewCustomDateRange";
 
-// Mock data for payments
-const mockTransactions = [
-  {
-    id: 1,
-    time: "06:15 PM",
-    customerName: "Ritu Madan",
-    paymentOption: "UPI",
-    transactionId: "** 9090",
-    collectionMode: "QR",
-    amount: 800,
-    status: "success",
-  },
-  {
-    id: 2,
-    time: "07:15 PM",
-    customerName: "Manish Bisht",
-    paymentOption: "Debit Card",
-    transactionId: "** 2011",
-    collectionMode: "Card Machine",
-    amount: 800,
-    status: "success",
-  },
-  {
-    id: 3,
-    time: "08:15 PM",
-    customerName: "Koushik Das",
-    paymentOption: "Credit Card",
-    transactionId: "** 4444",
-    collectionMode: "Paytm Deals",
-    amount: 8800,
-    status: "success",
-  },
-  {
-    id: 4,
-    time: "09:15 PM",
-    customerName: "Sneha Dey",
-    paymentOption: "UPI",
-    transactionId: "** 4342",
-    collectionMode: "QR",
-    amount: 800,
-    status: "success",
-  },
-];
+function pad2(n: number): string {
+  return String(n).padStart(2, "0");
+}
+
+/** Parse `day-YYYY-M-D` from `HomePaymentDayPoint.id` (same as dataset). */
+function calendarDateFromDayPoint(dayPoint: HomePaymentDayPoint): Date | null {
+  const m = /^day-(\d+)-(\d+)-(\d+)$/.exec(dayPoint.id);
+  if (!m) return null;
+  return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+}
+
+/** Split integer rupees across `parts` rows so the parts sum to `total`. */
+function splitIntTotal(total: number, parts: number): number[] {
+  if (parts <= 0) return [];
+  const base = Math.floor(total / parts);
+  const remainder = total - base * parts;
+  return Array.from({ length: parts }, (_, i) => base + (i < remainder ? 1 : 0));
+}
+
+function maskTransactionIdDisplay(full: string): string {
+  return `** ${full.slice(-4)}`;
+}
+
+function maskOrderIdDisplay(full: string): string {
+  return `******${full.slice(-6)}`;
+}
+
+const PAYMENTS_LIST_PAGE_SIZE = 12;
+
+const CUSTOMER_NAMES = ["Ritu Madan", "Manish Bisht", "Koushik Das", "Sneha Dey", "Asha Kapoor", "Vikram Mehta"];
+const PAYMENT_OPTIONS = ["UPI", "Debit Card", "Credit Card", "UPI", "Net Banking"];
+const COLLECTION_MODES = ["QR", "Card Machine", "Paytm Deals", "QR", "POS"];
+
+/**
+ * One listing row per payment in the selected range — same per-day counts as
+ * `computeHomePaymentDailySeries` / Payments summary “Payments (N)”.
+ */
+function generatePaymentsTransactions(selection: OverviewSelection, now: Date): PaymentTransaction[] {
+  const series = computeHomePaymentDailySeries(selection, now);
+  const daysDesc = [...series].reverse();
+  const rows: PaymentTransaction[] = [];
+  let seq = 0;
+
+  for (const dayPoint of daysDesc) {
+    const n = dayPoint.count;
+    if (n <= 0) continue;
+    const cal = calendarDateFromDayPoint(dayPoint);
+    if (!cal || !Number.isFinite(cal.getTime())) continue;
+    const dkey = `${cal.getFullYear()}${pad2(cal.getMonth() + 1)}${pad2(cal.getDate())}`;
+    const amounts = splitIntTotal(dayPoint.amount, n);
+
+    for (let k = 0; k < n; k++) {
+      const transactionIdFull = `PTM${dkey}${String(seq).padStart(5, "0")}${String(10000 + (seq * 7919) % 90000)}`;
+      const orderIdFull = `ORD${dkey}${String(seq).padStart(5, "0")}${String(100000 + (seq * 317) % 900000)}`;
+      const slot = n <= 1 ? 0.5 : k / (n - 1);
+      const minStart = 10 * 60;
+      const minEnd = 20 * 60;
+      const minutesFromMidnight = minStart + slot * (minEnd - minStart);
+      const h24 = Math.min(20, Math.floor(minutesFromMidnight / 60));
+      const min = Math.round(minutesFromMidnight % 60);
+      const hour12 = h24 > 12 ? h24 - 12 : h24 === 0 ? 12 : h24;
+      const period = h24 >= 12 ? "PM" : "AM";
+      const time = `${pad2(hour12)}:${pad2(min)} ${period}`;
+
+      rows.push({
+        id: transactionIdFull,
+        time,
+        dateLabel: dayPoint.fullDate,
+        customerName: CUSTOMER_NAMES[seq % CUSTOMER_NAMES.length],
+        paymentOption: PAYMENT_OPTIONS[seq % PAYMENT_OPTIONS.length],
+        transactionIdMasked: maskTransactionIdDisplay(transactionIdFull),
+        transactionIdFull,
+        orderIdMasked: maskOrderIdDisplay(orderIdFull),
+        orderIdFull,
+        collectionMode: COLLECTION_MODES[seq % COLLECTION_MODES.length],
+        amount: amounts[k] ?? 0,
+        status: "success",
+      });
+      seq++;
+    }
+  }
+  return rows;
+}
 
 type SummaryBreakdownKey = "collections" | "adjustments" | "deductions";
 
@@ -85,6 +131,8 @@ function summaryBreakdownMeta(
   title: string;
   total: string;
   surface: string;
+  /** One step darker than the expanded panel’s parent fill (see `collectionsBg` for collections). */
+  innerSurface: string;
   rows: { label: string; amount: string }[];
 } {
   switch (key) {
@@ -93,6 +141,7 @@ function summaryBreakdownMeta(
         title: "Collections",
         total: formatInrRupeesPrecise(summary.collectionsTotalRupees),
         surface: "bg-[#F3F8FE]",
+        innerSurface: "bg-[#e3edf8]",
         rows: [],
       };
     case "adjustments":
@@ -100,6 +149,7 @@ function summaryBreakdownMeta(
         title: "Adjustments",
         total: formatInrRupeesPrecise(summary.adjustmentsTotalRupees),
         surface: "bg-[#FEF7F7]",
+        innerSurface: "bg-[#f8efef]",
         rows: summary.adjustmentsRows.map((r) => ({
           label: r.label,
           amount: formatInrRupeesPrecise(r.amountRupees),
@@ -110,6 +160,7 @@ function summaryBreakdownMeta(
         title: "Deductions",
         total: formatInrRupeesPrecise(summary.deductionsTotalRupees),
         surface: "bg-[#FEF7F7]",
+        innerSurface: "bg-[#f8efef]",
         rows: summary.deductionsRows.map((r) => ({
           label: r.label,
           amount: formatInrRupeesPrecise(r.amountRupees),
@@ -120,9 +171,9 @@ function summaryBreakdownMeta(
 
 type BreakdownAnchorRect = { top: number; left: number; width: number; height: number };
 
-/** Expanded breakdown — Figma 320×228; anchored to card top-left; inner column scrolls if needed. */
+/** Expanded breakdown — width 320; height hugs content with a viewport cap. */
 const PANEL_W = 320;
-const PANEL_H = 228;
+const PANEL_MAX_H = "min(360px, calc(100vh - 24px))";
 
 function collectionsFigmaRowsFromSummary(summary: PaymentsPageSummaryComputed): {
   label: string;
@@ -133,13 +184,12 @@ function collectionsFigmaRowsFromSummary(summary: PaymentsPageSummaryComputed): 
   info?: boolean;
 }[] {
   const amountClass = "text-[14px] font-semibold leading-[20px] text-[#101010]";
-  const paymentsAmountClass = "text-[14px] font-normal leading-[20px] text-[#7e7e7e]";
   return [
     {
       label: "Payments",
       count: `(${summary.paymentsCount.toLocaleString("en-IN")})`,
       amount: formatInrRupeesPrecise(summary.paymentsPrincipalRupees),
-      amountClass: paymentsAmountClass,
+      amountClass,
     },
     {
       label: "Tip",
@@ -237,8 +287,10 @@ function PaymentsSummaryExpandedPanel({
   const vh = typeof window !== "undefined" ? window.innerHeight : 800;
   const margin = 16;
   const panelLeft = Math.min(anchor.left, vw - PANEL_W - margin);
-  const panelTop = Math.min(anchor.top, vh - PANEL_H - margin);
+  const maxPanelHeightPx = Math.min(360, vh - margin * 2);
+  const panelTop = Math.min(anchor.top, vh - margin - maxPanelHeightPx);
 
+  /** Parent fill for collections breakdown — inner uses `meta.innerSurface` one notch darker. */
   const collectionsBg: CSSProperties =
     active === "collections"
       ? {
@@ -258,10 +310,11 @@ function PaymentsSummaryExpandedPanel({
           left: panelLeft,
           top: panelTop,
           width: PANEL_W,
-          height: PANEL_H,
+          maxHeight: PANEL_MAX_H,
+          height: "auto",
           ...collectionsBg,
         }}
-        className={`pointer-events-auto z-[1] flex h-full w-full origin-top-left flex-col items-stretch gap-3 overflow-hidden rounded-[12px] px-5 py-3 shadow-[0_0_10px_rgba(0,0,0,0.15)] animate-in fade-in-0 zoom-in-95 duration-200 ${
+        className={`pointer-events-auto z-[1] flex w-full origin-top-left flex-col items-stretch gap-3 overflow-x-hidden overflow-y-auto rounded-[12px] px-5 py-3 shadow-[0_0_10px_rgba(0,0,0,0.15)] animate-in fade-in-0 zoom-in-95 duration-200 ${
           active === "collections" ? "" : meta.surface
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -276,9 +329,10 @@ function PaymentsSummaryExpandedPanel({
           <span className="text-[20px] font-semibold leading-[24px] text-[#101010]">{meta.total}</span>
         </div>
 
-        <div className="h-px w-full shrink-0 bg-[#e0e0e0]" />
-
-        <div className="flex min-h-0 w-full flex-1 flex-col gap-1 overflow-y-auto overscroll-contain">
+        <div
+          className={`w-full shrink-0 rounded-[10px] p-3 ${meta.innerSurface}`}
+        >
+          <div className="flex flex-col gap-1">
             {active === "collections"
               ? collectionsFigmaRows.map((row) => (
                   <div
@@ -343,9 +397,8 @@ function PaymentsSummaryExpandedPanel({
                     </div>
                   </div>
                 ))}
+          </div>
         </div>
-
-        <div className="h-px w-full shrink-0 bg-[#e0e0e0]" />
 
         <button
           type="button"
@@ -411,10 +464,60 @@ export function PaymentsPage() {
   const [statusFilter, setStatusFilter] = useState("Success");
   const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState<(typeof mockTransactions)[number] | null>(null);
+  const [listingPage, setListingPage] = useState(1);
+  const [selectedTransaction, setSelectedTransaction] = useState<PaymentTransaction | null>(null);
+  const [copiedToast, setCopiedToast] = useState(false);
+  const copiedToastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [summaryBreakdown, setSummaryBreakdown] = useState<SummaryBreakdownKey | null>(null);
   const [breakdownAnchor, setBreakdownAnchor] = useState<BreakdownAnchorRect | null>(null);
   const [refundSubOpen, setRefundSubOpen] = useState(false);
+
+  const showCopiedToast = useCallback(() => {
+    setCopiedToast(true);
+    if (copiedToastTimerRef.current != null) clearTimeout(copiedToastTimerRef.current);
+    copiedToastTimerRef.current = setTimeout(() => {
+      copiedToastTimerRef.current = null;
+      setCopiedToast(false);
+    }, 2200);
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (copiedToastTimerRef.current != null) clearTimeout(copiedToastTimerRef.current);
+    },
+    [],
+  );
+
+  const allTransactionsForRange = useMemo(
+    () => generatePaymentsTransactions(businessOverviewDateSelection, new Date()),
+    [businessOverviewDateSelection],
+  );
+
+  const listingTransactions = useMemo(() => {
+    if (statusFilter === "All") return allTransactionsForRange;
+    return allTransactionsForRange.filter(
+      (t) => t.status.toLowerCase() === statusFilter.toLowerCase(),
+    );
+  }, [allTransactionsForRange, statusFilter]);
+
+  const listingTotalPages = Math.max(1, Math.ceil(listingTransactions.length / PAYMENTS_LIST_PAGE_SIZE));
+
+  const paginatedListingTransactions = useMemo(
+    () =>
+      listingTransactions.slice(
+        (listingPage - 1) * PAYMENTS_LIST_PAGE_SIZE,
+        listingPage * PAYMENTS_LIST_PAGE_SIZE,
+      ),
+    [listingTransactions, listingPage],
+  );
+
+  useEffect(() => {
+    setListingPage(1);
+  }, [businessOverviewDateSelection, statusFilter]);
+
+  useEffect(() => {
+    setListingPage((p) => Math.min(p, listingTotalPages));
+  }, [listingTotalPages]);
 
   const dateDropdownRef = useRef<HTMLDivElement>(null);
   const statusDropdownRef = useRef<HTMLDivElement>(null);
@@ -534,7 +637,16 @@ export function PaymentsPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-4 md:gap-6 bg-[#ffffff] min-h-full px-[32px] pt-[12px] pb-[32px]">
+    <div className="relative flex flex-col gap-4 md:gap-6 bg-[#ffffff] min-h-full px-[32px] pt-[12px] pb-[32px]">
+      {copiedToast ? (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed top-4 left-1/2 z-[240] -translate-x-1/2 rounded-[8px] bg-[#101010] px-4 py-2 text-[14px] font-semibold text-white shadow-lg"
+        >
+          Copied
+        </div>
+      ) : null}
       {/* Page Title and Filters */}
       <div className="flex flex-col gap-4">
         <h1 className="text-[32px] font-semibold text-[#101010]">Payments</h1>
@@ -656,7 +768,7 @@ export function PaymentsPage() {
 
           {/* Search Widget — py-5 matches filter columns */}
           <div className="flex w-full flex-1 items-center justify-end px-5 py-5 md:h-full md:w-auto">
-            <SearchWithDropdown options={searchOptions} defaultOption="select" />
+            <SearchWithDropdown options={searchOptions} defaultOption="select" transactionRotatingHint />
           </div>
         </FilterBar>
       </div>
@@ -687,7 +799,7 @@ export function PaymentsPage() {
             <span className="min-w-0 break-words text-[20px] font-semibold leading-tight text-[#101010] tabular-nums">
               {formatInrRupeesPrecise(animCollections)}
             </span>
-            <div className="mt-3 flex items-center border-t border-[#e0e0e0] pt-3">
+            <div className="mt-3 flex items-center">
               <button
                 type="button"
                 className="flex items-center gap-1 text-[12px] font-medium text-[#004299] hover:underline"
@@ -715,7 +827,7 @@ export function PaymentsPage() {
             <span className="min-w-0 break-words text-[20px] font-semibold leading-tight text-[#101010] tabular-nums">
               {formatInrRupeesPrecise(animAdjustments)}
             </span>
-            <div className="mt-3 flex items-center border-t border-[#e0e0e0] pt-3">
+            <div className="mt-3 flex items-center">
               <button
                 type="button"
                 className="flex items-center gap-1 text-[12px] font-medium text-[#004299] hover:underline"
@@ -743,7 +855,7 @@ export function PaymentsPage() {
             <span className="min-w-0 break-words text-[20px] font-semibold leading-tight text-[#101010] tabular-nums">
               {formatInrRupeesPrecise(animDeductions)}
             </span>
-            <div className="mt-3 flex items-center border-t border-[#e0e0e0] pt-3">
+            <div className="mt-3 flex items-center">
               <button
                 type="button"
                 className="flex items-center gap-1 text-[12px] font-medium text-[#004299] hover:underline"
@@ -767,7 +879,7 @@ export function PaymentsPage() {
             <span className="text-[20px] font-semibold text-[#101010] tabular-nums">
               {formatInrRupeesPrecise(animSettlementProcessed)}
             </span>
-            <div className="mt-3 flex items-center border-t border-[#e0e0e0] pt-3">
+            <div className="mt-3 flex items-center">
               <button type="button" className="flex items-center gap-1 text-[12px] font-medium text-[#004299] hover:underline">
                 <span>View Details</span>
                 <ChevronRight className="size-4" />
@@ -800,7 +912,7 @@ export function PaymentsPage() {
           <div className="min-w-[800px]">
             {/* Table header — #EBEBEB bar + primary dark labels */}
             <div className="grid grid-cols-[90px_1fr_110px_130px_140px_130px_40px] gap-8 bg-[#EBEBEB] px-6 py-3 border-b border-[#e0e0e0]">
-              <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px]">Time</span>
+              <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Time</span>
               <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px]">Customer Name</span>
               <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Payment Option</span>
               <span className="text-[12px] text-[#101010] uppercase tracking-[0.6px] font-semibold leading-[16px] whitespace-nowrap">Transaction ID</span>
@@ -810,7 +922,7 @@ export function PaymentsPage() {
             </div>
 
             {/* Rows: zebra #fff / #fafafa, no row borders (same as Reports) */}
-            {mockTransactions.map((transaction, index) => (
+            {paginatedListingTransactions.map((transaction, index) => (
               <div
                 key={transaction.id}
                 onClick={() => setSelectedTransaction(transaction)}
@@ -820,15 +932,40 @@ export function PaymentsPage() {
               >
                 <div className="flex items-center gap-3">
                   <div className="size-5 shrink-0">
-                    <SuccessSmall />
+                    {transaction.status === "success" ? (
+                      <SuccessSmall />
+                    ) : (
+                      <div
+                        className={`size-5 rounded-full ${
+                          transaction.status === "pending"
+                            ? "bg-[#ff9d00]"
+                            : transaction.status === "failed"
+                              ? "bg-[#d93025]"
+                              : "bg-[#e0e0e0]"
+                        }`}
+                        aria-hidden
+                      />
+                    )}
                   </div>
                   <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.time}</span>
                 </div>
                 <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.customerName}</span>
                 <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.paymentOption}</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{transaction.transactionId}</span>
-                  <button className="text-[#004299] hover:text-[#009de5] transition-colors shrink-0">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">
+                    {transaction.transactionIdMasked}
+                  </span>
+                  <button
+                    type="button"
+                    aria-label="Copy transaction ID"
+                    className="text-[#004299] hover:text-[#009de5] transition-colors shrink-0"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      void navigator.clipboard
+                        .writeText(transaction.transactionIdFull)
+                        .then(() => showCopiedToast());
+                    }}
+                  >
                     <CopyIcon className="size-4" />
                   </button>
                 </div>
@@ -842,7 +979,12 @@ export function PaymentsPage() {
           </div>
         </div>
 
-        <Pagination currentPage={1} totalPages={32} />
+        <Pagination
+          currentPage={listingPage}
+          totalPages={listingTotalPages}
+          onPrevious={() => setListingPage((p) => Math.max(1, p - 1))}
+          onNext={() => setListingPage((p) => Math.min(listingTotalPages, p + 1))}
+        />
       </div>
 
       <Overlay
@@ -874,6 +1016,7 @@ export function PaymentsPage() {
         open={!!selectedTransaction}
         onClose={() => setSelectedTransaction(null)}
         transaction={selectedTransaction}
+        onCopied={showCopiedToast}
       />
     </div>
   );

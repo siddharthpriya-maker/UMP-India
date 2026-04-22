@@ -8,8 +8,20 @@ alwaysApply: false
 
 ## Container (standalone on page)
 - `overflow-x-auto border border-[#e0e0e0] rounded-[12px]`
-- Inner min-width wrapper: `min-w-[700px]` or `min-w-[800px]`
+- Inner min-width wrapper: `min-w-[700px]` or `min-w-[800px]` (use `min-w-[960px]` when the first column is wide, e.g. Settlements time + UTR stack)
 - Layout: CSS Grid with `grid-cols-[...]`
+
+## Full-page listing + pagination (canonical — `PaymentsPage.tsx`)
+Use this stack on L1 routes that show a bordered grid and `<Pagination />` directly on the page (Payments, Settlements date-group tables, Payment Pages list view).
+
+- **Table + pagination wrapper:** `flex flex-col gap-0` so page-level `gap-4 md:gap-6` does **not** insert space between the rounded table shell and the pagination bar (see `pagination.mdc`).
+- **Table shell:** `overflow-x-auto border border-[#e0e0e0] rounded-[12px]` (standalone — not wrapped in extra `p-6` that would inset the stroke).
+- **Inner:** `min-w-[800px]` unless columns need more width (`min-w-[960px]` Settlements).
+- **Column gutter:** `gap-8` (32px) on **both** header row and data rows — same `grid-cols-[...]` template for header and body.
+- **Header row:** `bg-[#EBEBEB] px-6 py-3 border-b border-[#e0e0e0]` plus label classes below; the bottom border separates the bar from the first zebra row.
+- **Data rows:** `px-6 py-4`, zebra + hover + `items-center` as in [Data Rows](#data-rows); optional `cursor-pointer` when the whole row opens a drawer or navigates.
+
+Other modules (Reports “Recently Generated” inside a card, Settings instruments, etc.) reuse the **same header row, zebra, hover, and gap-8** rules inside their layout variant — see **List inside a bordered card** below.
 
 ## List inside a bordered card (optional section title)
 Use when the listing sits inside an outer **card** (`rounded-[12px] border border-[#e0e0e0] bg-white`) with or without an **h2** above the grid.
@@ -19,6 +31,7 @@ Use when the listing sits inside an outer **card** (`rounded-[12px] border borde
 - **With title:** `h2` uses `px-6 pt-6 pb-4` (and usual title typography). Listing starts immediately under the title — no `gap` between title block and scroll region if you rely on `pb-4` alone.
 - **Without title:** omit the `h2`; first child is `overflow-x-auto` with the grid (header row still full-bleed to the card’s left/right edges).
 - Grid rows keep **horizontal** `px-6` on the row for cell alignment.
+- **Header under title:** first row inside `overflow-x-auto` still uses `bg-[#EBEBEB]`, `border-b border-[#e0e0e0]`, and `gap-8` so it matches standalone listings.
 - **Pagination:** place **outside** the bordered card, directly below the listing wrapper (`flex flex-col gap-0` — card first, then `<Pagination />`). Page horizontal padding aligns the bar with the rest of the screen (same as Payments / Settlements).
 
 ## Header Row (listing column titles)
@@ -40,7 +53,7 @@ Use when the listing sits inside an outer **card** (`rounded-[12px] border borde
 - Alignment: `items-center`
 
 ## Column Spacing
-- Gap: `gap-8` (32px)
+- Gap: **`gap-8` (32px)** on header and body grids — default for Payments, Settlements, Payment Pages, and Reports recent listing (do not use `gap-4` for these full-width merchant listings).
 - Time column: ~90px fixed
 - Text columns: 110–140px fixed
 - Flexible columns: `1fr`
@@ -50,6 +63,7 @@ Use when the listing sits inside an outer **card** (`rounded-[12px] border borde
 ## Variant: Without Vertical Separators
 Padding on the grid ROW, no cell borders.
 ```tsx
+{/* gap-8 on header and every data row; border-b only on header (not between data rows) */}
 <div className="grid grid-cols-[...] gap-8 bg-[#EBEBEB] px-6 py-3 border-b border-[#e0e0e0]">
   <span className="text-[12px] font-semibold uppercase tracking-[0.6px] leading-[16px] text-[#101010]">Header A</span>
   <span className="text-[12px] font-semibold uppercase tracking-[0.6px] leading-[16px] text-[#101010]">Header B</span>
@@ -77,7 +91,7 @@ Padding on individual CELLS, `border-r` on each cell except last. Apply `bg-[#EB
 
 ## Table Icons
 - Status icon (left): `size-5`, `shrink-0`
-- Copy button: `size-4 text-[#00b8f5] hover:text-[#004299]`
+- Copy control: `CopyIcon` `size-4` with parent `text-[#004299] hover:text-[#009de5] transition-colors` (same as Payments / Settlements rows)
 - Chevron (right): `ChevronRight size-5 text-[#7e7e7e]`
 
 ## Rules

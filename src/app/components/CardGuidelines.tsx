@@ -41,29 +41,21 @@ export const PAYMENT_SUMMARY_COLORS = {
 };
 
 /**
- * Action Card Colors
- * Priority-based backgrounds with opacity for hover effects
- */
-export const ACTION_CARD_COLORS = {
-  highPriority: {
-    base: "#ffebef",        // Red 50
-    opacity: 0.6,           // 60% opacity by default
-    hover: 1,               // 100% opacity on hover
-  },
-  lowPriority: {
-    base: "#fff8e1",        // Orange 50
-    opacity: 0.6,           // 60% opacity by default
-    hover: 1,               // 100% opacity on hover
-  },
-};
-
-/**
  * Notification Card Colors
  * Different states for read/unread notifications
  */
 export const NOTIFICATION_CARD_COLORS = {
   default: "#fafafa",       // Surface level 3
   unread: "#F5F9FE",        // Light blue background
+};
+
+/**
+ * Action Card Colors
+ * Home Actions tab uses the same neutral surfaces as read notification cards.
+ */
+export const ACTION_CARD_COLORS = {
+  surface: NOTIFICATION_CARD_COLORS.default,
+  hover: "#f5f9fe",
 };
 
 // ============================================================================
@@ -254,63 +246,50 @@ export function PaymentSummaryCards() {
 }
 
 /**
- * ACTION CARD (PRIORITY-BASED)
- * 
- * Used for: Actions requiring user attention in Actions tab
- * 
+ * ACTION CARD (NEUTRAL — HOME)
+ *
+ * Used for: Actions requiring user attention in the Home Actions tab.
+ * Surfaces match read notification cards: `#fafafa` default, `#f5f9fe` on hover.
+ *
  * Design Guidelines:
- * - Background: Priority-based with opacity
- *   - P0 (High): #ffebef at 60% opacity, 100% on hover
- *   - P1 (Low): #fff8e1 at 60% opacity, 100% on hover
- * - Border Radius: 16px (rounded-[16px])
- * - Padding: 16px (p-4)
- * - Layout: Flex row with content on left, icon on right
- * - Title: 14px, semibold, foreground color
- * - Description: 12px, muted-foreground, with bold amount
- * - CTA Link: 12px, semibold, #004299 color, hover underline
- * - Icon: 20px (size-5), positioned top-right
- * - Icon Color: P0 = destructive red, P1 = warning orange
- * - Hover: Transition from 60% to 100% opacity
- * - Gap: 12px between content and icon (gap-3)
+ * - Background: `bg-[#fafafa]` → `hover:bg-[#f5f9fe]` (same as read notifications)
+ * - Border Radius: 16px, Padding: 16px (`p-[16px]`), `cursor-pointer`, `transition-colors`
+ * - Layout: Flex row, content left, icon right, `gap-3`
+ * - Icon: size-5, neutral `text-[#7e7e7e]`
+ * - CTA: 12px semibold `#004299`, underline on hover
  */
 export function ActionCards() {
   return (
-    <div className="flex flex-col gap-4">
-      {/* High Priority (P0) Action Card */}
-      <div className="bg-[#ffebef]/60 hover:bg-[#ffebef] rounded-[16px] p-4 transition-colors">
+    <div className="flex flex-col gap-3">
+      <div className="cursor-pointer rounded-[16px] bg-[#fafafa] p-[16px] transition-colors hover:bg-[#f5f9fe]">
         <div className="flex items-start gap-3">
-          <div className="flex-1 min-w-0">
-            <h4 className="font-semibold text-[#101010] mb-1 text-[14px]">
-              New Dispute Raised
-            </h4>
-            <p className="text-[#7e7e7e] mb-2 text-[12px]">
+          <div className="min-w-0 flex-1">
+            <h4 className="mb-1 text-[14px] font-semibold text-[#101010]">New Dispute Raised</h4>
+            <p className="mb-2 text-[12px] text-[#7e7e7e]">
               <span className="font-bold text-[#101010]">₹3,200</span> at risk — submit proof to avoid debit
             </p>
-            <a href="#" className="text-[#004299] hover:underline font-semibold text-[12px]">
+            <a href="#" className="text-[12px] font-semibold text-[#004299] hover:underline">
               Submit Proof
             </a>
           </div>
-          <div className="shrink-0 text-[#fd5154]">
+          <div className="shrink-0 text-[#7e7e7e]">
             <AlertCircle className="size-5" />
           </div>
         </div>
       </div>
 
-      {/* Low Priority (P1) Action Card */}
-      <div className="bg-[#fff8e1]/60 hover:bg-[#fff8e1] rounded-[16px] p-4 transition-colors">
+      <div className="cursor-pointer rounded-[16px] bg-[#fafafa] p-[16px] transition-colors hover:bg-[#f5f9fe]">
         <div className="flex items-start gap-3">
-          <div className="flex-1 min-w-0">
-            <h4 className="font-semibold text-[#101010] mb-1 text-[14px]">
-              Settlement On Hold
-            </h4>
-            <p className="text-[#7e7e7e] mb-2 text-[12px]">
+          <div className="min-w-0 flex-1">
+            <h4 className="mb-1 text-[14px] font-semibold text-[#101010]">Settlement On Hold</h4>
+            <p className="mb-2 text-[12px] text-[#7e7e7e]">
               <span className="font-bold text-[#101010]">₹85,430</span> at risk — update bank details
             </p>
-            <a href="#" className="text-[#004299] hover:underline font-semibold text-[12px]">
+            <a href="#" className="text-[12px] font-semibold text-[#004299] hover:underline">
               Update Details
             </a>
           </div>
-          <div className="shrink-0 text-[#ff9d00]">
+          <div className="shrink-0 text-[#7e7e7e]">
             <CreditCard className="size-5" />
           </div>
         </div>
@@ -506,8 +485,7 @@ export function MathSymbolSeparators() {
  * |---------------------|--------|---------|-----------------|----------------------------|
  * | Overview Metric     | 20px   | p-5     | Semantic light  | Dashboard key metrics      |
  * | Payment Summary     | 12px   | p-5     | Semantic light  | Payment breakdown          |
- * | Action (P0)         | 16px   | p-4     | Red 60% opacity | High priority actions      |
- * | Action (P1)         | 16px   | p-4     | Orange 60% op.  | Low priority actions       |
+ * | Action (Home)       | 16px   | p-[16px]| #fafafa → #f5f9fe hover | Actions tab (neutral)   |
  * | Notification (unread)| 16px  | p-[16px]| #F5F9FE         | New notifications          |
  * | Notification (read) | 16px   | p-[16px]| #fafafa         | Old notifications          |
  * | Chart Container     | 16px   | p-6     | White           | Chart/graph containers     |
@@ -518,7 +496,7 @@ export function MathSymbolSeparators() {
  * 
  * ❌ Don't use arbitrary hex colors without design system reference
  * ❌ Don't add borders/strokes to action cards (use background only)
- * ❌ Don't use box shadows on hover for action cards (use opacity)
+ * ❌ Don't use colored priority tints on action cards (use neutral read-notification surfaces)
  * ❌ Don't forget hover states on interactive cards
  * ❌ Don't mix different border radius values within same section
  * ❌ Don't use padding less than 16px for cards
@@ -578,10 +556,11 @@ export function CardGuidelines() {
         {/* Action Cards */}
         <div>
           <h2 className="text-[24px] font-medium text-[#101010] mb-4">
-            Action Cards (Priority-Based)
+            Action Cards (neutral)
           </h2>
           <p className="text-[14px] text-[#7e7e7e] mb-6">
-            Cards requiring user attention with opacity hover effects. Border radius: 16px, Padding: 16px.
+            Same neutral surface as read notifications on Home: #fafafa with #f5f9fe hover. Border radius: 16px,
+            padding: 16px.
           </p>
           <div className="max-w-md">
             <ActionCards />
@@ -652,21 +631,21 @@ export function CardGuidelines() {
             {/* Action Card Colors */}
             <div>
               <h3 className="text-[16px] font-semibold text-[#101010] mb-3">
-                Action Cards (with 60% opacity)
+                Action cards (Home — neutral)
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="size-12 rounded-lg" style={{ backgroundColor: `${ACTION_CARD_COLORS.highPriority.base}` }} />
+                  <div className="size-12 rounded-lg" style={{ backgroundColor: ACTION_CARD_COLORS.surface }} />
                   <div>
-                    <div className="text-[14px] font-medium text-[#101010]">High Priority (P0)</div>
-                    <div className="text-[12px] text-[#7e7e7e] font-mono">{ACTION_CARD_COLORS.highPriority.base}</div>
+                    <div className="text-[14px] font-medium text-[#101010]">Default surface</div>
+                    <div className="text-[12px] text-[#7e7e7e] font-mono">{ACTION_CARD_COLORS.surface}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="size-12 rounded-lg" style={{ backgroundColor: `${ACTION_CARD_COLORS.lowPriority.base}` }} />
+                  <div className="size-12 rounded-lg" style={{ backgroundColor: ACTION_CARD_COLORS.hover }} />
                   <div>
-                    <div className="text-[14px] font-medium text-[#101010]">Low Priority (P1)</div>
-                    <div className="text-[12px] text-[#7e7e7e] font-mono">{ACTION_CARD_COLORS.lowPriority.base}</div>
+                    <div className="text-[14px] font-medium text-[#101010]">Hover surface</div>
+                    <div className="text-[12px] text-[#7e7e7e] font-mono">{ACTION_CARD_COLORS.hover}</div>
                   </div>
                 </div>
               </div>

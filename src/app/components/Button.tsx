@@ -9,6 +9,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ButtonSize;
   icon?: ReactNode;
   iconPosition?: "left" | "right";
+  /** When set, renders after `children` (e.g. icon on both sides with `icon` + `iconPosition="left"`). */
+  trailingIcon?: ReactNode;
   loading?: boolean;
   fullWidth?: boolean;
 }
@@ -38,6 +40,7 @@ export function Button({
   size = "medium",
   icon,
   iconPosition = "left",
+  trailingIcon,
   loading = false,
   disabled = false,
   fullWidth = false,
@@ -98,24 +101,40 @@ export function Button({
     .replace(/\s+/g, " ")
     .trim();
 
+  const iconWrapClass = `shrink-0 ${iconSizes[size]} flex items-center justify-center text-current [&_svg]:size-full`;
+
   const iconElement = icon && (
-    <span
-      className={`shrink-0 ${iconSizes[size]} flex items-center justify-center text-current [&_svg]:size-full`}
-    >
+    <span className={iconWrapClass}>
       {icon}
     </span>
   );
 
-  const contentRow = (
-    <span
-      className={`inline-flex items-center justify-center ${contentGap} ${loading ? "opacity-0" : ""}`}
-      aria-hidden={loading || undefined}
-    >
-      {icon && iconPosition === "left" && iconElement}
-      {!isIconOnly && children}
-      {icon && iconPosition === "right" && iconElement}
+  const trailingIconElement = trailingIcon && (
+    <span className={iconWrapClass}>
+      {trailingIcon}
     </span>
   );
+
+  const contentRow =
+    trailingIcon != null ? (
+      <span
+        className={`inline-flex items-center justify-center ${contentGap} ${loading ? "opacity-0" : ""}`}
+        aria-hidden={loading || undefined}
+      >
+        {icon ? iconElement : null}
+        {!isIconOnly && children}
+        {trailingIconElement}
+      </span>
+    ) : (
+      <span
+        className={`inline-flex items-center justify-center ${contentGap} ${loading ? "opacity-0" : ""}`}
+        aria-hidden={loading || undefined}
+      >
+        {icon && iconPosition === "left" && iconElement}
+        {!isIconOnly && children}
+        {icon && iconPosition === "right" && iconElement}
+      </span>
+    );
 
   return (
     <button

@@ -34,7 +34,8 @@ export type Dashboard2Props = {
 /** Payment Sources donut: clockwise sweep when the date filter changes (Recharts sector animation). */
 const PAYMENT_SOURCES_PIE_CW_MS = 500;
 
-const PAYMENT_SUMMARY_RESET_MS = 420;
+/** Must exceed `PAYMENT_SUMMARY_BAR_ANIM_MS` so the collapse finishes before we swap series length (avoids Recharts bar “stuck” when e.g. This week → This month). */
+const PAYMENT_SUMMARY_RESET_MS = 520;
 /** Bar height animation — line L→R draw starts only after this (kept in sync with `<Bar animationDuration>`). */
 const PAYMENT_SUMMARY_BAR_ANIM_MS = 400;
 /** Recharts default line morph — disabled so stroke-dash “draw” owns motion */
@@ -435,7 +436,7 @@ export function Dashboard2({
                   }}
                 />
                 <Bar
-                  key="payment-bar"
+                  key={`payment-bar-${selectionKey(paymentSummarySelection)}`}
                   yAxisId="left-payments"
                   dataKey="amount"
                   fill="#1576DB"
@@ -447,7 +448,7 @@ export function Dashboard2({
                   animationEasing="ease-in-out"
                 />
                 <Line
-                  key="payment-line"
+                  key={`payment-line-${selectionKey(paymentSummarySelection)}`}
                   yAxisId="right-count"
                   type="monotone"
                   dataKey="count"

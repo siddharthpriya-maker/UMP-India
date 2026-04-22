@@ -225,7 +225,7 @@ export function ReportsPage() {
           <div className="overflow-x-auto">
             <div className="min-w-[900px]">
             {/* Listing header — #EBEBEB bar + primary dark text */}
-            <div className="grid grid-cols-[180px_1fr_200px_180px_160px] gap-4 bg-[#EBEBEB] px-6 py-3">
+            <div className="grid grid-cols-[180px_1fr_200px_180px_160px] gap-8 border-b border-[#e0e0e0] bg-[#EBEBEB] px-6 py-3">
               <span className="text-[12px] font-semibold uppercase tracking-[0.6px] leading-[16px] text-[#101010] whitespace-nowrap">
                 Report Generation Date
               </span>
@@ -247,26 +247,26 @@ export function ReportsPage() {
             {mockRecentReports.map((report, index) => (
               <div
                 key={report.id}
-                className={`grid grid-cols-[180px_1fr_200px_180px_160px] gap-4 px-6 py-4 transition-colors items-center ${
+                className={`grid grid-cols-[180px_1fr_200px_180px_160px] gap-8 px-6 py-4 transition-colors items-center ${
                   index % 2 === 0 ? "bg-white" : "bg-[#fafafa]"
                 } hover:bg-[#f5f9fe]`}
               >
-                <span className="text-[14px] text-[#101010] leading-[24px]">
+                <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">
                   {report.generationDate}
                 </span>
 
-                <div className="flex flex-col">
-                  <span className="text-[14px] text-[#101010] leading-[24px]">{report.reportType}</span>
+                <div className="flex min-w-0 flex-col">
+                  <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">{report.reportType}</span>
                   {report.reportSubtype && (
                     <span className="text-[12px] text-[#7e7e7e] leading-[18px]">{report.reportSubtype}</span>
                   )}
                 </div>
 
-                <span className="text-[14px] text-[#101010] leading-[24px]">
+                <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">
                   {report.duration}
                 </span>
 
-                <span className="text-[14px] text-[#101010] leading-[24px]">
+                <span className="text-[14px] text-[#101010] leading-[24px] whitespace-nowrap">
                   {report.selectedSubMerchants}
                 </span>
 

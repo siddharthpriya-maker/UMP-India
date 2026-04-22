@@ -4,8 +4,8 @@
  * split across days with deterministic “shape” (weekday vs weekend).
  *
  * **App shell:** `MerchantReportingContext` holds **Business Overview** `OverviewSelection` (same as
- * `/payments` DATE) and memoized `computeBusinessOverviewMetrics` / `computePaymentsPageSummary`.
- * Home **Payment Summary** and **Payment Sources** use separate selections in `Dashboard.tsx`.
+ * Home **Payment Summary** chart and `/payments` DATE) and memoized `computeBusinessOverviewMetrics` /
+ * `computePaymentsPageSummary`. Home **Payment Sources** uses separate selection in `Dashboard.tsx`.
  */
 
 export type OverviewQuickPreset = "today" | "yesterday" | "thisWeek" | "thisMonth";
@@ -376,7 +376,7 @@ export function computePaymentsPageSummary(
 ): PaymentsPageSummaryComputed {
   const overview = computeBusinessOverviewMetrics(selection, now);
   const principal = Math.max(0, overview.paymentsTotalRupees);
-  const count = Math.max(1, overview.paymentsCount);
+  const count = overview.paymentsCount;
 
   const tip = Math.round(principal * 0.01232);
   const reversal = Math.round(principal * 0.0096);

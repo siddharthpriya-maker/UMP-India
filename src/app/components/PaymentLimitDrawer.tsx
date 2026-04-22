@@ -118,16 +118,9 @@ export function PaymentLimitDrawer({ open, onClose }: PaymentLimitDrawerProps) {
 
       <DrawerBody>
         <h2 className="text-[24px] font-bold text-[#101010] leading-[32px] px-8 pb-4">
-          Increase your payment limits
+          Increase Your Payment Limits with Quick Video KYC
         </h2>
         <div className="flex flex-col gap-5 px-8 pb-6">
-          {/* Value proposition */}
-          <div className="bg-[#fafafa] rounded-[12px] px-5 py-4">
-            <p className="text-[14px] text-[#101010] leading-[22px]">
-              Accept higher-value payments by completing a quick video KYC.
-            </p>
-          </div>
-
           {/* Status indicator */}
           <div className="border border-[#e0e0e0] rounded-[12px] px-5 py-4 flex items-center justify-between">
             <div className="flex items-center gap-2.5">

@@ -11,14 +11,14 @@ alwaysApply: false
 ```ts
 OVERVIEW_CARD_COLORS = { payments: "#F5FBFE", settlement: "#F0FDF4", refunds: "#FEF2F2" }
 PAYMENT_SUMMARY_COLORS = { collections: "#F3F8FE", adjustments: "#FEF7F7", deductions: "#FEF7F7", settlementProcessed: "rgba(39,174,95,0.06)", availableForSettlement: "#EFF8FD" }
-ACTION_CARD_COLORS = { P0: "#ffebef" (60% default → 100% hover), P1: "#fff8e1" (same) }
+ACTION_CARD_COLORS = { surface: "#fafafa" (read-notification default), hover: "#f5f9fe" }
 NOTIFICATION_CARD_COLORS = { read: "#fafafa", unread: "#F5F9FE" }
 ```
 
 Radius & padding constants:
 - Overview: `rounded-[20px]`, `p-5`
 - Summary: `rounded-[12px]`, `p-5`
-- Action/default: `rounded-[16px]`, `p-4`
+- Action / notification (read): `rounded-[16px]`, `p-[16px]`
 
 ---
 
@@ -41,15 +41,13 @@ Radius & padding constants:
 
 ---
 
-## 2. Action Priority Cards (Actions & Notifications Widget)
+## 2. Action Cards (Actions & Notifications Widget — Home)
 
-- P0 (High Priority): `bg-[#ffebef]/60`, hover: `hover:bg-[#ffebef]`
-- P1 (Low Priority): `bg-[#fff8e1]/60`, hover: `hover:bg-[#fff8e1]`
-- No border/stroke, `rounded-[16px]`, `p-4`, `transition-colors`
-- Layout: row `flex gap-3`
-- Icon: Lucide `size-5` on right side
-  - P0: `text-destructive` (resolves to error red), icons like `AlertCircle`, `CreditCard`
-  - P1: `text-chart-3` (resolves to warning), icons like `Shield`, `Smartphone`
+- Neutral surfaces (same family as **read** notification rows): `bg-[#fafafa]`, hover `hover:bg-[#f5f9fe]`
+- No border/stroke, `rounded-[16px]`, `p-[16px]`, `cursor-pointer`, `transition-colors`
+- List spacing: `flex flex-col gap-3` between cards
+- Layout: row `flex gap-3` inside each card
+- Icon: Lucide `size-5` on the right, neutral `text-[#7e7e7e]` (not priority-colored)
 - Typography:
   - Title: `text-[14px] font-semibold`
   - Body: `text-[12px]`, bold inline amounts
