@@ -1,5 +1,7 @@
 import { useState, type ReactNode } from "react";
+import type { OverviewSelection } from "../data/businessOverviewDataset";
 import { PrimaryButton, SecondaryButton, TertiaryButton } from "../Button";
+import { BusinessOverviewDateRangePicker } from "../BusinessOverviewDateRangePicker";
 import { FilterBar } from "../FilterBar";
 import { Header } from "../Header";
 import { Pagination } from "../Pagination";
@@ -155,6 +157,19 @@ function HeaderStorybookPreview() {
   );
 }
 
+function BusinessOverviewDateRangePickerStoryPreview() {
+  const [selection, setSelection] = useState<OverviewSelection>({ kind: "quick", preset: "today" });
+  return (
+    <div className="flex min-h-[48px] flex-col items-start gap-3">
+      <BusinessOverviewDateRangePicker
+        selection={selection}
+        onSelectionChange={setSelection}
+        variant="compact"
+      />
+    </div>
+  );
+}
+
 export const STORYBOOK_REGISTRY: StoryCategory[] = [
   {
     id: "buttons",
@@ -254,6 +269,30 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
     id: "data",
     label: "Data & filters",
     components: [
+      {
+        id: "business-overview-date-range-picker",
+        label: "BusinessOverviewDateRangePicker",
+        variants: [
+          {
+            id: "default",
+            label: "Default",
+            preview: <BusinessOverviewDateRangePickerStoryPreview />,
+            specs: [
+              "Preview uses `variant=\"compact\"` (card row): `text-[14px]`, `max-w-[min(100vw-8rem,20rem)]`, `self-start`, `hover:bg-[#f5f9fe]/80` — matches **Payment Summary** / **Payment Sources** on `Dashboard2`.",
+              "`variant=\"default\"` (not shown): wider trigger `max-w-[min(100vw-8rem,22rem)]`, `text-sm` — **Business Overview** on Home (`Dashboard1`).",
+              "Trigger: pill `bg-[#f5f9fe]`, `rounded-lg`, `h-[40px]`; label from `labelForSelection`; chevron rotates when open.",
+              "Panel: presets (`Today` … `Custom range`) or `BusinessOverviewCustomDateRange`; `mousedown` outside closes. Quick presets → `onSelectionChange({ kind: \"quick\", preset })`; custom → `{ kind: \"custom\", from, to }`.",
+            ],
+            accessibility: [
+              "Trigger is `button type=\"button\"`; preset rows are buttons with title + subtitle.",
+              "Keep calendar / custom flow labels clear when extending copy.",
+            ],
+            whenToUse: [
+              "Home **Business Overview** (`variant=\"default\"`) or dashboard chart card headers (`variant=\"compact\"`).",
+            ],
+          },
+        ],
+      },
       {
         id: "pagination",
         label: "Pagination",
@@ -429,9 +468,13 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
   },
 ];
 
-/** Old Header story path; keep resolving so bookmarks and L2 state stay valid. */
+/** Legacy story paths; keep resolving so bookmarks and L2 state stay valid. */
 export function canonicalStorybookPath(path: string): string {
-  return path === "header/default/main" ? "header/default/default" : path;
+  if (path === "header/default/main") return "header/default/default";
+  if (path === "data/business-overview-date-range-picker/compact") {
+    return "data/business-overview-date-range-picker/default";
+  }
+  return path;
 }
 
 export function findVariant(path: string): { category: StoryCategory; component: StoryComponent; variant: StoryVariant } | null {

@@ -58,7 +58,7 @@ export function StepWizard({ currentStep }: StepWizardProps) {
   return (
     <nav
       aria-label="Create payment page steps"
-      className="w-full shrink-0 px-[32px] pb-5 pt-0"
+      className="w-full shrink-0 bg-[#ffffff] px-[32px] pb-5 pt-0"
     >
       <div className="w-full rounded-[12px] border border-[#e0e0e0] bg-white px-6 py-5 shadow-[0_1px_3px_rgba(16,16,16,0.06)] sm:px-8">
         <ul className="flex w-full list-none flex-wrap items-center justify-center gap-y-4 p-0">

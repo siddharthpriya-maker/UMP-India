@@ -12,16 +12,18 @@ function storybookL2Value(fullPath: string) {
 }
 
 function buildStorybookL2Categories(): SubmenuCategory[] {
-  return STORYBOOK_REGISTRY.map((cat) => ({
-    title: cat.label,
-    collapsible: true,
-    items: cat.components.flatMap((comp) =>
-      comp.variants.map((v) => ({
-        label: comp.variants.length === 1 ? comp.label : `${comp.label}: ${v.label}`,
-        value: storybookL2Value(`${cat.id}/${comp.id}/${v.id}`),
-      }))
-    ),
-  }));
+  return [...STORYBOOK_REGISTRY]
+    .sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: "base" }))
+    .map((cat) => ({
+      title: cat.label,
+      collapsible: true,
+      items: cat.components.flatMap((comp) =>
+        comp.variants.map((v) => ({
+          label: comp.variants.length === 1 ? comp.label : `${comp.label}: ${v.label}`,
+          value: storybookL2Value(`${cat.id}/${comp.id}/${v.id}`),
+        }))
+      ),
+    }));
 }
 
 const storybookL2Categories = buildStorybookL2Categories();
@@ -207,7 +209,7 @@ export function Sidebar() {
 
   const submenuConfig: Record<string, string> = {
     "Accept Payments": "Accept Payments",
-    Storybook: STORYBOOK_REGISTRY[0]?.label ?? "Actions",
+    Storybook: storybookL2Categories[0]?.title ?? "Actions",
   };
 
   const handleNavItemClick = (label: string) => {

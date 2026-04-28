@@ -76,7 +76,7 @@ export function CTASection({
         <div className="mt-3 flex items-center justify-center gap-4 text-[11px] text-[#acacac]">
           <span>🔒 Secure Payment</span>
           <span>·</span>
-          <span>Powered by Razorpay</span>
+          <span>Powered by Paytm</span>
         </div>
       </div>
     </div>
