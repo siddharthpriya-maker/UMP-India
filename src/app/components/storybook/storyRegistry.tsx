@@ -1,6 +1,8 @@
 import { useState, type ReactNode } from "react";
+import { MemoryRouter } from "react-router";
 import { PrimaryButton, SecondaryButton, TertiaryButton } from "../Button";
 import { FilterBar } from "../FilterBar";
+import { Header } from "../Header";
 import { Pagination } from "../Pagination";
 import { ReportMenu } from "../ReportMenu";
 import { SearchWithDropdown } from "../SearchWithDropdown";
@@ -140,6 +142,17 @@ function ReportMenuStorybookPreview() {
     <div className="w-full max-w-[260px] shrink-0 rounded-[12px] border border-[#e0e0e0] bg-white p-3 overflow-hidden">
       <ReportMenu selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
     </div>
+  );
+}
+
+/** `useLocation()` must not be `/storybook` or the header swaps to catalog search copy — isolate merchant route. */
+function HeaderStorybookPreview() {
+  return (
+    <MemoryRouter initialEntries={["/home"]}>
+      <div className="w-full min-w-0 bg-white">
+        <Header />
+      </div>
+    </MemoryRouter>
   );
 }
 
@@ -378,6 +391,35 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
             ],
             whenToUse: [
               "Reports module — left-hand report type picker before configuration + table.",
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "header",
+    label: "Header",
+    components: [
+      {
+        id: "merchant-header",
+        label: "Header",
+        variants: [
+          {
+            id: "default",
+            label: "Default",
+            preview: <HeaderStorybookPreview />,
+            specs: [
+              "Shell: `flex w-full shrink-0 flex-col gap-4 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-6 lg:px-8` (`Header.tsx`).",
+              "Left: pill search `rounded-[100px] bg-[#f5f9fe]` (merchant); icon + field; empty query shows **Search for a** + `RotatingSearchSuffix` (Transaction ID / Refund ID / …) — only on merchant routes (preview uses `MemoryRouter` `/home`).",
+              "Right: `Whats New` + `Need Help?` (external link) + avatar ring `rounded-full border` with initials.",
+            ],
+            accessibility: [
+              "Search: `role=\"searchbox\"` + `aria-label` for scope; clear control `aria-label=\"Clear search\"` when text present.",
+              "Support link: `target=\"_blank\"` `rel=\"noopener noreferrer\"`.",
+            ],
+            whenToUse: [
+              "Global top bar on every merchant shell route; Storybook catalog uses alternate placeholder when `pathname === \"/storybook\"`.",
             ],
           },
         ],
