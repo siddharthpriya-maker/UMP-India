@@ -4,12 +4,12 @@ import { Dashboard2 } from "./Dashboard2";
 import { ActivationSuccessPopup } from "./ActivationSuccessPopup";
 import { PaymentLimitDrawer } from "./PaymentLimitDrawer";
 import type { OverviewSelection } from "../data/businessOverviewDataset";
-import { useMerchantReporting } from "../context/MerchantReportingContext";
 
 const defaultHomeChartSelection: OverviewSelection = { kind: "quick", preset: "today" };
 
 export function Dashboard() {
-  const { businessOverviewDateSelection, setBusinessOverviewDateSelection } = useMerchantReporting();
+  const [paymentSummarySelection, setPaymentSummarySelection] =
+    useState<OverviewSelection>(defaultHomeChartSelection);
   const [paymentSourcesSelection, setPaymentSourcesSelection] =
     useState<OverviewSelection>(defaultHomeChartSelection);
   const [showActivation, setShowActivation] = useState(() => {
@@ -32,8 +32,8 @@ export function Dashboard() {
     <div className="flex w-full min-h-full flex-col bg-[var(--background,#ffffff)]">
       <Dashboard1 />
       <Dashboard2
-        paymentSummarySelection={businessOverviewDateSelection}
-        onPaymentSummarySelectionChange={setBusinessOverviewDateSelection}
+        paymentSummarySelection={paymentSummarySelection}
+        onPaymentSummarySelectionChange={setPaymentSummarySelection}
         paymentSourcesSelection={paymentSourcesSelection}
         onPaymentSourcesSelectionChange={setPaymentSourcesSelection}
       />

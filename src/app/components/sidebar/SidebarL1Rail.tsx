@@ -1,5 +1,4 @@
-import type { ReactNode } from "react";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 import Book from "@mui/icons-material/Book";
 import svgPaths from "../../../imports/svg-9d73oqi9lc";
@@ -218,6 +217,10 @@ const STORYBOOK_CATALOG_L2_CATEGORIES: { title: string; items: string[] }[] = [
   { title: "Category three", items: ["label", "label", "label"] },
 ];
 
+function storybookCatalogStableDomId(title: string): string {
+  return title.replace(/\s+/g, "-");
+}
+
 function StorybookCatalogL2Panel({
   categories,
   expandedCategory,
@@ -245,8 +248,8 @@ function StorybookCatalogL2Panel({
                 <button
                   type="button"
                   aria-expanded={isExpanded}
-                  aria-controls={`storybook-l2-cat-${category.title.replace(/\s+/g, "-")}`}
-                  id={`storybook-l2-trigger-${category.title.replace(/\s+/g, "-")}`}
+                  aria-controls={`storybook-l2-cat-${storybookCatalogStableDomId(category.title)}`}
+                  id={`storybook-l2-trigger-${storybookCatalogStableDomId(category.title)}`}
                   onClick={() => onCategoryToggle(category.title)}
                   className="rounded-full p-0.5 transition-colors hover:bg-[#e0e0e0]"
                 >
@@ -258,10 +261,10 @@ function StorybookCatalogL2Panel({
               </div>
               {isExpanded ? (
                 <div
-                  id={`storybook-l2-cat-${category.title.replace(/\s+/g, "-")}`}
+                  id={`storybook-l2-cat-${storybookCatalogStableDomId(category.title)}`}
                   role="region"
                   className="flex flex-col"
-                  aria-labelledby={`storybook-l2-trigger-${category.title.replace(/\s+/g, "-")}`}
+                  aria-labelledby={`storybook-l2-trigger-${storybookCatalogStableDomId(category.title)}`}
                 >
                   {category.items.map((item, idx) => (
                     <button
@@ -296,6 +299,65 @@ export interface SidebarL1RailProps {
   presentation?: SidebarL1RailPresentation;
 }
 
+function SidebarL1RailStorybookCatalog({ onItemClick }: { onItemClick: (label: string) => void }) {
+  const [catalogL2Open, setCatalogL2Open] = useState(false);
+  const [catalogExpandedCategory, setCatalogExpandedCategory] = useState<string | null>(
+    STORYBOOK_CATALOG_L2_CATEGORIES[0]?.title ?? null,
+  );
+
+  const dismissCatalogL2 = () => setCatalogL2Open(false);
+  const openCatalogL2 = () => setCatalogL2Open(true);
+  const toggleCatalogCategory = (title: string) => {
+    setCatalogExpandedCategory((prev) => (prev === title ? null : title));
+  };
+
+  return (
+    <div
+      className="relative flex h-full min-h-[560px] w-[88px] shrink-0 flex-col bg-[#e7f1f8]"
+      onMouseLeave={dismissCatalogL2}
+    >
+      {/* Same shell as `Sidebar`: fixed 88px column; L2 is absolutely positioned to the right (does not shrink L1). */}
+      <div className="flex min-h-0 w-[88px] flex-1 flex-col items-center gap-8 overflow-y-auto py-3">
+        <div className="flex w-full items-center justify-center" onMouseEnter={dismissCatalogL2}>
+          <PaytmLogo />
+        </div>
+        <div className="flex w-[60px] flex-col items-center gap-4">
+          {[0, 1, 2].map((i) => (
+            <NavItem
+              key={`storybook-l1-top-${i}`}
+              icon={<RailSymbolMark />}
+              label={STORYBOOK_CATALOG_LABEL}
+              isActive={i === 0}
+              onClick={() => onItemClick(STORYBOOK_CATALOG_LABEL)}
+              onMouseEnter={dismissCatalogL2}
+            />
+          ))}
+          <div className="flex items-center justify-center rounded-[7px] py-2" onMouseEnter={dismissCatalogL2}>
+            <div className="h-1 w-8 rounded-[7px] bg-[#e0e0e0]" />
+          </div>
+          {[0, 1, 2].map((i) => (
+            <NavItem
+              key={`storybook-l1-bottom-${i}`}
+              icon={<RailSymbolMark />}
+              label={STORYBOOK_CATALOG_LABEL}
+              isActive={false}
+              onClick={() => onItemClick(STORYBOOK_CATALOG_LABEL)}
+              onMouseEnter={openCatalogL2}
+            />
+          ))}
+        </div>
+      </div>
+      {catalogL2Open ? (
+        <StorybookCatalogL2Panel
+          categories={STORYBOOK_CATALOG_L2_CATEGORIES}
+          expandedCategory={catalogExpandedCategory}
+          onCategoryToggle={toggleCatalogCategory}
+        />
+      ) : null}
+    </div>
+  );
+}
+
 /** 88px scrollable L1 column: logo, primary nav, divider, secondary nav — merchant shell pairs with `Sidebar` L2; `storybook-catalog` includes a sample L2 on hover (bottom three icons). */
 export function SidebarL1Rail({
   selectedTab,
@@ -305,63 +367,8 @@ export function SidebarL1Rail({
   isAcceptPaymentsSubmenuActive,
   presentation = "merchant",
 }: SidebarL1RailProps) {
-  const [catalogL2Open, setCatalogL2Open] = useState(false);
-  const [catalogExpandedCategory, setCatalogExpandedCategory] = useState<string | null>(
-    STORYBOOK_CATALOG_L2_CATEGORIES[0]?.title ?? null,
-  );
-
   if (presentation === "storybook-catalog") {
-    const dismissCatalogL2 = () => setCatalogL2Open(false);
-    const openCatalogL2 = () => setCatalogL2Open(true);
-    const toggleCatalogCategory = (title: string) => {
-      setCatalogExpandedCategory((prev) => (prev === title ? null : title));
-    };
-
-    return (
-      <div
-        className="relative flex h-full min-h-[560px] w-[88px] shrink-0 flex-col bg-[#e7f1f8]"
-        onMouseLeave={dismissCatalogL2}
-      >
-        {/* Same shell as `Sidebar`: fixed 88px column; L2 is absolutely positioned to the right (does not shrink L1). */}
-        <div className="flex min-h-0 w-[88px] flex-1 flex-col items-center gap-8 overflow-y-auto py-3">
-          <div className="flex w-full items-center justify-center" onMouseEnter={dismissCatalogL2}>
-            <PaytmLogo />
-          </div>
-          <div className="flex w-[60px] flex-col items-center gap-4">
-            {[0, 1, 2].map((i) => (
-              <NavItem
-                key={`storybook-l1-top-${i}`}
-                icon={<RailSymbolMark />}
-                label={STORYBOOK_CATALOG_LABEL}
-                isActive={i === 0}
-                onClick={() => onItemClick(STORYBOOK_CATALOG_LABEL)}
-                onMouseEnter={dismissCatalogL2}
-              />
-            ))}
-            <div className="flex items-center justify-center rounded-[7px] py-2" onMouseEnter={dismissCatalogL2}>
-              <div className="h-1 w-8 rounded-[7px] bg-[#e0e0e0]" />
-            </div>
-            {[0, 1, 2].map((i) => (
-              <NavItem
-                key={`storybook-l1-bottom-${i}`}
-                icon={<RailSymbolMark />}
-                label={STORYBOOK_CATALOG_LABEL}
-                isActive={false}
-                onClick={() => onItemClick(STORYBOOK_CATALOG_LABEL)}
-                onMouseEnter={openCatalogL2}
-              />
-            ))}
-          </div>
-        </div>
-        {catalogL2Open ? (
-          <StorybookCatalogL2Panel
-            categories={STORYBOOK_CATALOG_L2_CATEGORIES}
-            expandedCategory={catalogExpandedCategory}
-            onCategoryToggle={toggleCatalogCategory}
-          />
-        ) : null}
-      </div>
-    );
+    return <SidebarL1RailStorybookCatalog onItemClick={onItemClick} />;
   }
 
   return (

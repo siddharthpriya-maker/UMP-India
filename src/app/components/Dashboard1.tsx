@@ -13,18 +13,18 @@ export function Dashboard1() {
   const {
     businessOverviewDateSelection,
     setBusinessOverviewDateSelection,
-    paymentsPageSummary,
+    businessOverviewSummary,
   } = useMerchantReporting();
 
-  const overview = paymentsPageSummary.overview;
+  const overview = businessOverviewSummary.overview;
 
   const animPaymentsRupees = useAnimatedNumber(
-    Math.round(paymentsPageSummary.paymentsPrincipalRupees),
+    Math.round(businessOverviewSummary.paymentsPrincipalRupees),
   );
-  const paymentsCountDisplay = paymentsPageSummary.paymentsCount.toLocaleString("en-IN");
+  const paymentsCountDisplay = businessOverviewSummary.paymentsCount.toLocaleString("en-IN");
   const animSuccessTenths = useAnimatedNumber(Math.round(overview.successRatePercent * 10));
   const animSettlementRupees = useAnimatedNumber(
-    Math.round(paymentsPageSummary.settlementProcessedRupees),
+    Math.round(businessOverviewSummary.settlementProcessedRupees),
   );
   const animRefundsRupees = useAnimatedNumber(Math.round(overview.refundsTotalRupees));
   const animRefundsCount = useAnimatedNumber(overview.refundsPaymentCount);

@@ -456,8 +456,8 @@ function PaymentsSummaryExpandedPanel({
 
 export function PaymentsPage() {
   const {
-    businessOverviewDateSelection,
-    setBusinessOverviewDateSelection,
+    paymentsModuleDateSelection,
+    setPaymentsModuleDateSelection,
     paymentsPageSummary: paymentSummary,
   } = useMerchantReporting();
   const [paymentsDatePanel, setPaymentsDatePanel] = useState<"presets" | "custom">("presets");
@@ -489,8 +489,8 @@ export function PaymentsPage() {
   );
 
   const allTransactionsForRange = useMemo(
-    () => generatePaymentsTransactions(businessOverviewDateSelection, new Date()),
-    [businessOverviewDateSelection],
+    () => generatePaymentsTransactions(paymentsModuleDateSelection, new Date()),
+    [paymentsModuleDateSelection],
   );
 
   const listingTransactions = useMemo(() => {
@@ -513,7 +513,7 @@ export function PaymentsPage() {
 
   useEffect(() => {
     setListingPage(1);
-  }, [businessOverviewDateSelection, statusFilter]);
+  }, [paymentsModuleDateSelection, statusFilter]);
 
   useEffect(() => {
     setListingPage((p) => Math.min(p, listingTotalPages));
@@ -526,8 +526,8 @@ export function PaymentsPage() {
   const deductionsCardRef = useRef<HTMLDivElement>(null);
 
   const paymentRangeLabel = useMemo(
-    () => labelForSelection(businessOverviewDateSelection),
-    [businessOverviewDateSelection],
+    () => labelForSelection(paymentsModuleDateSelection),
+    [paymentsModuleDateSelection],
   );
 
   useEffect(() => {
@@ -605,12 +605,12 @@ export function PaymentsPage() {
   ];
 
   const applyPaymentsDatePreset = (preset: PaymentsDatePresetQuick) => {
-    setBusinessOverviewDateSelection({ kind: "quick", preset });
+    setPaymentsModuleDateSelection({ kind: "quick", preset });
     setIsDateDropdownOpen(false);
   };
 
   const handlePaymentsCustomRangeConfirm = (from: Date, to: Date) => {
-    setBusinessOverviewDateSelection({ kind: "custom", from, to });
+    setPaymentsModuleDateSelection({ kind: "custom", from, to });
     setPaymentsDatePanel("presets");
     setIsDateDropdownOpen(false);
   };

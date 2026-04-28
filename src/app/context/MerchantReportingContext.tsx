@@ -7,21 +7,27 @@ import {
   type ReactNode,
 } from "react";
 import {
-  computeBusinessOverviewMetrics,
   computePaymentsPageSummary,
-  type BusinessOverviewMetrics,
   type OverviewSelection,
   type PaymentsPageSummaryComputed,
 } from "../data/businessOverviewDataset";
 
 export type MerchantReportingContextValue = {
   /**
-   * Same period as **Business Overview** on Home, **Payment Summary** chart on Home,
-   * and **DATE** on `/payments`. Payment Sources on Home uses separate state (see `Dashboard.tsx`).
+   * Home **Business Overview** tiles only (Dashboard1). Changing this does not affect
+   * Home Payment Summary chart, Payment Sources, or `/payments`.
    */
   businessOverviewDateSelection: OverviewSelection;
   setBusinessOverviewDateSelection: (next: OverviewSelection) => void;
-  overviewMetrics: BusinessOverviewMetrics;
+  /** Derived from `businessOverviewDateSelection` — KPIs for the three overview cards on Home. */
+  businessOverviewSummary: PaymentsPageSummaryComputed;
+
+  /**
+   * `/payments` DATE filter, summary strip, and listing period only. Independent from Home
+   * Business Overview and from the Home Payment Summary chart.
+   */
+  paymentsModuleDateSelection: OverviewSelection;
+  setPaymentsModuleDateSelection: (next: OverviewSelection) => void;
   paymentsPageSummary: PaymentsPageSummaryComputed;
 };
 
@@ -32,32 +38,42 @@ const defaultSelection: OverviewSelection = { kind: "quick", preset: "today" };
 export function MerchantReportingProvider({ children }: { children: ReactNode }) {
   const [businessOverviewDateSelection, setBusinessOverviewDateSelectionState] =
     useState<OverviewSelection>(defaultSelection);
+  const [paymentsModuleDateSelection, setPaymentsModuleDateSelectionState] =
+    useState<OverviewSelection>(defaultSelection);
 
   const setBusinessOverviewDateSelection = useCallback((next: OverviewSelection) => {
     setBusinessOverviewDateSelectionState(next);
   }, []);
 
-  const overviewMetrics = useMemo(
-    () => computeBusinessOverviewMetrics(businessOverviewDateSelection),
+  const setPaymentsModuleDateSelection = useCallback((next: OverviewSelection) => {
+    setPaymentsModuleDateSelectionState(next);
+  }, []);
+
+  const businessOverviewSummary = useMemo(
+    () => computePaymentsPageSummary(businessOverviewDateSelection),
     [businessOverviewDateSelection],
   );
 
   const paymentsPageSummary = useMemo(
-    () => computePaymentsPageSummary(businessOverviewDateSelection),
-    [businessOverviewDateSelection],
+    () => computePaymentsPageSummary(paymentsModuleDateSelection),
+    [paymentsModuleDateSelection],
   );
 
   const value = useMemo(
     (): MerchantReportingContextValue => ({
       businessOverviewDateSelection,
       setBusinessOverviewDateSelection,
-      overviewMetrics,
+      businessOverviewSummary,
+      paymentsModuleDateSelection,
+      setPaymentsModuleDateSelection,
       paymentsPageSummary,
     }),
     [
       businessOverviewDateSelection,
       setBusinessOverviewDateSelection,
-      overviewMetrics,
+      businessOverviewSummary,
+      paymentsModuleDateSelection,
+      setPaymentsModuleDateSelection,
       paymentsPageSummary,
     ],
   );

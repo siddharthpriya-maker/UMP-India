@@ -115,7 +115,7 @@ function L2Submenu({
                       : selectedTab === itemValue;
                   return (
                     <button
-                      key={item.label}
+                      key={itemValue}
                       type="button"
                       onClick={() => onItemClick(itemValue)}
                       className={`flex items-start rounded-[12px] p-[12px] transition-colors ${
