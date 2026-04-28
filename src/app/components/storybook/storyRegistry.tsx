@@ -1,7 +1,8 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { PrimaryButton, SecondaryButton, TertiaryButton } from "../Button";
 import { FilterBar } from "../FilterBar";
 import { Pagination } from "../Pagination";
+import { ReportMenu } from "../ReportMenu";
 import { SearchWithDropdown } from "../SearchWithDropdown";
 import { SidebarL1Rail } from "../sidebar/SidebarL1Rail";
 
@@ -95,10 +96,7 @@ function StoryButtonGridPreview({
   return (
     <div className="grid grid-cols-3 grid-rows-4 gap-4 md:gap-6">
       {STORY_BUTTON_PREVIEW_GRID.map((cell) => (
-        <div
-          key={cell.id}
-          className="flex min-h-0 flex-col rounded-[12px] bg-white p-5 shadow-[0_1px_3px_rgba(16,16,16,0.05)]"
-        >
+        <div key={cell.id} className="flex min-h-0 flex-col gap-1">
           <h3 className="text-[13px] font-semibold leading-[18px] text-[#101010]">{cell.title}</h3>
           <div className="mt-4 flex min-h-[48px] flex-1 items-start">
             <StoryButtonPreviewSingle Btn={Btn} icon={cell.icon} size={cell.size} />
@@ -123,7 +121,7 @@ function TertiaryButtonFullPreview() {
 
 function SidebarL1RailStorybookPreview() {
   return (
-    <div className="inline-flex max-h-[85vh] min-h-[560px] w-[88px] shrink-0 flex-col overflow-hidden bg-[#e7f1f8]">
+    <div className="relative inline-flex max-h-[85vh] min-h-[560px] shrink-0 overflow-visible bg-[#e7f1f8]">
       <SidebarL1Rail
         selectedTab="Storybook"
         pathname="/storybook"
@@ -132,6 +130,15 @@ function SidebarL1RailStorybookPreview() {
         isAcceptPaymentsSubmenuActive={false}
         presentation="storybook-catalog"
       />
+    </div>
+  );
+}
+
+function ReportMenuStorybookPreview() {
+  const [selectedCategory, setSelectedCategory] = useState("payment");
+  return (
+    <div className="w-full max-w-[260px] shrink-0 rounded-[12px] border border-[#e0e0e0] bg-white p-3 overflow-hidden">
+      <ReportMenu selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
     </div>
   );
 }
@@ -150,7 +157,7 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
             label: "Primary",
             preview: <PrimaryButtonFullPreview />,
             specs: [
-              "Preview is a 3×4 grid (12 cards): text-only, icon left, icon right, and icon on both sides × small / medium / large. Each card is titled for its variant.",
+              "Preview is a 3×4 grid (12 cells): text-only, icon left, icon right, and icon on both sides × small / medium / large. Each cell is titled for its variant; the grid sits on the shared Storybook white preview surface (no per-cell frame).",
               "Default filled CTA — `bg-[#004299]`, hover `bg-[#012A72]`, white label text; sizes per `buttons.mdc`.",
               "Icon: pass `ButtonStorySymbolMark` as `icon`; path `d` matches `src/assets/icons/symbol.svg` via `SYMBOL_PATH_FROM_ASSET` (keep both in sync).",
               "`iconPosition=\"right\"` for trailing single icon; `icon` + `trailingIcon` for symmetric flanks (`trailingIcon` omits single-icon `iconPosition` behavior).",
@@ -180,7 +187,7 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
             label: "Secondary",
             preview: <SecondaryButtonFullPreview />,
             specs: [
-              "Preview matches Primary: 3×4 grid (12 cards) — text-only, icon left, icon right, icon on both sides × small / medium / large; each card titled for its variant.",
+              "Preview matches Primary: 3×4 grid (12 cells) — text-only, icon left, icon right, icon on both sides × small / medium / large; each cell titled for its variant.",
               "Outlined style — `border-[#004299]`, `text-[#004299]`, white surface, hover tints per design system.",
               "Same icon API as Primary (`ButtonStorySymbolMark`, `iconPosition`, `trailingIcon`); path `d` synced via `SYMBOL_PATH_FROM_ASSET` with `src/assets/icons/symbol.svg`.",
               "Pairs with Primary for lower-emphasis actions (export, refresh, cancel where destructive is not intended).",
@@ -210,7 +217,7 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
             label: "Tertiary",
             preview: <TertiaryButtonFullPreview />,
             specs: [
-              "Preview matches Primary and Secondary: 3×4 grid (12 cards) — text-only, icon left, icon right, icon on both sides × small / medium / large; each card titled for its variant.",
+              "Preview matches Primary and Secondary: 3×4 grid (12 cells) — text-only, icon left, icon right, icon on both sides × small / medium / large; each cell titled for its variant.",
               "Soft blue surface `bg-[#e7f1f8]`, blue text — lowest emphasis among the three button families.",
               "Same icon API (`ButtonStorySymbolMark`, `iconPosition`, `trailingIcon`); path `d` synced via `SYMBOL_PATH_FROM_ASSET` with `src/assets/icons/symbol.svg`.",
               "Also supports `loading`, `fullWidth`, and `disabled` on `TertiaryButton` / `Button`.",
@@ -243,14 +250,13 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
             id: "default",
             label: "Default",
             preview: (
-              <div className="max-w-3xl rounded-[12px] bg-white">
-                <Pagination currentPage={3} totalPages={12} onPrevious={() => {}} onNext={() => {}} />
-              </div>
+              <Pagination currentPage={3} totalPages={12} onPrevious={() => {}} onNext={() => {}} />
             ),
             specs: [
               "Neutral gray bordered controls — not `SecondaryButton` (blue outline).",
               "Left: “Page X of Y” in `text-[14px] font-semibold text-[#7e7e7e]`; right: Previous / Next with chevrons.",
               "Place below listing with `flex flex-col gap-0` so no extra gap from page spacing (`pagination.mdc`).",
+              "Storybook: `StorybookPage` wraps every variant preview in a shared white surface (`rounded-[12px] bg-white`, no border or shadow); the pagination row itself has no background.",
             ],
             accessibility: [
               "Disable Previous on first page and Next on last page (built into component).",
@@ -298,21 +304,18 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
         label: "SearchWithDropdown",
         variants: [
           {
-            id: "payments-hint",
-            label: "Payments (rotating hint)",
-            preview: (
-              <SearchWithDropdown options={searchOptions} defaultOption="select" transactionRotatingHint />
-            ),
+            id: "payments-default",
+            label: "Payments (default)",
+            preview: <SearchWithDropdown options={searchOptions} defaultOption="select" />,
             specs: [
               "Left: filter type dropdown; vertical divider; right: search icon + field (`max-w-[560px]` default width).",
-              "With `transactionRotatingHint`, empty “Select Filter” shows the same rotating “Search for a …” suffix as the global header.",
+              "With the sentinel “Select Filter” and no custom `placeholder`, the field shows **Enter search value** (static). The rotating “Search for a … Transaction ID | …” hint exists only on the global **Header** search.",
             ],
             accessibility: [
-              "`aria-label` reflects transaction vs generic hint; reduced motion shows static first suffix.",
+              "Select-filter mode: `aria-label` “Choose a filter type, then enter a search value”; reduced motion does not apply here (no rotating overlay).",
             ],
             whenToUse: [
-              "Payments FilterBar tail — pass `transactionRotatingHint`.",
-              "Settlements / Refunds: omit prop; placeholder stays “Enter search value” until a field is chosen.",
+              "Payments, Settlements, Refunds — FilterBar tail with `defaultOption=\"select\"` until the user picks a field.",
             ],
           },
         ],
@@ -325,7 +328,7 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
     components: [
       {
         id: "l1-only",
-        label: "L1 only",
+        label: "Default",
         variants: [
           {
             id: "main",
@@ -333,7 +336,9 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
             preview: <SidebarL1RailStorybookPreview />,
             specs: [
               "Merchant shell: fixed **88px** rail (`w-[88px]`), `bg-[#e7f1f8]`, scrollable column (`overflow-y-auto`) with logo, primary tabs, divider, secondary tabs — matches `Sidebar` L1 before L2 opens.",
-              "Storybook preview uses `presentation=\"storybook-catalog\"`: three symbol-mark rows, divider, three more rows; every caption reads **label**; first row shows active pill (`bg-[#b1e6fb]`). Production uses `presentation=\"merchant\"` (default) with full tab set.",
+              "Storybook preview uses `presentation=\"storybook-catalog\"`: three symbol-mark rows, divider, three bottom rows; every L1 caption reads **label**; first top row shows active pill (`bg-[#b1e6fb]`). Production uses `presentation=\"merchant\"` (default) with full tab set.",
+              "Catalog rail: same **88px** column as merchant `Sidebar` — L2 is `absolute left-[88px]` (`252px` wide), so L1 stays fully visible beside it. Hovering any of the **bottom three** L1 icons opens L2; leaving the sidebar subtree closes it; hovering logo, top icons, or divider closes L2.",
+              "L2 demo: **three** uppercase category titles with chevron accordions; expanded section lists rows whose label text is **label** (matches L1).",
               "`SidebarL1Rail` is shared with the live sidebar; Storybook preview uses inert `onItemClick` / `onItemHover` handlers.",
               "Symbol path matches `symbol.svg` / Storybook button demos (`RAIL_SYMBOL_PATH` in `SidebarL1Rail.tsx`).",
             ],
@@ -343,6 +348,36 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
             ],
             whenToUse: [
               "Global L1 navigation for the merchant app; Storybook tile opens the component registry (L2).",
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "menu",
+    label: "Menu",
+    components: [
+      {
+        id: "report-menu",
+        label: "ReportMenu",
+        variants: [
+          {
+            id: "default",
+            label: "Default",
+            preview: <ReportMenuStorybookPreview />,
+            specs: [
+              "Same shell as Reports page left column: `max-w-[260px] shrink-0 rounded-[12px] border border-[#e0e0e0] bg-white overflow-hidden p-3` (`ReportsPage.tsx`).",
+              "Nav: `flex flex-col gap-1`; each row is a full-width `button` with `rounded-[12px] px-3 py-3`, label `text-[14px] leading-[24px]`, trailing `ChevronRight` `size-4 text-[#7e7e7e]`.",
+              "Active row: `bg-[#e0f5fd] font-bold`; inactive: `font-normal hover:bg-[#fafafa]`.",
+              "Categories from `REPORT_CATEGORIES` in `reportMenu.constants.ts` (Payment, Settlement, Refund, …).",
+            ],
+            accessibility: [
+              "Wrapped in `<nav aria-label=\"Report types\">`; decorative chevron `aria-hidden`.",
+              "Use `type=\"button\"`; selection updates local state in this preview only.",
+            ],
+            whenToUse: [
+              "Reports module — left-hand report type picker before configuration + table.",
             ],
           },
         ],

@@ -768,7 +768,7 @@ export function PaymentsPage() {
 
           {/* Search Widget — py-5 matches filter columns */}
           <div className="flex w-full flex-1 items-center justify-end px-5 py-5 md:h-full md:w-auto">
-            <SearchWithDropdown options={searchOptions} defaultOption="select" transactionRotatingHint />
+            <SearchWithDropdown options={searchOptions} defaultOption="select" />
           </div>
         </FilterBar>
       </div>
@@ -802,11 +802,11 @@ export function PaymentsPage() {
             <div className="mt-3 flex items-center">
               <button
                 type="button"
-                className="flex items-center gap-1 text-[12px] font-medium text-[#004299] hover:underline"
+                className="inline-flex items-center gap-1.5 text-[12px] font-medium leading-4 text-[#004299] hover:underline"
                 onClick={() => toggleBreakdown("collections")}
               >
                 <span>View Breakdown</span>
-                <ChevronDown className="size-4 transition-transform" aria-hidden />
+                <ChevronDown className="size-4 shrink-0 transition-transform" aria-hidden />
               </button>
             </div>
           </div>
@@ -830,11 +830,11 @@ export function PaymentsPage() {
             <div className="mt-3 flex items-center">
               <button
                 type="button"
-                className="flex items-center gap-1 text-[12px] font-medium text-[#004299] hover:underline"
+                className="inline-flex items-center gap-1.5 text-[12px] font-medium leading-4 text-[#004299] hover:underline"
                 onClick={() => toggleBreakdown("adjustments")}
               >
                 <span>View Breakdown</span>
-                <ChevronDown className="size-4 transition-transform" aria-hidden />
+                <ChevronDown className="size-4 shrink-0 transition-transform" aria-hidden />
               </button>
             </div>
           </div>
@@ -858,11 +858,11 @@ export function PaymentsPage() {
             <div className="mt-3 flex items-center">
               <button
                 type="button"
-                className="flex items-center gap-1 text-[12px] font-medium text-[#004299] hover:underline"
+                className="inline-flex items-center gap-1.5 text-[12px] font-medium leading-4 text-[#004299] hover:underline"
                 onClick={() => toggleBreakdown("deductions")}
               >
                 <span>View Breakdown</span>
-                <ChevronDown className="size-4 transition-transform" aria-hidden />
+                <ChevronDown className="size-4 shrink-0 transition-transform" aria-hidden />
               </button>
             </div>
           </div>
@@ -880,9 +880,12 @@ export function PaymentsPage() {
               {formatInrRupeesPrecise(animSettlementProcessed)}
             </span>
             <div className="mt-3 flex items-center">
-              <button type="button" className="flex items-center gap-1 text-[12px] font-medium text-[#004299] hover:underline">
+              <button
+                type="button"
+                className="inline-flex items-center gap-1.5 text-[12px] font-medium leading-4 text-[#004299] hover:underline"
+              >
                 <span>View Details</span>
-                <ChevronRight className="size-4" />
+                <ChevronRight className="size-4 shrink-0" aria-hidden />
               </button>
             </div>
           </div>

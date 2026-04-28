@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import Book from "@mui/icons-material/Book";
 import svgPaths from "../../../imports/svg-9d73oqi9lc";
 import RefundsDuo from "../../../imports/RefundsDuo";
@@ -209,6 +211,79 @@ const bottomItems = [
 
 const STORYBOOK_CATALOG_LABEL = "label";
 
+/** Sample L2 for `storybook-catalog`: accordion categories; rows use the same caption as L1 (`label`). */
+const STORYBOOK_CATALOG_L2_CATEGORIES: { title: string; items: string[] }[] = [
+  { title: "Category one", items: ["label", "label"] },
+  { title: "Category two", items: ["label"] },
+  { title: "Category three", items: ["label", "label", "label"] },
+];
+
+function StorybookCatalogL2Panel({
+  categories,
+  expandedCategory,
+  onCategoryToggle,
+}: {
+  categories: { title: string; items: string[] }[];
+  expandedCategory: string | null;
+  onCategoryToggle: (title: string) => void;
+}) {
+  return (
+    <div
+      className="absolute bottom-0 left-[88px] top-0 z-10 flex max-h-full w-[252px] flex-col rounded-tr-[16px] border-l border-[#e0e0e0] bg-[#e7f1f8] pt-[22px]"
+      role="region"
+      aria-label="Sample secondary navigation"
+    >
+      <div className="flex min-h-0 flex-1 flex-col items-start overflow-y-auto px-[8px]">
+        {categories.map((category) => {
+          const isExpanded = expandedCategory === category.title;
+          return (
+            <div key={category.title} className="w-full">
+              <div className="flex w-full items-center justify-between px-[12px] py-[16px]">
+                <p className="text-[12px] font-semibold uppercase leading-[16px] tracking-[0.6px] text-[#101010]">
+                  {category.title}
+                </p>
+                <button
+                  type="button"
+                  aria-expanded={isExpanded}
+                  aria-controls={`storybook-l2-cat-${category.title.replace(/\s+/g, "-")}`}
+                  id={`storybook-l2-trigger-${category.title.replace(/\s+/g, "-")}`}
+                  onClick={() => onCategoryToggle(category.title)}
+                  className="rounded-full p-0.5 transition-colors hover:bg-[#e0e0e0]"
+                >
+                  <ChevronDown
+                    className={`size-6 text-[#101010] transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                    aria-hidden
+                  />
+                </button>
+              </div>
+              {isExpanded ? (
+                <div
+                  id={`storybook-l2-cat-${category.title.replace(/\s+/g, "-")}`}
+                  role="region"
+                  className="flex flex-col"
+                  aria-labelledby={`storybook-l2-trigger-${category.title.replace(/\s+/g, "-")}`}
+                >
+                  {category.items.map((item, idx) => (
+                    <button
+                      key={`${category.title}-${idx}`}
+                      type="button"
+                      className="flex w-full items-start rounded-[12px] p-[12px] text-left transition-colors hover:bg-[#e0e0e0]"
+                    >
+                      <span className="flex-1 py-[2px] text-[14px] font-medium leading-[20px] text-[#101010]">
+                        {item}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export type SidebarL1RailPresentation = "merchant" | "storybook-catalog";
 
 export interface SidebarL1RailProps {
@@ -221,7 +296,7 @@ export interface SidebarL1RailProps {
   presentation?: SidebarL1RailPresentation;
 }
 
-/** 88px scrollable L1 column: logo, primary nav, divider, secondary nav — same shell as `Sidebar` without L2. */
+/** 88px scrollable L1 column: logo, primary nav, divider, secondary nav — merchant shell pairs with `Sidebar` L2; `storybook-catalog` includes a sample L2 on hover (bottom three icons). */
 export function SidebarL1Rail({
   selectedTab,
   pathname,
@@ -230,37 +305,61 @@ export function SidebarL1Rail({
   isAcceptPaymentsSubmenuActive,
   presentation = "merchant",
 }: SidebarL1RailProps) {
+  const [catalogL2Open, setCatalogL2Open] = useState(false);
+  const [catalogExpandedCategory, setCatalogExpandedCategory] = useState<string | null>(
+    STORYBOOK_CATALOG_L2_CATEGORIES[0]?.title ?? null,
+  );
+
   if (presentation === "storybook-catalog") {
+    const dismissCatalogL2 = () => setCatalogL2Open(false);
+    const openCatalogL2 = () => setCatalogL2Open(true);
+    const toggleCatalogCategory = (title: string) => {
+      setCatalogExpandedCategory((prev) => (prev === title ? null : title));
+    };
+
     return (
-      <div className="flex min-h-0 w-[88px] flex-1 flex-col items-center gap-8 overflow-y-auto py-3">
-        <div className="flex w-full items-center justify-center">
-          <PaytmLogo />
-        </div>
-        <div className="flex w-[60px] flex-col items-center gap-4">
-          {[0, 1, 2].map((i) => (
-            <NavItem
-              key={`storybook-l1-top-${i}`}
-              icon={<RailSymbolMark />}
-              label={STORYBOOK_CATALOG_LABEL}
-              isActive={i === 0}
-              onClick={() => onItemClick(STORYBOOK_CATALOG_LABEL)}
-              onMouseEnter={() => onItemHover(STORYBOOK_CATALOG_LABEL)}
-            />
-          ))}
-          <div className="flex items-center justify-center rounded-[7px] py-2">
-            <div className="h-1 w-8 rounded-[7px] bg-[#e0e0e0]" />
+      <div
+        className="relative flex h-full min-h-[560px] w-[88px] shrink-0 flex-col bg-[#e7f1f8]"
+        onMouseLeave={dismissCatalogL2}
+      >
+        {/* Same shell as `Sidebar`: fixed 88px column; L2 is absolutely positioned to the right (does not shrink L1). */}
+        <div className="flex min-h-0 w-[88px] flex-1 flex-col items-center gap-8 overflow-y-auto py-3">
+          <div className="flex w-full items-center justify-center" onMouseEnter={dismissCatalogL2}>
+            <PaytmLogo />
           </div>
-          {[0, 1, 2].map((i) => (
-            <NavItem
-              key={`storybook-l1-bottom-${i}`}
-              icon={<RailSymbolMark />}
-              label={STORYBOOK_CATALOG_LABEL}
-              isActive={false}
-              onClick={() => onItemClick(STORYBOOK_CATALOG_LABEL)}
-              onMouseEnter={() => onItemHover(STORYBOOK_CATALOG_LABEL)}
-            />
-          ))}
+          <div className="flex w-[60px] flex-col items-center gap-4">
+            {[0, 1, 2].map((i) => (
+              <NavItem
+                key={`storybook-l1-top-${i}`}
+                icon={<RailSymbolMark />}
+                label={STORYBOOK_CATALOG_LABEL}
+                isActive={i === 0}
+                onClick={() => onItemClick(STORYBOOK_CATALOG_LABEL)}
+                onMouseEnter={dismissCatalogL2}
+              />
+            ))}
+            <div className="flex items-center justify-center rounded-[7px] py-2" onMouseEnter={dismissCatalogL2}>
+              <div className="h-1 w-8 rounded-[7px] bg-[#e0e0e0]" />
+            </div>
+            {[0, 1, 2].map((i) => (
+              <NavItem
+                key={`storybook-l1-bottom-${i}`}
+                icon={<RailSymbolMark />}
+                label={STORYBOOK_CATALOG_LABEL}
+                isActive={false}
+                onClick={() => onItemClick(STORYBOOK_CATALOG_LABEL)}
+                onMouseEnter={openCatalogL2}
+              />
+            ))}
+          </div>
         </div>
+        {catalogL2Open ? (
+          <StorybookCatalogL2Panel
+            categories={STORYBOOK_CATALOG_L2_CATEGORIES}
+            expandedCategory={catalogExpandedCategory}
+            onCategoryToggle={toggleCatalogCategory}
+          />
+        ) : null}
       </div>
     );
   }

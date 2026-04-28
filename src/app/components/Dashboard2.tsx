@@ -40,35 +40,8 @@ const PAYMENT_SUMMARY_RESET_MS = 520;
 const PAYMENT_SUMMARY_BAR_ANIM_MS = 400;
 /** Recharts default line morph — disabled so stroke-dash “draw” owns motion */
 const PAYMENT_SUMMARY_LINE_MORPH_MS = 0;
-/** Left-to-right stroke reveal for the count line (ms), runs after bars finish */
+/** Left-to-right stroke reveal for the count line (ms), runs after bars finish — linear in time so speed stays even. */
 const PAYMENT_SUMMARY_LINE_DRAW_MS = 1800;
-
-/** CSS `cubic-bezier(0.25, 0.1, 0.25, 1)` — X = time, Y = draw progress (matches previous transition feel). */
-const BEZIER_X1 = 0.25;
-const BEZIER_Y1 = 0.1;
-const BEZIER_X2 = 0.25;
-const BEZIER_Y2 = 1;
-
-function cubicBezierComponent(t: number, p0: number, p1: number, p2: number, p3: number): number {
-  const u = 1 - t;
-  return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3;
-}
-
-/** Maps linear clock `u` in [0,1] to eased draw progress in [0,1]. */
-function easePaymentLineDraw(u: number): number {
-  if (u <= 0) return 0;
-  if (u >= 1) return 1;
-  let lo = 0;
-  let hi = 1;
-  for (let i = 0; i < 12; i++) {
-    const mid = (lo + hi) * 0.5;
-    const x = cubicBezierComponent(mid, 0, BEZIER_X1, BEZIER_X2, 1);
-    if (x < u) lo = mid;
-    else hi = mid;
-  }
-  const T = (lo + hi) * 0.5;
-  return cubicBezierComponent(T, 0, BEZIER_Y1, BEZIER_Y2, 1);
-}
 
 /** Arc length along `path` closest to dot center (px). */
 function arcLengthClosestToPoint(path: SVGPathElement, px: number, py: number, totalLen: number): number {
@@ -245,8 +218,7 @@ export function Dashboard2({
 
             const elapsed = now - start;
             const u = Math.min(1, elapsed / PAYMENT_SUMMARY_LINE_DRAW_MS);
-            const prog = easePaymentLineDraw(u);
-            const offset = L * (1 - prog);
+            const offset = L * (1 - u);
             const visible = L - offset;
 
             p.setAttribute("stroke-dashoffset", String(offset));
@@ -454,14 +426,14 @@ export function Dashboard2({
                   dataKey="count"
                   stroke="#21C179"
                   name="No of Payments"
-                  strokeWidth={2}
+                  strokeWidth={3}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   dot={{
                     fill: "#21C179",
-                    r: 3,
+                    r: 4,
                     stroke: "#ffffff",
-                    strokeWidth: 1,
+                    strokeWidth: 2,
                     className: "cursor-pointer",
                   }}
                   activeDot={{

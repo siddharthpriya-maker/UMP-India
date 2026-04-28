@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Search } from "lucide-react";
-import { RotatingSearchSuffix } from "./RotatingSearchSuffix";
 
 interface SearchOption {
   label: string;
@@ -15,11 +14,6 @@ interface SearchWithDropdownProps {
   placeholder?: string;
   /** Tailwind width classes; default matches all FilterBar tails: full width of slot, max 560px. */
   width?: string;
-  /**
-   * When true and the sentinel “select” filter is active with an empty query, the input uses the same
-   * rotating “Search for a … (Transaction ID | Refund ID | …)” hint as the global Header (`PaymentsPage`).
-   */
-  transactionRotatingHint?: boolean;
 }
 
 /** Sentinel: left trigger shows **Select Filter**; empty input placeholder **Enter search value**. */
@@ -31,7 +25,6 @@ export function SearchWithDropdown({
   onSearch,
   placeholder,
   width = "w-full max-w-[560px]",
-  transactionRotatingHint = false,
 }: SearchWithDropdownProps) {
   const [selectedOption, setSelectedOption] = useState(
     defaultOption || options[0]?.value || ""
@@ -46,23 +39,16 @@ export function SearchWithDropdown({
     ? "Select Filter"
     : options.find((o) => o.value === selectedOption)?.label || selectedOption;
 
-  const showRotatingHint = transactionRotatingHint && placeholder === undefined && isSelectFilter && searchQuery === "";
-
   const inputPlaceholder =
     placeholder !== undefined
       ? placeholder
       : isSelectFilter
-        ? transactionRotatingHint
-          ? ""
-          : "Enter search value"
+        ? "Enter search value"
         : `Search ${selectedLabel}`;
 
-  const inputAriaLabel =
-    isSelectFilter && transactionRotatingHint
-      ? "Search for a transaction ID, refund ID, order ID, or topic"
-      : isSelectFilter
-        ? "Choose a filter type, then enter a search value"
-        : `Search by ${selectedLabel}`;
+  const inputAriaLabel = isSelectFilter
+    ? "Choose a filter type, then enter a search value"
+    : `Search by ${selectedLabel}`;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -114,7 +100,7 @@ export function SearchWithDropdown({
         {isDropdownOpen && (
           <div className="absolute top-full left-0 z-50 mt-1 w-[200px] rounded-lg border border-[#e0e0e0] bg-white shadow-lg">
             <div className="max-h-[min(280px,50vh)] overflow-y-auto py-0">
-              <div className="flex flex-col divide-y divide-[#e0e0e0]">
+              <div className="flex flex-col">
                 {options.map((option) => (
                   <button
                     key={option.value}
@@ -136,7 +122,7 @@ export function SearchWithDropdown({
       {/* Divider */}
       <div className="h-full w-[1px] bg-[#e0e0e0]" />
 
-      {/* Search Input — same rotating hint as Header when “Select Filter” + empty (e.g. Payments FilterBar) */}
+      {/* Search input — rotating “Search for a …” hint exists only on the global Header search. */}
       <div className="relative flex min-w-0 flex-1 items-center px-3">
         <Search className="mr-2 size-5 shrink-0 text-[#7e7e7e]" />
         <div className="relative min-h-px min-w-0 flex-1">
@@ -147,21 +133,8 @@ export function SearchWithDropdown({
             onKeyDown={handleKeyDown}
             placeholder={inputPlaceholder}
             aria-label={inputAriaLabel}
-            className={`w-full bg-transparent text-[14px] outline-none ${
-              showRotatingHint
-                ? "font-semibold text-transparent caret-[#101010] placeholder:text-transparent"
-                : "font-semibold text-[#101010] placeholder:text-[#7e7e7e]"
-            }`}
+            className="w-full bg-transparent text-[14px] font-semibold text-[#101010] outline-none placeholder:text-[#7e7e7e]"
           />
-          {showRotatingHint ? (
-            <div
-              className="pointer-events-none absolute inset-0 z-0 flex min-w-0 items-center gap-0 pr-1 text-[14px] font-semibold leading-5 text-[#7e7e7e]"
-              aria-hidden
-            >
-              <span className="shrink-0">Search for a&nbsp;</span>
-              <RotatingSearchSuffix variant="filter" />
-            </div>
-          ) : null}
         </div>
       </div>
     </div>

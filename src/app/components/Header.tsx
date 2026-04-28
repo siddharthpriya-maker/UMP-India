@@ -75,7 +75,7 @@ export function Header() {
                 ) : (
                   <>
                     <span className="shrink-0">Search for a&nbsp;</span>
-                    <RotatingSearchSuffix variant="header" />
+                    <RotatingSearchSuffix />
                   </>
                 )}
               </div>

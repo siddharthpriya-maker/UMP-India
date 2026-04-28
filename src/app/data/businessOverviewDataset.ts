@@ -343,10 +343,14 @@ export function formatInrRupees(amount: number): string {
   return `₹${Math.round(amount).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
 }
 
-/** Same as mock Payments summary cards (two decimal places). */
+/** Payments summary cards & dashboard: paise shown only when non-zero (whole rupees omit `.00`). */
 export function formatInrRupeesPrecise(amount: number): string {
-  const n = Math.round(amount * 100) / 100;
-  return `₹${n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const cents = Math.round(amount * 100);
+  const rupees = cents / 100;
+  if (cents % 100 === 0) {
+    return `₹${(cents / 100).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
+  }
+  return `₹${rupees.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 export type PaymentsPageSummaryComputed = {

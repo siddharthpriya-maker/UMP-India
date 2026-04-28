@@ -18,12 +18,10 @@ function getReducedMotionServerSnapshot() {
   return false;
 }
 
-export type RotatingSearchSuffixVariant = "header" | "filter";
-
 /**
- * Vertically cycles hint suffixes (Transaction ID, Refund ID, …) for global header and FilterBar search.
+ * Vertically cycles hint suffixes (Transaction ID, Refund ID, …) for the global Header search only.
  */
-export function RotatingSearchSuffix({ variant = "header" }: { variant?: RotatingSearchSuffixVariant }) {
+export function RotatingSearchSuffix() {
   const [index, setIndex] = useState(0);
   const reduceMotion = useSyncExternalStore(
     subscribeReducedMotion,
@@ -40,9 +38,7 @@ export function RotatingSearchSuffix({ variant = "header" }: { variant?: Rotatin
   }, [reduceMotion]);
 
   const lineClass =
-    variant === "filter"
-      ? "flex h-5 shrink-0 items-center whitespace-nowrap text-[14px] font-semibold leading-5 text-[#7e7e7e]"
-      : "flex h-5 shrink-0 items-center whitespace-nowrap text-sm font-medium leading-5 text-[#7e7e7e] md:text-base";
+    "flex h-5 shrink-0 items-center whitespace-nowrap text-sm font-medium leading-5 text-[#7e7e7e] md:text-base";
 
   if (reduceMotion) {
     return <span className={lineClass}>{SEARCH_HINT_SUFFIXES[0]}</span>;

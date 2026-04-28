@@ -102,7 +102,8 @@ export function StorybookPage() {
           <h2 id="storybook-preview-title" className="sr-only">
             Preview
           </h2>
-          {variant.preview}
+          {/* Every variant preview sits on one white surface — no border or shadow (catalog canvas is tinted). */}
+          <div className="w-full max-w-3xl rounded-[12px] bg-white p-6 md:p-8">{variant.preview}</div>
         </section>
 
         <div className="flex min-h-0 max-w-3xl flex-1 flex-col gap-4 md:gap-6">
