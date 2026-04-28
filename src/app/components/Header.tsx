@@ -29,22 +29,33 @@ function SearchIcon() {
   );
 }
 
-export function Header() {
+export type HeaderProps = {
+  /**
+   * Storybook **component preview** only: show the same search affordances as merchant shells
+   * (rotating “Search for a …” hint) while the real URL is still `/storybook`. Do not nest another
+   * router for this — nested routers can blank the app under `BrowserRouter`.
+   */
+  embeddedMerchantSearch?: boolean;
+};
+
+export function Header({ embeddedMerchantSearch = false }: HeaderProps) {
   const [query, setQuery] = useState("");
   const { pathname } = useLocation();
-  const isStorybook = pathname === "/storybook";
+  const storybookRoute = pathname === "/storybook";
+  /** Catalog search copy + pill border — global Storybook shell only, not embedded previews. */
+  const useStorybookCatalogSearchUi = storybookRoute && !embeddedMerchantSearch;
 
   return (
     <div
       className={cn(
         "flex w-full shrink-0 flex-col items-start gap-4 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-6 lg:px-8",
-        isStorybook && "bg-transparent"
+        storybookRoute && "bg-transparent",
       )}
     >
       <div
         className={cn(
           "flex max-h-[56px] w-full items-center gap-3 overflow-clip rounded-[100px] bg-[#f5f9fe] p-3 md:gap-4 md:p-4 md:w-auto md:max-w-[560px] md:min-w-[300px] lg:w-[560px]",
-          isStorybook && "border border-[#e0e0e0]"
+          useStorybookCatalogSearchUi && "border border-[#e0e0e0]",
         )}
       >
         <SearchIcon />
@@ -56,7 +67,7 @@ export function Header() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               aria-label={
-                isStorybook
+                useStorybookCatalogSearchUi
                   ? "Search Storybook components and learnings"
                   : "Search for a transaction ID, refund ID, order ID, or topic"
               }
@@ -70,7 +81,7 @@ export function Header() {
                 className="pointer-events-none absolute inset-0 z-0 flex min-w-0 items-center gap-0 pr-1 text-sm font-medium leading-5 text-[#7e7e7e] md:text-base"
                 aria-hidden
               >
-                {isStorybook ? (
+                {useStorybookCatalogSearchUi ? (
                   <span className="min-w-0 truncate">Search components and learnings</span>
                 ) : (
                   <>

@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router";
 import { ChevronDown, Link2, FileText } from "lucide-react";
 import { SidebarL1Rail } from "./sidebar/SidebarL1Rail";
 import { TAB_ROUTES, ROUTE_TO_TAB } from "../App";
-import { STORYBOOK_REGISTRY, defaultStoryPath, findVariant } from "./storybook/storyRegistry";
+import { STORYBOOK_REGISTRY, canonicalStorybookPath, defaultStoryPath, findVariant } from "./storybook/storyRegistry";
 
 const STORYBOOK_L2_VALUE_PREFIX = "__storybook__:";
 
@@ -29,7 +29,8 @@ const storybookL2Categories = buildStorybookL2Categories();
 function storybookPathFromLocation(pathname: string, search: string): string {
   if (pathname !== "/storybook") return defaultStoryPath();
   const raw = new URLSearchParams(search).get("p") ?? "";
-  return findVariant(raw) ? raw : defaultStoryPath();
+  if (!findVariant(raw)) return defaultStoryPath();
+  return canonicalStorybookPath(raw);
 }
 
 interface SubmenuItem {

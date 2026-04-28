@@ -1,9 +1,23 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
-import { defaultStoryPath, findVariant } from "./storyRegistry";
+import { cn } from "../ui/utils";
+import { StorybookInspectFab } from "./StorybookInspectFab";
+import { StorybookPreviewInspector } from "./StorybookPreviewInspector";
+import { canonicalStorybookPath, defaultStoryPath, findVariant } from "./storyRegistry";
 
 function slugForTitle(title: string) {
   return title.replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase() || "section";
+}
+
+/** Scroll only `.shell-main-canvas` — avoids `scrollIntoView` moving outer letterbox/chrome (can hide the app header). */
+function scrollStorybookMainCanvasToElement(anchorId: string) {
+  const anchor = document.getElementById(anchorId);
+  const canvas = anchor?.closest(".shell-main-canvas") as HTMLElement | null;
+  if (!anchor || !canvas) return;
+  const c = canvas.getBoundingClientRect();
+  const a = anchor.getBoundingClientRect();
+  const nextTop = a.top - c.top + canvas.scrollTop - 12;
+  canvas.scrollTo({ top: Math.max(0, nextTop), behavior: "smooth" });
 }
 
 function StoryDocTable({
@@ -64,20 +78,31 @@ function StoryDocTable({
 
 export function StorybookPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [inspectMode, setInspectMode] = useState(false);
   const raw = searchParams.get("p") ?? "";
   const fallback = useMemo(() => defaultStoryPath(), []);
-  const path = findVariant(raw) ? raw : fallback;
+  const path = findVariant(raw) ? canonicalStorybookPath(raw) : fallback;
 
   useEffect(() => {
     if (!findVariant(raw)) {
       setSearchParams({ p: fallback }, { replace: true });
+      return;
+    }
+    const canonical = canonicalStorybookPath(raw);
+    if (canonical !== raw) {
+      setSearchParams({ p: canonical }, { replace: true });
     }
   }, [raw, fallback, setSearchParams]);
 
   const resolved = findVariant(path);
   const variant = resolved?.variant;
+  const previewWide = Boolean(variant?.previewWide);
 
-  if (!variant) {
+  useEffect(() => {
+    setInspectMode(false);
+  }, [path]);
+
+  if (!variant || !resolved) {
     return (
       <div className="flex h-full w-full min-h-0 flex-1 flex-col px-[32px] pt-[12px] pb-[32px]">
         <p className="text-[14px] leading-[22px] text-[#7e7e7e]">
@@ -88,25 +113,77 @@ export function StorybookPage() {
     );
   }
 
+  /** Left nav playbook: variant \`main\` + different labels → L2-style component line + variant as H1. */
+  const showComponentEyebrow =
+    variant.id === "main" &&
+    resolved.component.label !== variant.label &&
+    resolved.component.label.trim() !== "";
+
   return (
     <>
       <header className="mb-4 flex w-full shrink-0 flex-col gap-1 px-[32px] pt-[12px] md:mb-6">
         <p className="text-[12px] font-semibold leading-[16px] tracking-[0.6px] text-[#7e7e7e]">
           {resolved.category.label}
         </p>
-        <h1 className="text-[32px] font-semibold leading-[40px] text-[#101010]">{variant.label}</h1>
+        {showComponentEyebrow ? (
+          <p className="text-[14px] font-medium leading-[20px] text-[#444746]">{resolved.component.label}</p>
+        ) : null}
+        <div className="flex w-full min-w-0 items-center justify-between gap-4">
+          <h1 className="min-w-0 flex-1 text-[32px] font-semibold leading-[40px] text-[#101010]">{variant.label}</h1>
+          <StorybookInspectFab
+            pressed={inspectMode}
+            onPress={() => {
+              setInspectMode((on) => {
+                const next = !on;
+                if (next) {
+                  requestAnimationFrame(() => scrollStorybookMainCanvasToElement("storybook-preview-anchor"));
+                }
+                return next;
+              });
+            }}
+          />
+        </div>
       </header>
 
-      <div className="flex min-h-0 w-full flex-1 flex-col gap-4 md:gap-6 px-[32px] pb-[32px]">
-        <section aria-labelledby="storybook-preview-title" className="min-h-0 shrink-0">
+      <div
+        className={cn(
+          "flex min-h-0 w-full flex-1 flex-col gap-4 md:gap-6 px-[32px] pb-[32px]",
+          previewWide && "max-w-full",
+        )}
+      >
+        <section
+          id="storybook-preview-anchor"
+          aria-labelledby="storybook-preview-title"
+          className="min-h-0 shrink-0 scroll-mt-4"
+        >
           <h2 id="storybook-preview-title" className="sr-only">
             Preview
           </h2>
-          {/* Every variant preview sits on one white surface — no border or shadow (catalog canvas is tinted). */}
-          <div className="w-full max-w-3xl rounded-[12px] bg-white p-6 md:p-8">{variant.preview}</div>
+          {inspectMode ? (
+            <p className="mb-3 text-[13px] leading-[20px] text-[#444746]">
+              Hover to highlight, click to lock layout readouts. Hold <kbd className="rounded border border-[#e0e0e0] bg-[#fafafa] px-1.5 py-0.5 font-mono text-[12px]">Alt</kbd>{" "}
+              while hovering to jump one level up. <span className="font-medium text-[#101010]">Esc</span> exits inspect
+              mode.
+            </p>
+          ) : null}
+          {/* White card is layout-only; inspect targets live inside the inner wrapper (no ring/cursor on the card). */}
+          <div
+            className={cn(
+              "w-full rounded-[12px] bg-white p-6 md:p-8",
+              previewWide ? "max-w-none" : "max-w-3xl",
+            )}
+          >
+            <StorybookPreviewInspector
+              enabled={inspectMode}
+              onExit={() => setInspectMode(false)}
+              className="relative min-h-0 w-full"
+            >
+              {variant.preview}
+            </StorybookPreviewInspector>
+          </div>
         </section>
 
-        <div className="flex min-h-0 max-w-3xl flex-1 flex-col gap-4 md:gap-6">
+        <div className={cn("flex min-h-0 flex-1 flex-col gap-4 md:gap-6", previewWide ? "max-w-none" : "max-w-3xl")}>
           <StoryDocTable
             title="Specs & guidelines"
             items={variant.specs}

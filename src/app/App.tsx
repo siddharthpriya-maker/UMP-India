@@ -64,11 +64,13 @@ function AppShell() {
                 isStorybook && "bg-[#f5f9fe]"
               )}
             >
-              <Header />
+              <div data-app-global-header className="shrink-0">
+                <Header />
+              </div>
               <main
                 className={cn(
                   "flex min-h-0 flex-1 flex-col overflow-hidden",
-                  isStorybook ? "bg-transparent" : "bg-[#f5f9fe]"
+                  isStorybook ? "bg-transparent" : "bg-white"
                 )}
               >
                 <div className="shell-main-canvas flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">

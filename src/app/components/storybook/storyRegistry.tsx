@@ -1,5 +1,4 @@
 import { useState, type ReactNode } from "react";
-import { MemoryRouter } from "react-router";
 import { PrimaryButton, SecondaryButton, TertiaryButton } from "../Button";
 import { FilterBar } from "../FilterBar";
 import { Header } from "../Header";
@@ -15,6 +14,8 @@ export type StoryVariant = {
   specs: string[];
   accessibility: string[];
   whenToUse: string[];
+  /** When true, Storybook preview + doc tables use full content width (e.g. global `Header`). */
+  previewWide?: boolean;
 };
 
 export type StoryComponent = {
@@ -145,14 +146,12 @@ function ReportMenuStorybookPreview() {
   );
 }
 
-/** `useLocation()` must not be `/storybook` or the header swaps to catalog search copy — isolate merchant route. */
+/** Merchant search UI via `embeddedMerchantSearch` — do not nest `MemoryRouter` (breaks `BrowserRouter`). */
 function HeaderStorybookPreview() {
   return (
-    <MemoryRouter initialEntries={["/home"]}>
-      <div className="w-full min-w-0 bg-white">
-        <Header />
-      </div>
-    </MemoryRouter>
+    <div className="w-full min-w-0 bg-white">
+      <Header embeddedMerchantSearch />
+    </div>
   );
 }
 
@@ -373,11 +372,11 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
     components: [
       {
         id: "report-menu",
-        label: "ReportMenu",
+        label: "Report Menu",
         variants: [
           {
             id: "default",
-            label: "Default",
+            label: "Report Menu",
             preview: <ReportMenuStorybookPreview />,
             specs: [
               "Same shell as Reports page left column: `max-w-[260px] shrink-0 rounded-[12px] border border-[#e0e0e0] bg-white overflow-hidden p-3` (`ReportsPage.tsx`).",
@@ -402,17 +401,19 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
     label: "Header",
     components: [
       {
-        id: "merchant-header",
-        label: "Header",
+        id: "default",
+        label: "Default",
         variants: [
           {
             id: "default",
             label: "Default",
             preview: <HeaderStorybookPreview />,
+            previewWide: true,
             specs: [
               "Shell: `flex w-full shrink-0 flex-col gap-4 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-6 lg:px-8` (`Header.tsx`).",
-              "Left: pill search `rounded-[100px] bg-[#f5f9fe]` (merchant); icon + field; empty query shows **Search for a** + `RotatingSearchSuffix` (Transaction ID / Refund ID / …) — only on merchant routes (preview uses `MemoryRouter` `/home`).",
+              "Left: pill search `rounded-[100px] bg-[#f5f9fe]` (merchant); icon + field; empty query shows **Search for a** + `RotatingSearchSuffix` (Transaction ID / Refund ID / …). Preview passes `embeddedMerchantSearch` so that UI renders on `/storybook` without a nested router.",
               "Right: `Whats New` + `Need Help?` (external link) + avatar ring `rounded-full border` with initials.",
+              "Storybook: `previewWide` so the preview + doc tables span full canvas width like the real top bar (not `max-w-3xl`).",
             ],
             accessibility: [
               "Search: `role=\"searchbox\"` + `aria-label` for scope; clear control `aria-label=\"Clear search\"` when text present.",
@@ -428,8 +429,13 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
   },
 ];
 
+/** Old Header story path; keep resolving so bookmarks and L2 state stay valid. */
+export function canonicalStorybookPath(path: string): string {
+  return path === "header/default/main" ? "header/default/default" : path;
+}
+
 export function findVariant(path: string): { category: StoryCategory; component: StoryComponent; variant: StoryVariant } | null {
-  const [catId, compId, varId] = path.split("/");
+  const [catId, compId, varId] = canonicalStorybookPath(path).split("/");
   const category = STORYBOOK_REGISTRY.find((c) => c.id === catId);
   if (!category) return null;
   const component = category.components.find((c) => c.id === compId);
