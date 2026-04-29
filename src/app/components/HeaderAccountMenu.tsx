@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { PrimaryButton } from "./Button";
+import { MerchantAvatar } from "./MerchantAvatar";
 import { cn } from "./ui/utils";
-import {
-  ensureTwoLetterAvatar,
-  twoLetterInitialsFromEmail,
-  twoLetterInitialsFromName,
-} from "../lib/avatarInitials";
+import { twoLetterInitialsFromName } from "../lib/avatarInitials";
 import {
   HEADER_ACCOUNT_MERCHANTS,
   MERCHANT_SECTION_TITLES,
@@ -47,9 +44,6 @@ export function HeaderAccountMenu({
 
   const rootRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
-  const avatarInitials = ensureTwoLetterAvatar(
-    avatarInitialsProp ?? twoLetterInitialsFromEmail(userEmail),
-  );
 
   const filteredBySection = useMemo(() => {
     const qr = HEADER_ACCOUNT_MERCHANTS.filter(
@@ -106,11 +100,7 @@ export function HeaderAccountMenu({
                   selected ? "bg-[#e0f5fd]" : "bg-white hover:bg-[#fafafa]",
                 )}
               >
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-[#e0e0e0] bg-[#ebebeb]">
-                  <span className="text-center text-[12px] font-bold leading-none tracking-tight text-[#101010]">
-                    {twoLetterInitialsFromName(m.name)}
-                  </span>
-                </div>
+                <MerchantAvatar nameOrEmail={m.name} />
                 <div className="min-w-0 flex-1">
                   <p className="text-[14px] font-semibold leading-[20px] text-[#101010]">{m.name}</p>
                   <p className="mt-0.5 truncate text-[12px] leading-4 text-[#7e7e7e]">MID: {m.mid}</p>
@@ -127,15 +117,13 @@ export function HeaderAccountMenu({
     <div className="relative shrink-0" ref={rootRef}>
       <button
         type="button"
-        className="flex size-10 shrink-0 items-center justify-center rounded-full border border-[#e0e0e0] bg-[#f5f9fe] transition-colors hover:bg-[#f5f9fe]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004299] focus-visible:ring-offset-2"
+        className="flex shrink-0 rounded-full p-0 transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004299] focus-visible:ring-offset-2"
         aria-expanded={open}
         aria-haspopup="dialog"
         aria-controls={open ? menuId : undefined}
         onClick={() => (open ? dismiss() : setOpen(true))}
       >
-        <span className="block text-center text-[11px] font-bold leading-none tracking-tight text-[#101010] md:text-xs">
-          {avatarInitials}
-        </span>
+        <MerchantAvatar nameOrEmail={userEmail} initialsOverride={avatarInitialsProp} />
       </button>
 
       {open ? (

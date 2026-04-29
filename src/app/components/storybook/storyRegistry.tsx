@@ -4,6 +4,7 @@ import { PrimaryButton, SecondaryButton, TertiaryButton } from "../Button";
 import { BusinessOverviewDateRangePicker } from "../BusinessOverviewDateRangePicker";
 import { FilterBar } from "../FilterBar";
 import { Header } from "../Header";
+import { MerchantAvatar } from "../MerchantAvatar";
 import { Pagination } from "../Pagination";
 import { ReportMenu } from "../ReportMenu";
 import { SearchWithDropdown } from "../SearchWithDropdown";
@@ -166,6 +167,15 @@ function BusinessOverviewDateRangePickerStoryPreview() {
         onSelectionChange={setSelection}
         variant="compact"
       />
+    </div>
+  );
+}
+
+function MerchantAvatarStorybookPreview() {
+  return (
+    <div className="flex flex-col items-start gap-3">
+      <span className="text-[12px] font-medium text-[#7e7e7e]">Merchant avatar (header & lists)</span>
+      <MerchantAvatar nameOrEmail="siddharth.priya@paytm.com" />
     </div>
   );
 }
@@ -440,6 +450,28 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
     label: "Header",
     components: [
       {
+        id: "merchant-avatar",
+        label: "MerchantAvatar",
+        variants: [
+          {
+            id: "default",
+            label: "Default",
+            preview: <MerchantAvatarStorybookPreview />,
+            specs: [
+              "**40×40px** ring: `rounded-full`, `border border-[#e0e0e0]`, `bg-[#ebebeb]` — one surface for **global header** profile and **account menu** merchant rows (`MerchantAvatar`).",
+              "**Initials**: two letters via `avatarInitials.ts`; optional `initialsOverride` when the shell passes explicit glyphs (e.g. header props).",
+              "**No photo** in product UI — initials only.",
+            ],
+            accessibility: [
+              "`role=\"img\"` + `aria-label` from `nameOrEmail` (or initials-only fallback).",
+            ],
+            whenToUse: [
+              "Global header profile chip; account / merchant switcher rows; any merchant identity without a photo.",
+            ],
+          },
+        ],
+      },
+      {
         id: "default",
         label: "Default",
         variants: [
@@ -451,7 +483,7 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
             specs: [
               "Shell: `flex w-full shrink-0 flex-col gap-4 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-6 lg:px-8` (`Header.tsx`).",
               "Left: pill search `rounded-[100px] bg-[#f5f9fe]` (merchant); icon + field; empty query shows **Search for a** + `RotatingSearchSuffix` (Transaction ID / Refund ID / …). Preview passes `embeddedMerchantSearch` so that UI renders on `/storybook` without a nested router.",
-              "Right: `Whats New` + `Need Help?` (external link) + avatar ring `rounded-full border` with initials.",
+              "Right: `Whats New` + `Need Help?` (external link) + `MerchantAvatar` profile chip (`bg-[#ebebeb]` ring).",
               "Storybook: `previewWide` so the preview + doc tables span full canvas width like the real top bar (not `max-w-3xl`).",
             ],
             accessibility: [

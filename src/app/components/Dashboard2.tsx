@@ -426,7 +426,7 @@ export function Dashboard2({
                   dataKey="count"
                   stroke="#21C179"
                   name="No of Payments"
-                  strokeWidth={3}
+                  strokeWidth={2}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   dot={{

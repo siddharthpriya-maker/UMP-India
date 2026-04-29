@@ -24,8 +24,8 @@ alwaysApply: false
 - Standard hyperlink styling
 
 ## Profile Avatar
-- BG: `bg-[#f5f9fe]`
+- BG: `bg-[#ebebeb]` (shared `MerchantAvatar` with account menu list rows)
 - Border: `border border-[#e0e0e0]`
-- Size: `size-9 md:size-10`
+- Size: `size-10` (40×40px)
 - Shape: `rounded-full`
-- Content: bold initials centered
+- Content: bold two-letter initials centered
