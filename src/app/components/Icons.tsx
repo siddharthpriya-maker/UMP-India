@@ -331,6 +331,33 @@ export function CompletedFilledGreenIcon({ className = "size-6" }: IconProps) {
   );
 }
 
+/** 6×6 status bullet — success green `#21C179`. Asset: `src/assets/icons/dot_success_21C179.svg`. */
+export function StatusDotSuccessIcon({ className = "size-1.5" }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+      <rect width="6" height="6" rx="3" fill="#21C179" />
+    </svg>
+  );
+}
+
+/** 6×6 status bullet — error / danger red `#FD5154`. Asset: `src/assets/icons/dot_error_FD5154.svg`. */
+export function StatusDotErrorIcon({ className = "size-1.5" }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+      <rect width="6" height="6" rx="3" fill="#FD5154" />
+    </svg>
+  );
+}
+
+/** 6×6 status bullet — warning amber `#FF9D00`. Asset: `src/assets/icons/dot_warning_FF9D00.svg`. */
+export function StatusDotWarningIcon({ className = "size-1.5" }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+      <rect width="6" height="6" rx="3" fill="#FF9D00" />
+    </svg>
+  );
+}
+
 export function NoticeFilledIcon({ className = "size-6" }: IconProps) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24">
@@ -974,6 +1001,9 @@ export const Icons = {
   FailedFilledRed: FailedFilledRedIcon,
   FailedSmall: FailedSmallIcon,
   CompletedFilledGreen: CompletedFilledGreenIcon,
+  StatusDotSuccess: StatusDotSuccessIcon,
+  StatusDotError: StatusDotErrorIcon,
+  StatusDotWarning: StatusDotWarningIcon,
   NoticeFilled: NoticeFilledIcon,
   DeleteOutlined: DeleteOutlinedIcon,
   Attachment: AttachmentIcon,

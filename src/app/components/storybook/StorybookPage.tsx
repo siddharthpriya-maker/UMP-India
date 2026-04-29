@@ -1,9 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Search } from "lucide-react";
 import { useSearchParams } from "react-router";
+import { FilterBar } from "../FilterBar";
 import { cn } from "../ui/utils";
 import { StorybookInspectFab } from "./StorybookInspectFab";
 import { StorybookPreviewInspector } from "./StorybookPreviewInspector";
-import { canonicalStorybookPath, defaultStoryPath, findVariant } from "./storyRegistry";
+import {
+  canonicalStorybookPath,
+  defaultStoryPath,
+  findVariant,
+  STORYBOOK_REGISTRY,
+} from "./storyRegistry";
 
 function slugForTitle(title: string) {
   return title.replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase() || "section";
@@ -65,6 +72,140 @@ function StoryDocTable({
   );
 }
 
+function buildStorybookSearchIndex(): { path: string; title: string; needle: string }[] {
+  const rows: { path: string; title: string; needle: string }[] = [];
+  for (const cat of STORYBOOK_REGISTRY) {
+    for (const comp of cat.components) {
+      for (const v of comp.variants) {
+        const path = `${cat.id}/${comp.id}/${v.id}`;
+        rows.push({
+          path,
+          title: `${cat.label} › ${comp.label} › ${v.label}`,
+          needle: `${cat.label} ${comp.label} ${v.label} ${path}`.toLowerCase(),
+        });
+      }
+    }
+  }
+  return rows;
+}
+
+function StorybookHeaderFilterBar({
+  categoryLabel,
+  componentLabel,
+  variantLabel,
+  currentPath,
+  onNavigate,
+}: {
+  categoryLabel: string;
+  componentLabel: string;
+  variantLabel: string;
+  currentPath: string;
+  onNavigate: (path: string) => void;
+}) {
+  const searchIndex = useMemo(() => buildStorybookSearchIndex(), []);
+  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const trimmed = query.trim().toLowerCase();
+  const matches = useMemo(() => {
+    if (!trimmed) return [];
+    return searchIndex.filter((r) => r.needle.includes(trimmed)).slice(0, 12);
+  }, [searchIndex, trimmed]);
+
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      if (!containerRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, []);
+
+  useEffect(() => {
+    setQuery("");
+    setOpen(false);
+  }, [currentPath]);
+
+  return (
+    <FilterBar>
+      <div className="flex w-full flex-col gap-[1px] px-5 py-5 transition-colors hover:bg-[#EBEBEB] md:h-full md:w-auto md:rounded-tl-[12px] md:rounded-bl-[12px]">
+        <span className="text-[12px] font-semibold uppercase tracking-[0.6px] text-[#7e7e7e]">Category</span>
+        <span className="text-[14px] font-semibold text-[#101010]">{categoryLabel}</span>
+      </div>
+      <div className="flex w-full flex-col gap-[1px] px-5 py-5 transition-colors hover:bg-[#EBEBEB] md:h-full md:w-auto">
+        <span className="text-[12px] font-semibold uppercase tracking-[0.6px] text-[#7e7e7e]">Component</span>
+        <span className="text-[14px] font-semibold text-[#101010]">{componentLabel}</span>
+      </div>
+      <div className="flex w-full flex-col gap-[1px] px-5 py-5 transition-colors hover:bg-[#EBEBEB] md:h-full md:w-auto">
+        <span className="text-[12px] font-semibold uppercase tracking-[0.6px] text-[#7e7e7e]">Variant</span>
+        <span className="text-[14px] font-semibold text-[#101010]">{variantLabel}</span>
+      </div>
+      <div
+        ref={containerRef}
+        className="relative z-30 flex min-h-0 w-full flex-1 flex-col justify-center px-5 py-5 md:h-full md:min-w-0 md:flex-1"
+      >
+        <label htmlFor="storybook-story-search" className="sr-only">
+          Search Storybook stories
+        </label>
+        <div className="relative w-full md:max-w-md md:self-end">
+          <Search
+            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#7e7e7e]"
+            aria-hidden
+          />
+          <input
+            id="storybook-story-search"
+            type="search"
+            value={query}
+            onChange={(e) => {
+              const v = e.target.value;
+              setQuery(v);
+              setOpen(v.trim().length > 0);
+            }}
+            onFocus={() => {
+              if (query.trim()) setOpen(true);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setOpen(false);
+            }}
+            placeholder="Search stories…"
+            autoComplete="off"
+            className="h-[40px] w-full rounded-lg border border-[#e0e0e0] bg-white py-2 pl-10 pr-3 text-[14px] text-[#101010] outline-none transition-colors placeholder:text-[#acacac] focus:border-[#004299] focus:ring-1 focus:ring-[#004299]"
+          />
+          {open && matches.length > 0 ? (
+            <ul
+              className="absolute left-0 right-0 top-full z-50 mt-1 max-h-[min(320px,50vh)] overflow-y-auto rounded-lg border border-[#e0e0e0] bg-white py-1 shadow-lg"
+              role="listbox"
+              aria-label="Matching stories"
+            >
+              {matches.map((m) => (
+                <li key={m.path} role="presentation">
+                  <button
+                    type="button"
+                    role="option"
+                    className="w-full px-4 py-2.5 text-left text-[14px] text-[#101010] transition-colors hover:bg-[#EBEBEB]"
+                    onClick={() => {
+                      onNavigate(m.path);
+                      setOpen(false);
+                      setQuery("");
+                    }}
+                  >
+                    {m.title}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {open && trimmed && matches.length === 0 ? (
+            <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded-lg border border-[#e0e0e0] bg-white px-4 py-3 text-[13px] text-[#7e7e7e] shadow-lg">
+              No stories match.
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </FilterBar>
+  );
+}
+
 export function StorybookPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [inspectMode, setInspectMode] = useState(false);
@@ -102,22 +243,16 @@ export function StorybookPage() {
     );
   }
 
-  /** Left nav playbook: variant \`main\` + different labels → L2-style component line + variant as H1. */
-  const showComponentEyebrow =
-    variant.id === "main" &&
-    resolved.component.label !== variant.label &&
-    resolved.component.label.trim() !== "";
-
   return (
     <>
-      <header className="mb-4 flex w-full shrink-0 flex-col gap-1 px-[32px] pt-[12px] md:mb-6">
-        <p className="text-[12px] font-semibold leading-[16px] tracking-[0.6px] text-[#7e7e7e]">
-          {resolved.category.label}
-        </p>
-        {showComponentEyebrow ? (
-          <p className="text-[14px] font-medium leading-[20px] text-[#444746]">{resolved.component.label}</p>
-        ) : null}
-        <h1 className="min-w-0 text-[32px] font-semibold leading-[40px] text-[#101010]">{variant.label}</h1>
+      <header className="mb-4 flex w-full shrink-0 flex-col px-[32px] pt-[12px] md:mb-6">
+        <StorybookHeaderFilterBar
+          categoryLabel={resolved.category.label}
+          componentLabel={resolved.component.label}
+          variantLabel={variant.label}
+          currentPath={path}
+          onNavigate={(next) => setSearchParams({ p: canonicalStorybookPath(next) })}
+        />
       </header>
 
       <div

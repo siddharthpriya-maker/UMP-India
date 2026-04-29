@@ -19,6 +19,7 @@ alwaysApply: false
 | Inline Medium | `size-5` | 20×20 | `0 0 24 24` | Status icons, search, action card icons, row actions |
 | Inline Tiny | `size-3.5` | 14×14 | `0 0 24 24` | Shadcn checkbox check glyph, CTA arrows |
 | Unread dot | `size-2` | 8×8 | — | Notification unread indicator |
+| Status dot (fixed) | `size-1.5` | 6×6 | `0 0 6 6` | Inline status bullets — `StatusDotSuccessIcon` / `StatusDotErrorIcon` / `StatusDotWarningIcon` (`dot_*` assets); fills `#21C179` / `#FD5154` / `#FF9D00` |
 
 ## Informational icons (`Info`, `HelpCircle`, similar)
 
@@ -124,7 +125,7 @@ All SVG icons MUST use `currentColor` instead of hardcoded hex. The parent contr
 <path stroke="#101010" fill="#101010" />
 ```
 
-**Exceptions:** Brand icons (`UPIIcon` with `#048A43`/`#F57922`, Paytm logo with `#002970`/`#00BAF2`) and fixed-color status glyphs (`FailedFilledRedIcon` `#FD5154`, `CompletedFilledGreenIcon` `#21C179`).
+**Exceptions:** Brand icons (`UPIIcon` with `#048A43`/`#F57922`, Paytm logo with `#002970`/`#00BAF2`) and fixed-color status glyphs (`FailedFilledRedIcon` `#FD5154`, `CompletedFilledGreenIcon` `#21C179`, `StatusDotSuccessIcon` `#21C179`, `StatusDotErrorIcon` `#FD5154`, `StatusDotWarningIcon` `#FF9D00`).
 
 ### 2. Duo-Tone Pattern (Product & Feature Icons)
 - Body shapes: `fill="white"`

@@ -1,24 +1,25 @@
-import { useState } from "react";
+import { useEffect, useId, useState } from "react";
 import {
   X, ChevronDown, Upload, Plus, Trash2, Image, Type,
-  Palette, Layout, CreditCard, Heart, Package,
+  Layout, CreditCard, Heart, Package,
 } from "lucide-react";
 import { TextField } from "../TextField";
-import type {
-  SectionId,
-  StructuredPageState,
-  BrandingData,
-  ProductData,
-  ProductItem,
-  CustomerData,
-  CustomerField,
-  CTAData,
-  PageCustomization,
-  ProductMode,
-  PricingType,
-  FieldType,
-  DevicePreview,
-  CoverType,
+import {
+  DEFAULT_CUSTOMIZATION,
+  type SectionId,
+  type StructuredPageState,
+  type BrandingData,
+  type ProductData,
+  type ProductItem,
+  type CustomerData,
+  type CustomerField,
+  type CTAData,
+  type PageCustomization,
+  type ProductMode,
+  type PricingType,
+  type FieldType,
+  type DevicePreview,
+  type CoverType,
 } from "./builder-types";
 
 interface PropertyPanelProps {
@@ -32,25 +33,22 @@ export function PropertyPanel({
   pageState,
   onUpdate,
 }: PropertyPanelProps) {
-  const [activeTab, setActiveTab] = useState<"properties" | "customize">("properties");
+  const [activeTab, setActiveTab] = useState<"properties" | "customize">("customize");
   const hasSection = selectedSection !== null;
+
+  /** Selecting a section on the artboard opens Properties; clearing selection returns to Customize. */
+  useEffect(() => {
+    if (selectedSection !== null) {
+      setActiveTab("properties");
+    } else {
+      setActiveTab("customize");
+    }
+  }, [selectedSection]);
 
   return (
     <div className="flex w-[300px] shrink-0 flex-col overflow-hidden border-l border-[#e0e0e0] bg-white">
-      {/* Properties = selected section only. Customize = full artboard (page-level). */}
+      {/* Customize = page-level theme/layout (default). Properties = selected section (opens when a block is selected). */}
       <div className="flex shrink-0 border-b border-[#e0e0e0]">
-        <button
-          type="button"
-          onClick={() => setActiveTab("properties")}
-          className={[
-            "flex-1 py-2.5 text-center text-[12px] font-semibold transition-colors",
-            activeTab === "properties"
-              ? "border-b-2 border-[#004299] text-[#004299]"
-              : "text-[#acacac] hover:text-[#7e7e7e]",
-          ].join(" ")}
-        >
-          Properties
-        </button>
         <button
           type="button"
           onClick={() => setActiveTab("customize")}
@@ -62,6 +60,18 @@ export function PropertyPanel({
           ].join(" ")}
         >
           Customize
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("properties")}
+          className={[
+            "flex-1 py-2.5 text-center text-[12px] font-semibold transition-colors",
+            activeTab === "properties"
+              ? "border-b-2 border-[#004299] text-[#004299]"
+              : "text-[#acacac] hover:text-[#7e7e7e]",
+          ].join(" ")}
+        >
+          Properties
         </button>
       </div>
 
@@ -598,55 +608,117 @@ function CustomizationPanel({
 }) {
   const patch = (p: Partial<PageCustomization>) => onChange({ ...customization, ...p });
 
+  const themeColorsDefault =
+    customization.primaryColor === DEFAULT_CUSTOMIZATION.primaryColor &&
+    customization.secondaryColor === DEFAULT_CUSTOMIZATION.secondaryColor &&
+    customization.backgroundColor === DEFAULT_CUSTOMIZATION.backgroundColor;
+
+  const resetThemeColors = () => {
+    patch({
+      primaryColor: DEFAULT_CUSTOMIZATION.primaryColor,
+      secondaryColor: DEFAULT_CUSTOMIZATION.secondaryColor,
+      backgroundColor: DEFAULT_CUSTOMIZATION.backgroundColor,
+    });
+  };
+
   return (
-    <div className="flex flex-col gap-5 p-4">
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-[#acacac]">
-        Theme
-      </span>
-      <ColorField label="Primary Color" value={customization.primaryColor} onChange={(v) => patch({ primaryColor: v })} />
-      <ColorField label="Secondary Color" value={customization.secondaryColor} onChange={(v) => patch({ secondaryColor: v })} />
-      <ColorField label="Background" value={customization.backgroundColor} onChange={(v) => patch({ backgroundColor: v })} />
-      <SelectField
-        label="Font Family"
-        value={customization.fontFamily}
-        onChange={(v) => patch({ fontFamily: v })}
-        options={[
-          { value: "Inter", label: "Inter" },
-          { value: "Roboto", label: "Roboto" },
-          { value: "Poppins", label: "Poppins" },
-          { value: "Lato", label: "Lato" },
-          { value: "Open Sans", label: "Open Sans" },
-        ]}
-      />
-      <div className="flex flex-col gap-1.5">
-        <span className="text-[12px] font-semibold text-[#7e7e7e]">Layout</span>
+    <div className="flex flex-col gap-6 p-4">
+      <section className="flex flex-col gap-4" aria-labelledby="customize-theme-colors-heading">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <h3 id="customize-theme-colors-heading" className="text-[13px] font-semibold text-[#101010]">
+              Theme colors
+            </h3>
+            <p className="mt-1 text-[11px] leading-relaxed text-[#acacac]">
+              Type a hex code or tap the swatch to use your system color picker. Colors apply to the live preview.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={resetThemeColors}
+            disabled={themeColorsDefault}
+            className="shrink-0 rounded-[6px] px-2 py-1 text-[11px] font-semibold text-[#004299] transition-colors hover:bg-[#f5f9fe] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+          >
+            Reset
+          </button>
+        </div>
+
+        <ThemeColorField
+          label="Primary"
+          description="CTA button, headings, and main accents"
+          value={customization.primaryColor}
+          onChange={(v) => patch({ primaryColor: v })}
+        />
+        <ThemeColorField
+          label="Secondary"
+          description="Supporting accents and highlights"
+          value={customization.secondaryColor}
+          onChange={(v) => patch({ secondaryColor: v })}
+        />
+        <ThemeColorField
+          label="Background"
+          description="Page canvas behind your sections"
+          value={customization.backgroundColor}
+          onChange={(v) => patch({ backgroundColor: v })}
+        />
+      </section>
+
+      <div className="h-px shrink-0 bg-[#f0f0f0]" role="presentation" />
+
+      <section className="flex flex-col gap-3" aria-labelledby="customize-typography-heading">
+        <h3 id="customize-typography-heading" className="text-[13px] font-semibold text-[#101010]">
+          Typography
+        </h3>
+        <SelectField
+          label="Font family"
+          value={customization.fontFamily}
+          onChange={(v) => patch({ fontFamily: v })}
+          options={[
+            { value: "Inter", label: "Inter" },
+            { value: "Roboto", label: "Roboto" },
+            { value: "Poppins", label: "Poppins" },
+            { value: "Lato", label: "Lato" },
+            { value: "Open Sans", label: "Open Sans" },
+          ]}
+        />
+      </section>
+
+      <div className="h-px shrink-0 bg-[#f0f0f0]" role="presentation" />
+
+      <section className="flex flex-col gap-3" aria-labelledby="customize-layout-heading">
+        <div>
+          <h3 id="customize-layout-heading" className="text-[13px] font-semibold text-[#101010]">
+            Layout
+          </h3>
+          <p className="mt-1 text-[11px] text-[#acacac]">How sections arrange on wide screens</p>
+        </div>
         <div className="flex gap-2">
           <button
             type="button"
             onClick={() => patch({ layout: "single" })}
             className={[
-              "flex-1 rounded-[8px] border py-2 text-[11px] font-semibold transition-colors",
+              "flex-1 rounded-[8px] border py-2.5 text-[11px] font-semibold transition-colors",
               customization.layout === "single"
                 ? "border-[#004299] bg-[#f5f9fe] text-[#004299]"
                 : "border-[#e0e0e0] text-[#7e7e7e] hover:border-[#ccc]",
             ].join(" ")}
           >
-            1 Column
+            1 column
           </button>
           <button
             type="button"
             onClick={() => patch({ layout: "two-column" })}
             className={[
-              "flex-1 rounded-[8px] border py-2 text-[11px] font-semibold transition-colors",
+              "flex-1 rounded-[8px] border py-2.5 text-[11px] font-semibold transition-colors",
               customization.layout === "two-column"
                 ? "border-[#004299] bg-[#f5f9fe] text-[#004299]"
                 : "border-[#e0e0e0] text-[#7e7e7e] hover:border-[#ccc]",
             ].join(" ")}
           >
-            2 Column
+            2 columns
           </button>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
@@ -709,31 +781,131 @@ function ToggleRow({
   );
 }
 
-function ColorField({
+/** Parse user input to `#rrggbb` or return null. Accepts `#RGB`, `#RRGGBB`, with or without `#`. */
+function normalizeHexInput(raw: string): string | null {
+  let t = raw.trim();
+  if (!t) return null;
+  if (t[0] !== "#") t = `#${t}`;
+  const body = t
+    .slice(1)
+    .replace(/[^0-9a-fA-F]/g, "");
+  if (body.length === 3) {
+    const expanded = body
+      .split("")
+      .map((c) => c + c)
+      .join("");
+    return `#${expanded.toLowerCase()}`;
+  }
+  if (body.length === 6) {
+    return `#${body.toLowerCase()}`;
+  }
+  return null;
+}
+
+function hexForColorInput(hex: string): string {
+  return normalizeHexInput(hex) ?? "#000000";
+}
+
+function ThemeColorField({
   label,
+  description,
   value,
   onChange,
 }: {
   label: string;
+  description: string;
   value: string;
   onChange: (v: string) => void;
 }) {
+  const id = useId();
+  const errorId = `${id}-error`;
+  const [text, setText] = useState(value);
+  const [error, setError] = useState<string | undefined>();
+
+  useEffect(() => {
+    setText(value);
+  }, [value]);
+
+  const handleTextBlur = () => {
+    const n = normalizeHexInput(text);
+    if (n) {
+      onChange(n);
+      setText(n);
+      setError(undefined);
+      return;
+    }
+    if (!text.trim()) {
+      setText(value);
+      setError(undefined);
+      return;
+    }
+    setError("Use a valid hex value (e.g. #004299).");
+    setText(value);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.currentTarget.blur();
+    }
+  };
+
   return (
-    <div className="flex items-center gap-3">
-      <label
-        className="flex size-8 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-[6px] border border-[#e0e0e0]"
-        style={{ backgroundColor: value }}
-      >
-        <input
-          type="color"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="invisible size-0"
-        />
-      </label>
-      <div className="flex flex-col">
+    <div className="flex flex-col gap-2">
+      <div>
         <span className="text-[12px] font-semibold text-[#7e7e7e]">{label}</span>
-        <span className="text-[11px] font-mono text-[#acacac]">{value}</span>
+        <p className="mt-0.5 text-[11px] leading-snug text-[#acacac]">{description}</p>
+      </div>
+      <div className="flex items-stretch gap-2.5">
+        <label
+          className="relative flex size-11 shrink-0 cursor-pointer overflow-hidden rounded-[8px] border border-[#e0e0e0] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)] focus-within:ring-2 focus-within:ring-[#004299] focus-within:ring-offset-1"
+          style={{ backgroundColor: hexForColorInput(value) }}
+          title="Open color picker"
+        >
+          <span className="sr-only">Color picker for {label}</span>
+          <input
+            type="color"
+            value={hexForColorInput(value)}
+            onChange={(e) => {
+              const next = e.target.value;
+              onChange(next);
+              setText(next);
+              setError(undefined);
+            }}
+            className="size-full min-h-[44px] min-w-[44px] cursor-pointer opacity-0"
+            aria-label={`Pick ${label} color`}
+          />
+        </label>
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <label htmlFor={id} className="sr-only">
+            Hex code for {label}
+          </label>
+          <input
+            id={id}
+            type="text"
+            value={text}
+            onChange={(e) => {
+              setText(e.target.value);
+              setError(undefined);
+            }}
+            onBlur={handleTextBlur}
+            onKeyDown={handleKeyDown}
+            spellCheck={false}
+            autoCapitalize="none"
+            autoCorrect="off"
+            aria-invalid={error ? true : undefined}
+            aria-describedby={error ? errorId : undefined}
+            placeholder="#004299"
+            className={[
+              "h-[40px] w-full rounded-[8px] border bg-white px-3 font-mono text-[13px] text-[#101010] outline-none transition-colors placeholder:text-[#ccc] hover:border-[#ccc] focus:ring-1 focus:ring-[#004299]",
+              error ? "border-[#fd5154] focus:border-[#fd5154]" : "border-[#e0e0e0] focus:border-[#004299]",
+            ].join(" ")}
+          />
+          {error ? (
+            <p id={errorId} className="text-[11px] leading-snug text-[#fd5154]">
+              {error}
+            </p>
+          ) : null}
+        </div>
       </div>
     </div>
   );
