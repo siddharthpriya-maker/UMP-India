@@ -1,8 +1,23 @@
 import { useState } from "react";
 import {
-  Image, Type, AlignLeft, Video, Package, CreditCard,
-  Heart, Target, Phone, Mail, MapPin, ChevronDown, MousePointer,
-  Receipt, Plus, ContactRound,
+  Image,
+  Type,
+  AlignLeft,
+  Video,
+  Package,
+  Phone,
+  Mail,
+  MapPin,
+  ChevronDown,
+  MousePointer,
+  Receipt,
+  Plus,
+  ContactRound,
+  CheckSquare,
+  Check,
+  CreditCard,
+  Heart,
+  Target,
 } from "lucide-react";
 import type { SectionId, SectionComponentDef, BrandingData, ProductData } from "./builder-types";
 import { SECTION_COMPONENTS, SECTION_META, SECTION_ORDER } from "./builder-types";
@@ -23,6 +38,7 @@ const iconMap: Record<string, typeof Type> = {
   "mouse-pointer": MousePointer,
   receipt: Receipt,
   "contact-round": ContactRound,
+  "check-square": CheckSquare,
 };
 
 const BRANDING_TOGGLE_MAP: Record<string, keyof Pick<BrandingData, "coverEnabled" | "logoEnabled" | "descriptionEnabled" | "businessDetailsEnabled" | "videoEnabled">> = {
@@ -33,11 +49,9 @@ const BRANDING_TOGGLE_MAP: Record<string, keyof Pick<BrandingData, "coverEnabled
   brand_video: "videoEnabled",
 };
 
-const PRODUCT_TOGGLE_MAP: Record<string, keyof Pick<ProductData, "itemCardEnabled" | "pricingPlanEnabled" | "donationAmountEnabled" | "donationGoalEnabled">> = {
+const PRODUCT_TOGGLE_MAP: Record<string, keyof Pick<ProductData, "itemCardEnabled" | "itemAddonsEnabled">> = {
   item_card: "itemCardEnabled",
-  pricing_plan: "pricingPlanEnabled",
-  donation_amount: "donationAmountEnabled",
-  donation_goal: "donationGoalEnabled",
+  item_addon: "itemAddonsEnabled",
 };
 
 interface SectionComponentLibraryProps {
@@ -229,37 +243,76 @@ function ProductToggleRow({
   onProductToggle?: (field: keyof ProductData, value: boolean) => void;
 }) {
   const toggleKey = PRODUCT_TOGGLE_MAP[comp.id];
-  const isEnabled = toggleKey && productData
-    ? (productData[toggleKey] as boolean)
-    : false;
+  const isLockedAlwaysOn = comp.id === "item_card";
+  const isEnabled = isLockedAlwaysOn
+    ? true
+    : toggleKey && productData
+      ? (productData[toggleKey] as boolean)
+      : false;
+  const isCheckboxStyle = comp.id === "item_addon";
 
   return (
-    <div className="flex items-center gap-2.5 rounded-[8px] px-2.5 py-2 transition-colors hover:bg-[#f5f9fe]">
+    <div
+      className={[
+        "flex items-center gap-2.5 rounded-[8px] px-2.5 py-2 transition-colors",
+        isLockedAlwaysOn ? "" : "hover:bg-[#f5f9fe]",
+      ].join(" ")}
+    >
       <div className="flex size-7 shrink-0 items-center justify-center rounded-[6px] bg-[#f5f5f5]">
         <Icon className="size-3.5 text-[#7e7e7e]" />
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate text-[12px] font-medium text-[#101010]">
+        <span
+          className={`truncate text-[12px] font-medium ${isLockedAlwaysOn ? "text-[#acacac]" : "text-[#101010]"}`}
+        >
           {comp.label}
         </span>
       </div>
-      <button
-        type="button"
-        onClick={() => {
-          if (toggleKey && onProductToggle) {
-            onProductToggle(toggleKey, !isEnabled);
-          }
-        }}
-        className={`relative h-[18px] w-[32px] shrink-0 rounded-full transition-colors ${
-          isEnabled ? "bg-[#004299]" : "bg-[#e0e0e0]"
-        }`}
-      >
+      {isCheckboxStyle ? (
+        <button
+          type="button"
+          role="checkbox"
+          aria-checked={isEnabled}
+          title={isEnabled ? "Disable add-ons for items" : "Enable add-ons for items"}
+          onClick={() => {
+            if (toggleKey && onProductToggle) {
+              onProductToggle(toggleKey, !isEnabled);
+            }
+          }}
+          className={[
+            "flex size-5 shrink-0 items-center justify-center rounded-[4px] border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004299] focus-visible:ring-offset-1",
+            isEnabled ? "border-[#004299] bg-[#004299]" : "border-[#ccc] bg-white",
+          ].join(" ")}
+        >
+          {isEnabled ? <Check className="size-3.5 text-white" strokeWidth={3} /> : null}
+        </button>
+      ) : isLockedAlwaysOn ? (
         <div
-          className={`absolute top-[2px] size-[14px] rounded-full bg-white shadow-sm transition-transform ${
-            isEnabled ? "translate-x-[16px]" : "translate-x-[2px]"
+          className="relative h-[18px] w-[32px] shrink-0 cursor-not-allowed rounded-full bg-[#004299]/45"
+          aria-label="Item card is always on for this page"
+          title="Item card is always on for this page"
+        >
+          <div className="absolute top-[2px] size-[14px] translate-x-[16px] rounded-full bg-white/95 shadow-sm" />
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => {
+            if (toggleKey && onProductToggle) {
+              onProductToggle(toggleKey, !isEnabled);
+            }
+          }}
+          className={`relative h-[18px] w-[32px] shrink-0 rounded-full transition-colors ${
+            isEnabled ? "bg-[#004299]" : "bg-[#e0e0e0]"
           }`}
-        />
-      </button>
+        >
+          <div
+            className={`absolute top-[2px] size-[14px] rounded-full bg-white shadow-sm transition-transform ${
+              isEnabled ? "translate-x-[16px]" : "translate-x-[2px]"
+            }`}
+          />
+        </button>
+      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { StepWizard } from "./StepWizard";
+import { WizardStepHeader } from "./WizardStepHeader";
 import { PageLevelMenu } from "./PageLevelMenu";
 import { TextField } from "../TextField";
 import type { BuilderStep, PageInfo } from "./types";
@@ -40,67 +41,65 @@ export function PageInfoForm({ currentStep, onBack, onNext, onStepSelect, pageIn
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-[#ffffff]">
       <StepWizard currentStep={currentStep} onStepSelect={onStepSelect} />
+      <WizardStepHeader
+        title="Page information"
+        description="Enter your page name, category, and business contact details. You’ll build the layout in the next step."
+      />
 
       <div className="flex min-h-0 flex-1 flex-col">
         <div className="min-h-0 flex-1 overflow-y-auto px-[32px] pt-0 pb-4">
-          <div className="flex w-full min-w-0 flex-col gap-6">
-            <h5 className="text-[14px] font-medium leading-[20px] text-[#7e7e7e]">
-              Provide basic details about your payment page.
-            </h5>
-
-            <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 md:gap-x-6 md:gap-y-5">
-              <div className="min-w-0">
-                <TextField
-                  label="Payment Page Name"
-                  required
-                  value={form.pageName}
-                  onChange={(v) => update("pageName", v)}
-                  assistiveText="e.g. Spring Semester Fees 2026"
-                />
-              </div>
-              <div className="min-w-0">
-                <CategorySelect
-                  value={form.pageCategory}
-                  onChange={(v) => update("pageCategory", v)}
-                />
-              </div>
-              <div className="min-w-0">
-                <TextField
-                  label="Business Email"
-                  required
-                  type="email"
-                  value={form.businessEmail}
-                  onChange={(v) => update("businessEmail", v)}
-                  assistiveText="Displayed on the payment page"
-                />
-              </div>
-              <div className="min-w-0">
-                <TextField
-                  label="Business Phone Number"
-                  required
-                  value={form.businessPhone}
-                  onChange={(v) => update("businessPhone", v)}
-                  assistiveText="Contact number for customer queries"
-                />
-              </div>
-              <div className="min-w-0">
-                <TextField
-                  label="Payment Page Expiry Date"
-                  type="date"
-                  value={form.expiryDate}
-                  onChange={(v) => update("expiryDate", v)}
-                  assistiveText="Leave empty for no expiry"
-                />
-              </div>
-              <div className="min-w-0">
-                <TextField
-                  label="Browser Tab Display Name"
-                  required
-                  value={form.browserTabTitle}
-                  onChange={(v) => update("browserTabTitle", v)}
-                  assistiveText="Title shown in the browser tab"
-                />
-              </div>
+          <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 md:gap-x-6 md:gap-y-5">
+            <div className="min-w-0">
+              <TextField
+                label="Payment Page Name"
+                required
+                value={form.pageName}
+                onChange={(v) => update("pageName", v)}
+                assistiveText="e.g. Spring Semester Fees 2026"
+              />
+            </div>
+            <div className="min-w-0">
+              <CategorySelect
+                value={form.pageCategory}
+                onChange={(v) => update("pageCategory", v)}
+              />
+            </div>
+            <div className="min-w-0">
+              <TextField
+                label="Business Email"
+                required
+                type="email"
+                value={form.businessEmail}
+                onChange={(v) => update("businessEmail", v)}
+                assistiveText="Displayed on the payment page"
+              />
+            </div>
+            <div className="min-w-0">
+              <TextField
+                label="Business Phone Number"
+                required
+                value={form.businessPhone}
+                onChange={(v) => update("businessPhone", v)}
+                assistiveText="Contact number for customer queries"
+              />
+            </div>
+            <div className="min-w-0">
+              <TextField
+                label="Payment Page Expiry Date"
+                type="date"
+                value={form.expiryDate}
+                onChange={(v) => update("expiryDate", v)}
+                assistiveText="Leave empty for no expiry"
+              />
+            </div>
+            <div className="min-w-0">
+              <TextField
+                label="Browser Tab Display Name"
+                required
+                value={form.browserTabTitle}
+                onChange={(v) => update("browserTabTitle", v)}
+                assistiveText="Title shown in the browser tab"
+              />
             </div>
           </div>
         </div>

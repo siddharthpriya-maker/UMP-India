@@ -1,102 +1,98 @@
-import { Check } from "lucide-react";
 import type { BuilderStep } from "./types";
 
 const steps: { key: BuilderStep; label: string }[] = [
-  { key: "info", label: "Page Information" },
-  { key: "builder", label: "Page Builder" },
-  { key: "settings", label: "Additional Settings" },
+  { key: "info", label: "Page information" },
+  { key: "builder", label: "Page builder" },
+  { key: "settings", label: "Additional settings" },
 ];
 
 const stepOrder: BuilderStep[] = ["info", "builder", "settings"];
 
-interface StepWizardProps {
+export interface StepWizardProps {
   currentStep: BuilderStep;
+  /** Jump to a completed or current step. Upcoming steps are not interactive. */
+  onStepSelect?: (step: BuilderStep) => void;
 }
 
-function StepIndicator({
-  index,
-  isCompleted,
-  isActive,
-}: {
-  index: number;
-  isCompleted: boolean;
-  isActive: boolean;
-}) {
-  if (isCompleted) {
-    return (
-      <div
-        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#22C55E] text-white shadow-sm"
-        aria-hidden
-      >
-        <Check className="size-[18px]" strokeWidth={2.5} />
-      </div>
-    );
-  }
-  if (isActive) {
-    return (
-      <div
-        className="flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-[#22C55E] bg-transparent text-[14px] font-semibold leading-none text-[#22C55E]"
-        aria-hidden
-      >
-        {index + 1}
-      </div>
-    );
-  }
-  return (
-    <div
-      className="flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-[#e0e0e0] bg-[#ffffff] text-[14px] font-semibold leading-none text-[#7e7e7e]"
-      aria-hidden
-    >
-      {index + 1}
-    </div>
-  );
-}
-
-export function StepWizard({ currentStep }: StepWizardProps) {
+/**
+ * Three-segment line progress (no step labels in the UI). Brand blue for
+ * completed / current; neutral track for upcoming steps.
+ */
+export function StepWizard({ currentStep, onStepSelect }: StepWizardProps) {
   const currentIdx = stepOrder.indexOf(currentStep);
 
   return (
     <nav
       aria-label="Create payment page steps"
-      className="w-full shrink-0 bg-[#ffffff] px-[32px] pb-5 pt-0"
+      className="w-full min-w-0 shrink-0 bg-white px-[32px] py-4"
     >
-      <div className="w-full rounded-[12px] border border-[#e0e0e0] bg-white px-6 py-5 shadow-[0_1px_3px_rgba(16,16,16,0.06)] sm:px-8">
-        <ul className="flex w-full list-none flex-wrap items-center justify-center gap-y-4 p-0">
+      <ol className="m-0 flex w-full min-w-0 list-none items-stretch gap-2 p-0 sm:gap-3">
         {steps.map((step, idx) => {
-          const isCompleted = idx < currentIdx;
-          const isActive = idx === currentIdx;
-          const segmentCompleted = idx < currentIdx;
+          const isUpcoming = idx > currentIdx;
+          const lineClass = isUpcoming
+            ? "bg-[#e0e0e0]"
+            : "bg-[#004299]";
+
+          const line = (
+            <span
+              aria-hidden
+              className={`block h-1 w-full min-w-0 rounded-full transition-colors ${lineClass}`}
+            />
+          );
+
+          if (isUpcoming) {
+            return (
+              <li key={step.key} className="min-w-0 flex-1">
+                <div
+                  className="flex w-full cursor-not-allowed flex-col justify-center"
+                  title="Complete previous steps first"
+                >
+                  {line}
+                </div>
+                <span className="sr-only">
+                  {step.label}, not yet available
+                </span>
+              </li>
+            );
+          }
+
+          if (onStepSelect) {
+            return (
+              <li key={step.key} className="min-w-0 flex-1">
+                <button
+                  type="button"
+                  onClick={() => onStepSelect(step.key)}
+                  className="flex w-full min-w-0 flex-col justify-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004299] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                  aria-current={idx === currentIdx ? "step" : undefined}
+                  aria-label={
+                    idx === currentIdx
+                      ? `${step.label}, step ${idx + 1} of ${steps.length}, current`
+                      : `${step.label}, step ${idx + 1} of ${steps.length}, go to this step`
+                  }
+                >
+                  {line}
+                </button>
+              </li>
+            );
+          }
 
           return (
-            <li key={step.key} className="flex items-center">
-              <div className="flex items-center gap-3">
-                <StepIndicator index={idx} isCompleted={isCompleted} isActive={isActive} />
-                <span
-                  className={`max-w-[200px] text-left text-[13px] leading-5 sm:max-w-[260px] sm:text-[14px] ${
-                    isCompleted
-                      ? "font-semibold text-[#22C55E]"
-                      : isActive
-                        ? "font-semibold text-[#101010]"
-                        : "font-medium text-[#7e7e7e]"
-                  }`}
-                >
-                  {step.label}
+            <li
+              key={step.key}
+              className="min-w-0 flex-1"
+              aria-current={idx === currentIdx ? "step" : undefined}
+            >
+              <div className="flex w-full flex-col justify-center">
+                {line}
+                <span className="sr-only">
+                  {step.label}, step {idx + 1} of {steps.length}
+                  {idx === currentIdx ? ", current" : ""}
                 </span>
               </div>
-
-              {idx < steps.length - 1 && (
-                <div
-                  className={`mx-3 h-0 w-12 shrink-0 border-t-2 border-dashed sm:mx-4 sm:w-20 md:w-24 ${
-                    segmentCompleted ? "border-[#22C55E]" : "border-[#e0e0e0]"
-                  }`}
-                  aria-hidden
-                />
-              )}
             </li>
           );
         })}
-        </ul>
-      </div>
+      </ol>
     </nav>
   );
 }

@@ -1,5 +1,5 @@
-import { Package, Plus, ShoppingCart, Heart, Eye } from "lucide-react";
-import type { ProductData, PageCustomization, DevicePreview } from "./builder-types";
+import { Package, Plus, ShoppingCart, Heart, Eye, Check } from "lucide-react";
+import type { ProductData, ProductItem, PageCustomization, DevicePreview } from "./builder-types";
 
 interface ProductSectionProps {
   data: ProductData;
@@ -22,7 +22,7 @@ export function ProductSection({
   const visibleItems = data.items.slice(0, 3);
   const hasMore = data.items.length > 3;
 
-  const total = data.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const total = data.items.reduce((sum, i) => sum + lineTotal(i), 0);
 
   const formatAmount = (n: number) =>
     new Intl.NumberFormat("en-IN", { style: "currency", currency: data.currency, maximumFractionDigits: 0 }).format(n);
@@ -73,6 +73,7 @@ export function ProductSection({
                 currency={data.currency}
                 primaryColor={customization.primaryColor}
                 showQuantity={item.enableQuantity}
+                itemAddonsEnabled={data.itemAddonsEnabled}
               />
             ))}
           </div>
@@ -130,20 +131,33 @@ function EmptyProductState() {
   );
 }
 
+function lineTotal(item: ProductItem) {
+  const qty = item.enableQuantity ? Math.max(1, item.quantity) : 1;
+  const base = item.price * qty;
+  const addons = item.addons ?? [];
+  const addonSum =
+    addons.filter((a) => a.defaultSelected).reduce((s, a) => s + a.price, 0) * qty;
+  return base + addonSum;
+}
+
 function ItemCard({
   item,
   currency,
   primaryColor,
   showQuantity,
+  itemAddonsEnabled,
 }: {
-  item: { id: string; image: string; title: string; description: string; price: number; quantity: number };
+  item: ProductItem;
   currency: string;
   primaryColor: string;
   showQuantity: boolean;
+  itemAddonsEnabled: boolean;
 }) {
   const hasImage = !!item.image;
   const formatAmount = (n: number) =>
     new Intl.NumberFormat("en-IN", { style: "currency", currency, maximumFractionDigits: 0 }).format(n);
+
+  const addons = item.addons ?? [];
 
   return (
     <div className="flex gap-3 rounded-[12px] border border-[#f0f0f0] bg-white p-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-shadow hover:shadow-md">
@@ -171,6 +185,32 @@ function ItemCard({
             </span>
           )}
         </div>
+        {itemAddonsEnabled && addons.length > 0 ? (
+          <ul className="mt-2 flex flex-col gap-1.5 border-t border-[#f5f5f5] pt-2">
+            {addons.map((addon) => (
+              <li key={addon.id} className="flex items-center gap-2">
+                <span
+                  className={[
+                    "flex size-4 shrink-0 items-center justify-center rounded border",
+                    addon.defaultSelected ? "border-[currentColor] bg-[currentColor]" : "border-[#ccc] bg-white",
+                  ].join(" ")}
+                  style={addon.defaultSelected ? { color: primaryColor } : undefined}
+                  aria-hidden
+                >
+                  {addon.defaultSelected ? (
+                    <Check className="size-3 text-white" strokeWidth={3} />
+                  ) : null}
+                </span>
+                <span className="min-w-0 flex-1 truncate text-[12px] text-[#444746]">
+                  {addon.label || "Add-on"}
+                </span>
+                <span className="shrink-0 text-[12px] font-semibold tabular-nums text-[#101010]">
+                  +{formatAmount(addon.price)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </div>
     </div>
   );

@@ -29,7 +29,7 @@ export function Dashboard() {
   };
 
   return (
-    <div className="flex w-full min-h-full flex-col bg-[var(--background,#ffffff)]">
+    <div className="flex min-h-0 w-full flex-1 flex-col bg-[var(--background,#ffffff)]">
       <Dashboard1 />
       <Dashboard2
         paymentSummarySelection={paymentSummarySelection}

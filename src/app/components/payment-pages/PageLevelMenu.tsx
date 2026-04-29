@@ -9,9 +9,15 @@ export interface PageLevelMenuProps {
   onClearAll?: () => void;
   /** When true, “Clear all” is non-interactive (e.g. nothing to clear). */
   clearAllDisabled?: boolean;
-  /** Outline / secondary CTA (back / previous stage). */
-  secondaryLabel: string;
-  onSecondary: () => void;
+  /** Outline / secondary CTA (e.g. cancel). Omitted when navigation is only via step tabs. */
+  secondaryLabel?: string;
+  onSecondary?: () => void;
+  /** Outline CTA between secondary and primary (e.g. Save draft on Page Builder). */
+  midAction?: {
+    label: string;
+    onClick: () => void;
+    disabled?: boolean;
+  };
   /** Primary filled CTA (continue / save). */
   primaryLabel: string;
   onPrimary: () => void;
@@ -25,7 +31,7 @@ export interface PageLevelMenuProps {
 
 /**
  * Sticky bottom bar for full-page wizard flows (Payment Pages: Page Info, Builder, Additional Settings).
- * Left: assistive text + optional “Clear all”; right: secondary + primary (UMP button styles).
+ * Left: assistive text + optional “Clear all”; right: optional secondary, optional mid outline (e.g. Save draft), primary.
  */
 export function PageLevelMenu({
   assistiveText = "Assistive text",
@@ -34,6 +40,7 @@ export function PageLevelMenu({
   clearAllDisabled = false,
   secondaryLabel,
   onSecondary,
+  midAction,
   primaryLabel,
   onPrimary,
   primaryDisabled = false,
@@ -52,7 +59,7 @@ export function PageLevelMenu({
   return (
     <footer
       aria-label={ariaLabel}
-      className="sticky bottom-0 z-20 flex shrink-0 items-center justify-between gap-6 border-t border-[#e0e0e0] bg-[#f5f9fe] px-[32px] py-4 shadow-[0_-2px_12px_rgba(16,16,16,0.06)]"
+      className="relative z-20 flex w-full shrink-0 items-center justify-between gap-6 bg-[#f5f9fe] px-[32px] py-4 shadow-[0_-2px_12px_rgba(16,16,16,0.06)]"
     >
       <div className="flex min-w-0 flex-col gap-1">
         <span className="text-[12px] leading-[16px] text-[#101010]">
@@ -75,13 +82,30 @@ export function PageLevelMenu({
         )}
       </div>
       <div className="flex shrink-0 items-center gap-3">
-        <button
-          type="button"
-          onClick={onSecondary}
-          className="flex min-w-[120px] items-center justify-center rounded-[8px] border border-[#004299] px-4 py-2.5 text-[14px] font-semibold leading-[20px] text-[#004299] transition-colors hover:border-[#012A72] hover:bg-[#f7f9fd] hover:text-[#012A72]"
-        >
-          {secondaryLabel}
-        </button>
+        {secondaryLabel && onSecondary ? (
+          <button
+            type="button"
+            onClick={onSecondary}
+            className="flex min-w-[120px] items-center justify-center rounded-[8px] border border-[#004299] px-4 py-2.5 text-[14px] font-semibold leading-[20px] text-[#004299] transition-colors hover:border-[#012A72] hover:bg-[#f7f9fd] hover:text-[#012A72]"
+          >
+            {secondaryLabel}
+          </button>
+        ) : null}
+        {midAction ? (
+          <button
+            type="button"
+            onClick={midAction.onClick}
+            disabled={midAction.disabled}
+            className={[
+              "flex min-w-[120px] items-center justify-center rounded-[8px] border px-4 py-2.5 text-[14px] font-semibold leading-[20px] transition-colors",
+              midAction.disabled
+                ? "cursor-not-allowed border-[#e0e0e0] text-[#acacac] opacity-60"
+                : "border-[#004299] text-[#004299] hover:border-[#012A72] hover:bg-[#f7f9fd] hover:text-[#012A72]",
+            ].join(" ")}
+          >
+            {midAction.label}
+          </button>
+        ) : null}
         <button
           type="button"
           onClick={onPrimary}

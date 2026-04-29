@@ -1,10 +1,12 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { StepWizard } from "./StepWizard";
+import { WizardStepHeader } from "./WizardStepHeader";
 import { BuilderTopBar } from "./BuilderTopBar";
 import { SectionComponentLibrary } from "./SectionComponentLibrary";
 import { BuilderCanvas } from "./BuilderCanvas";
 import { PropertyPanel } from "./PropertyPanel";
 import { GuidedOverlay } from "./GuidedOverlay";
+import { PageLevelMenu } from "./PageLevelMenu";
 import type {
   SectionId,
   StructuredPageState,
@@ -15,7 +17,6 @@ import type {
   CustomerData,
   CTAData,
   CustomerField,
-  ProductItem,
 } from "./builder-types";
 import {
   DEFAULT_PAGE_STATE,
@@ -28,15 +29,15 @@ import type { BuilderStep } from "./types";
 
 interface PageBuilderProps {
   currentStep: BuilderStep;
-  onBack: () => void;
   onNext: () => void;
+  onStepSelect?: (step: BuilderStep) => void;
   pageName?: string;
   pageCategory?: string;
   businessEmail?: string;
   businessPhone?: string;
 }
 
-export function PageBuilder({ currentStep, onBack, onNext, pageName, pageCategory, businessEmail, businessPhone }: PageBuilderProps) {
+export function PageBuilder({ currentStep, onNext, onStepSelect, pageName, pageCategory, businessEmail, businessPhone }: PageBuilderProps) {
   const [pageState, setPageState] = useState<StructuredPageState>(() => {
     const state = { ...DEFAULT_PAGE_STATE };
     if (pageCategory) {
@@ -74,9 +75,15 @@ export function PageBuilder({ currentStep, onBack, onNext, pageName, pageCategor
     return () => { if (autosaveTimer.current) clearTimeout(autosaveTimer.current); };
   }, [pageState]);
 
-  /* State updater */
+  /* State updater — item card is always enabled for the product section */
   const updatePageState = useCallback((patch: Partial<StructuredPageState>) => {
-    setPageState((prev) => ({ ...prev, ...patch }));
+    setPageState((prev) => {
+      const next = { ...prev, ...patch };
+      if (patch.product !== undefined) {
+        next.product = { ...prev.product, ...patch.product, itemCardEnabled: true };
+      }
+      return next;
+    });
   }, []);
 
   /* Handle adding a component from the left panel */
@@ -95,11 +102,20 @@ export function PageBuilder({ currentStep, onBack, onNext, pageName, pageCategor
             const id = `item_${Date.now()}`;
             next.product = {
               ...prev.product,
-              items: [...prev.product.items, { id, image: "", title: "", description: "", price: 0, enableQuantity: false, quantity: 1 }],
+              items: [
+                ...prev.product.items,
+                {
+                  id,
+                  image: "",
+                  title: "",
+                  description: "",
+                  price: 0,
+                  enableQuantity: false,
+                  quantity: 1,
+                  addons: [],
+                },
+              ],
             };
-          }
-          if (def.id === "donation_goal") {
-            next.product = { ...prev.product, showDonationGoal: true, pricingType: "donation" };
           }
           break;
         case "customer": {
@@ -137,6 +153,24 @@ export function PageBuilder({ currentStep, onBack, onNext, pageName, pageCategor
     });
   }, []);
 
+  const handleClearAll = useCallback(() => {
+    setPageState(() => {
+      const state = { ...DEFAULT_PAGE_STATE };
+      if (pageCategory) {
+        state.product = { ...state.product, ...getProductDefaultsForCategory(pageCategory) };
+      }
+      if (businessEmail || businessPhone) {
+        state.branding = {
+          ...state.branding,
+          businessEmail: businessEmail || "",
+          businessPhone: businessPhone || "",
+        };
+      }
+      return state;
+    });
+    setSelectedSection(null);
+  }, [pageCategory, businessEmail, businessPhone]);
+
   const handleSaveDraft = useCallback(() => {
     setIsSaving(true);
     setTimeout(() => setIsSaving(false), 1200);
@@ -152,74 +186,85 @@ export function PageBuilder({ currentStep, onBack, onNext, pageName, pageCategor
   }, []);
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[#fafafa]">
-      {/* Step wizard */}
-      <StepWizard currentStep={currentStep} />
-
-      {/* Builder workspace */}
-      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
-        {/* Top bar */}
-        <BuilderTopBar
-          title={pageTitle}
-          onTitleChange={setPageTitle}
-          previewMode={previewMode}
-          onPreviewModeChange={setPreviewMode}
-          onSaveDraft={handleSaveDraft}
-          onContinue={handleContinue}
-          onPreview={() => {}}
-          continueDisabled={!valid}
-          isSaving={isSaving}
+    <div className="flex min-h-0 flex-1 flex-col bg-[#fafafa]">
+      <div className="shrink-0 bg-white">
+        <StepWizard currentStep={currentStep} onStepSelect={onStepSelect} />
+        <WizardStepHeader
+          title="Page builder"
+          description="Add sections, set up products, and customise how your payment page looks and reads for customers."
         />
+      </div>
 
-        {/* Three-panel layout */}
-        <div className="flex min-h-0 flex-1 overflow-hidden">
-          {/* Left: section-aware component library */}
-          <SectionComponentLibrary
-            selectedSection={selectedSection}
-            onSelectSection={setSelectedSection}
-            onAddComponent={handleAddComponent}
-            brandingData={pageState.branding}
-            onBrandingToggle={(field, value) => {
-              setPageState((prev) => ({
-                ...prev,
-                branding: { ...prev.branding, [field]: value },
-              }));
-            }}
-            productData={pageState.product}
-            onProductToggle={(field, value) => {
-              setPageState((prev) => ({
-                ...prev,
-                product: { ...prev.product, [field]: value },
-              }));
-            }}
-          />
-
-          {/* Center: dotted canvas with artboard */}
-          <BuilderCanvas
-            pageState={pageState}
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+          <BuilderTopBar
+            title={pageTitle}
+            onTitleChange={setPageTitle}
             previewMode={previewMode}
-            selectedSection={selectedSection}
-            onSelectSection={setSelectedSection}
-            onFitToScreen={() => {}}
+            onPreviewModeChange={setPreviewMode}
+            onPreview={() => {}}
           />
 
-          {/* Right: contextual property panel */}
-          <PropertyPanel
-            selectedSection={selectedSection}
-            pageState={pageState}
-            onUpdate={updatePageState}
-          />
+          <div className="flex min-h-0 flex-1 overflow-hidden">
+            <SectionComponentLibrary
+              selectedSection={selectedSection}
+              onSelectSection={setSelectedSection}
+              onAddComponent={handleAddComponent}
+              brandingData={pageState.branding}
+              onBrandingToggle={(field, value) => {
+                setPageState((prev) => ({
+                  ...prev,
+                  branding: { ...prev.branding, [field]: value },
+                }));
+              }}
+              productData={pageState.product}
+              onProductToggle={(field, value) => {
+                if (field === "itemCardEnabled" && value === false) return;
+                setPageState((prev) => ({
+                  ...prev,
+                  product: { ...prev.product, [field]: value },
+                }));
+              }}
+            />
+
+            <BuilderCanvas
+              pageState={pageState}
+              previewMode={previewMode}
+              selectedSection={selectedSection}
+              onSelectSection={setSelectedSection}
+              onFitToScreen={() => {}}
+            />
+
+            <PropertyPanel
+              selectedSection={selectedSection}
+              pageState={pageState}
+              onUpdate={updatePageState}
+            />
+          </div>
+
+          {showGuide && (
+            <GuidedOverlay
+              pageState={pageState}
+              currentGuideSection={currentGuideSection}
+              onSelectSection={handleGuideSelectSection}
+              onDismiss={() => setShowGuide(false)}
+            />
+          )}
         </div>
 
-        {/* Guided overlay */}
-        {showGuide && (
-          <GuidedOverlay
-            pageState={pageState}
-            currentGuideSection={currentGuideSection}
-            onSelectSection={handleGuideSelectSection}
-            onDismiss={() => setShowGuide(false)}
-          />
-        )}
+        <PageLevelMenu
+          assistiveText="Draft saves automatically while you edit. Finish all sections to continue."
+          onClearAll={handleClearAll}
+          midAction={{
+            label: isSaving ? "Saving…" : "Save as draft",
+            onClick: handleSaveDraft,
+            disabled: isSaving,
+          }}
+          primaryLabel="Continue"
+          onPrimary={handleContinue}
+          primaryDisabled={!valid}
+          ariaLabel="Page builder actions"
+        />
       </div>
     </div>
   );

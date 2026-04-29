@@ -151,13 +151,40 @@ export function PaymentPagesPage() {
   };
 
   if (builderStep === "info") {
-    return <PageInfoForm currentStep={builderStep} onBack={handleBuilderBack} onNext={handleBuilderNext} pageInfo={pageInfo} onPageInfoChange={setPageInfo} />;
+    return (
+      <div className="flex w-full min-h-0 flex-1 flex-col overflow-hidden">
+        <PageInfoForm
+          currentStep={builderStep}
+          onBack={handleBuilderBack}
+          onNext={handleBuilderNext}
+          onStepSelect={setBuilderStep}
+          pageInfo={pageInfo}
+          onPageInfoChange={setPageInfo}
+        />
+      </div>
+    );
   }
   if (builderStep === "builder") {
-    return <PageBuilder currentStep={builderStep} onBack={handleBuilderBack} onNext={handleBuilderNext} pageName={pageInfo.pageName} pageCategory={pageInfo.pageCategory} businessEmail={pageInfo.businessEmail} businessPhone={pageInfo.businessPhone} />;
+    return (
+      <div className="flex w-full min-h-0 flex-1 flex-col overflow-hidden">
+        <PageBuilder
+          currentStep={builderStep}
+          onNext={handleBuilderNext}
+          onStepSelect={setBuilderStep}
+          pageName={pageInfo.pageName}
+          pageCategory={pageInfo.pageCategory}
+          businessEmail={pageInfo.businessEmail}
+          businessPhone={pageInfo.businessPhone}
+        />
+      </div>
+    );
   }
   if (builderStep === "settings") {
-    return <AdditionalSettings currentStep={builderStep} onBack={handleBuilderBack} onNext={handleBuilderNext} />;
+    return (
+      <div className="flex w-full min-h-0 flex-1 flex-col overflow-hidden">
+        <AdditionalSettings currentStep={builderStep} onNext={handleBuilderNext} onStepSelect={setBuilderStep} />
+      </div>
+    );
   }
 
   return (

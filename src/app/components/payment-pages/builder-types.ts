@@ -73,6 +73,15 @@ export const DEFAULT_BRANDING: BrandingData = {
 
 export type ProductMode = "single" | "multiple" | "catalog";
 
+/** Optional paid extra tied to a main line item (e.g. warranty). Shown as checkboxes when add-ons are enabled. */
+export interface ProductItemAddon {
+  id: string;
+  label: string;
+  price: number;
+  /** Pre-selected in the builder preview (buyer can still change at checkout). */
+  defaultSelected: boolean;
+}
+
 export interface ProductItem {
   id: string;
   image: string;
@@ -81,6 +90,8 @@ export interface ProductItem {
   price: number;
   enableQuantity: boolean;
   quantity: number;
+  /** Add-on lines when `ProductData.itemAddonsEnabled` is on. */
+  addons: ProductItemAddon[];
 }
 
 export type PricingType = "fixed" | "subscription" | "donation" | "custom_donation" | "ecommerce";
@@ -94,6 +105,8 @@ export interface ProductData {
   donationCurrent: number;
   currency: string;
   itemCardEnabled: boolean;
+  /** Optional extras (checkbox list) for each item card. */
+  itemAddonsEnabled: boolean;
   pricingPlanEnabled: boolean;
   donationAmountEnabled: boolean;
   donationGoalEnabled: boolean;
@@ -111,6 +124,7 @@ export const DEFAULT_PRODUCT: ProductData = {
       price: 0,
       enableQuantity: false,
       quantity: 1,
+      addons: [],
     },
   ],
   showDonationGoal: false,
@@ -118,6 +132,7 @@ export const DEFAULT_PRODUCT: ProductData = {
   donationCurrent: 0,
   currency: "INR",
   itemCardEnabled: true,
+  itemAddonsEnabled: false,
   pricingPlanEnabled: false,
   donationAmountEnabled: false,
   donationGoalEnabled: false,
@@ -219,14 +234,35 @@ export function isPageValid(state: StructuredPageState): boolean {
 
 /* ─── Category-based product defaults ──────────────────────────────────────── */
 
-export function getProductDefaultsForCategory(category: string): Pick<ProductData, "itemCardEnabled" | "pricingPlanEnabled" | "donationAmountEnabled" | "donationGoalEnabled"> {
+export function getProductDefaultsForCategory(category: string): Pick<
+  ProductData,
+  "itemCardEnabled" | "itemAddonsEnabled" | "pricingPlanEnabled" | "donationAmountEnabled" | "donationGoalEnabled"
+> {
   switch (category) {
     case "Donations":
-      return { itemCardEnabled: false, pricingPlanEnabled: false, donationAmountEnabled: true, donationGoalEnabled: true };
+      return {
+        itemCardEnabled: true,
+        itemAddonsEnabled: false,
+        pricingPlanEnabled: false,
+        donationAmountEnabled: true,
+        donationGoalEnabled: true,
+      };
     case "Subscriptions":
-      return { itemCardEnabled: false, pricingPlanEnabled: true, donationAmountEnabled: false, donationGoalEnabled: false };
+      return {
+        itemCardEnabled: true,
+        itemAddonsEnabled: false,
+        pricingPlanEnabled: true,
+        donationAmountEnabled: false,
+        donationGoalEnabled: false,
+      };
     default:
-      return { itemCardEnabled: true, pricingPlanEnabled: false, donationAmountEnabled: false, donationGoalEnabled: false };
+      return {
+        itemCardEnabled: true,
+        itemAddonsEnabled: false,
+        pricingPlanEnabled: false,
+        donationAmountEnabled: false,
+        donationGoalEnabled: false,
+      };
   }
 }
 
@@ -248,11 +284,15 @@ export const SECTION_COMPONENTS: SectionComponentDef[] = [
   { id: "brand_description", label: "Description", icon: "align-left", section: "branding", description: "Short brand or page description" },
   { id: "business_details", label: "Business Details", icon: "contact-round", section: "branding", description: "Email and phone number" },
   { id: "brand_video", label: "Embed Video", icon: "video", section: "branding", description: "Optional video embed" },
-  // Product
-  { id: "item_card", label: "Item Card", icon: "package", section: "product", description: "Add a product or service item" },
-  { id: "pricing_plan", label: "Pricing Plan", icon: "credit-card", section: "product", description: "Subscription or plan option" },
-  { id: "donation_amount", label: "Donation Amount", icon: "heart", section: "product", description: "Custom or preset donation" },
-  { id: "donation_goal", label: "Donation Goal", icon: "target", section: "product", description: "Progress toward a goal" },
+  // Product — item card + optional add-ons only (other flows use Properties)
+  { id: "item_card", label: "Item card", icon: "package", section: "product", description: "Main product or service line item" },
+  {
+    id: "item_addon",
+    label: "Item add-on",
+    icon: "check-square",
+    section: "product",
+    description: "Optional extras buyers can add with the main item",
+  },
   // Customer
   { id: "text_field", label: "Text Field", icon: "type", section: "customer", description: "Single-line text input" },
   { id: "email_field", label: "Email Field", icon: "mail", section: "customer", description: "Email address input" },

@@ -1,5 +1,8 @@
-import { useState, type ReactNode } from "react";
-import type { OverviewSelection } from "../data/businessOverviewDataset";
+import { useState, useEffect, type ReactNode } from "react";
+import type { OverviewSelection } from "../../data/businessOverviewDataset";
+import type { BuilderStep } from "../payment-pages/types";
+import { StepWizard } from "../payment-pages/StepWizard";
+import { WizardStepHeader } from "../payment-pages/WizardStepHeader";
 import { PrimaryButton, SecondaryButton, TertiaryButton } from "../Button";
 import { BusinessOverviewDateRangePicker } from "../BusinessOverviewDateRangePicker";
 import { FilterBar } from "../FilterBar";
@@ -176,6 +179,22 @@ function MerchantAvatarStorybookPreview() {
     <div className="flex flex-col items-start gap-3">
       <span className="text-[12px] font-medium text-[#7e7e7e]">Merchant avatar (header & lists)</span>
       <MerchantAvatar nameOrEmail="siddharth.priya@paytm.com" />
+    </div>
+  );
+}
+
+function StepWizardStorybookPreview({ currentStep: initialStep }: { currentStep: BuilderStep }) {
+  const [step, setStep] = useState<BuilderStep>(initialStep);
+  useEffect(() => {
+    setStep(initialStep);
+  }, [initialStep]);
+  return (
+    <div className="w-full min-w-0 bg-[#ffffff]">
+      <StepWizard currentStep={step} onStepSelect={setStep} />
+      <WizardStepHeader
+        title="Page information"
+        description="Example subtext under the step bar — same pattern as list module pages (32px title, 14px #7e7e7e body)."
+      />
     </div>
   );
 }
@@ -492,6 +511,67 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
             ],
             whenToUse: [
               "Global top bar on every merchant shell route; Storybook catalog uses alternate placeholder when `pathname === \"/storybook\"`.",
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "payment-pages",
+    label: "Payment pages",
+    components: [
+      {
+        id: "step-wizard",
+        label: "Step progress (lines)",
+        variants: [
+          {
+            id: "step-1-page-information",
+            label: "Page Information active",
+            preview: <StepWizardStorybookPreview currentStep="info" />,
+            previewWide: true,
+            specs: [
+              "Three **horizontal line segments** only (no step titles in the UI): `ol` with `flex` + `gap-2` / `sm:gap-3`, each `li` is `flex-1`.",
+              "Track: **`h-1`**, **`rounded-full`**. Completed and current: **`#004299`**; upcoming: **`#e0e0e0`**. `transition-colors` on the bar.",
+              "**`WizardStepHeader`** (below the bar in the app): **`h1`** `text-[32px] font-semibold leading-[40px] text-[#101010]`; subtext **`p`** `text-[14px] leading-[20px] text-[#7e7e7e]`, `max-w-[720px]`, `px-[32px] pb-4` — same hierarchy as **Payment Pages** and **Reports** page titles.",
+              "`onStepSelect`: each completed or current segment is a `button` (full width of its cell); upcoming segments are static with `cursor-not-allowed` + `title`. Storybook uses local state for preview.",
+            ],
+            accessibility: [
+              "Landmark: `nav` + `aria-label=\"Create payment page steps\"`; list is an `ol`.",
+              "Reachable steps: `button` with `aria-label` (step name + index) and `aria-current=\"step\"` when active; upcoming `li` includes `sr-only` state text; visual bar is `aria-hidden` on the span.",
+            ],
+            whenToUse: [
+              "Top of **Payment Pages → New page** wizard — fixed above scrolling step content; `currentStep` driven by route / local wizard state.",
+            ],
+          },
+          {
+            id: "step-2-page-builder",
+            label: "Page Builder active",
+            preview: <StepWizardStorybookPreview currentStep="builder" />,
+            previewWide: true,
+            specs: [
+              "First segment **filled** (`#004299`); second **current** (blue); third **upcoming** (gray).",
+            ],
+            accessibility: [
+              "First two segments are focusable as buttons when `onStepSelect` is set; third is not in tab order.",
+            ],
+            whenToUse: [
+              "Mid-wizard when the merchant is editing layout/branding on **Page Builder**.",
+            ],
+          },
+          {
+            id: "step-3-additional-settings",
+            label: "Additional Settings active",
+            preview: <StepWizardStorybookPreview currentStep="settings" />,
+            previewWide: true,
+            specs: [
+              "First two segments solid **#004299** (complete); third segment **#004299** (current). All three segments are `button`s for revisiting earlier steps.",
+            ],
+            accessibility: [
+              "On the last step, steps 1–2 use **go to this step**; step 3 is current.",
+            ],
+            whenToUse: [
+              "Last wizard step (notifications, advanced options) before **Continue** / publish.",
             ],
           },
         ],

@@ -1,7 +1,7 @@
 import { useEffect, useId, useState } from "react";
 import {
   X, ChevronDown, Upload, Plus, Trash2, Image, Type,
-  Layout, CreditCard, Heart, Package,
+  Layout,
 } from "lucide-react";
 import { TextField } from "../TextField";
 import {
@@ -11,6 +11,7 @@ import {
   type BrandingData,
   type ProductData,
   type ProductItem,
+  type ProductItemAddon,
   type CustomerData,
   type CustomerField,
   type CTAData,
@@ -166,26 +167,7 @@ function BrandingProperties({
 
   return (
     <div className="flex flex-col gap-5 p-4">
-      {/* Logo — only when enabled */}
-      {data.logoEnabled && (
-        <FileUploadField
-          label="Logo"
-          value={data.logo}
-          onChange={(v) => patch({ logo: v })}
-          accept="image/*"
-          hint="Square PNG or SVG recommended"
-        />
-      )}
-
-      {/* Business Name — always shown */}
-      <TextField
-        label="Business Name"
-        value={data.businessName}
-        onChange={(v) => patch({ businessName: v })}
-        size="compact"
-      />
-
-      {/* Cover — only when enabled */}
+      {/* Cover — type + asset first when enabled */}
       {data.coverEnabled && (
         <>
           <div className="flex flex-col gap-1.5">
@@ -227,6 +209,25 @@ function BrandingProperties({
           )}
         </>
       )}
+
+      {/* Logo — only when enabled */}
+      {data.logoEnabled && (
+        <FileUploadField
+          label="Logo"
+          value={data.logo}
+          onChange={(v) => patch({ logo: v })}
+          accept="image/*"
+          hint="Square PNG or SVG recommended"
+        />
+      )}
+
+      {/* Business Name — always shown */}
+      <TextField
+        label="Business Name"
+        value={data.businessName}
+        onChange={(v) => patch({ businessName: v })}
+        size="compact"
+      />
 
       {/* Description — only when enabled */}
       {data.descriptionEnabled && (
@@ -294,7 +295,7 @@ function ProductProperties({
     patch({
       items: [
         ...data.items,
-        { id, image: "", title: "", description: "", price: 0, enableQuantity: false, quantity: 1 },
+        { id, image: "", title: "", description: "", price: 0, enableQuantity: false, quantity: 1, addons: [] },
       ],
     });
     setExpandedItem(id);
@@ -305,6 +306,31 @@ function ProductProperties({
 
   const updateItem = (id: string, p: Partial<ProductItem>) =>
     patch({ items: data.items.map((i) => (i.id === id ? { ...i, ...p } : i)) });
+
+  const addAddon = (itemId: string) => {
+    const addon: ProductItemAddon = {
+      id: `addon_${Date.now()}`,
+      label: "",
+      price: 0,
+      defaultSelected: false,
+    };
+    const item = data.items.find((i) => i.id === itemId);
+    if (!item) return;
+    updateItem(itemId, { addons: [...(item.addons ?? []), addon] });
+  };
+
+  const updateAddon = (itemId: string, addonId: string, p: Partial<ProductItemAddon>) => {
+    const item = data.items.find((i) => i.id === itemId);
+    if (!item) return;
+    const addons = (item.addons ?? []).map((a) => (a.id === addonId ? { ...a, ...p } : a));
+    updateItem(itemId, { addons });
+  };
+
+  const removeAddon = (itemId: string, addonId: string) => {
+    const item = data.items.find((i) => i.id === itemId);
+    if (!item) return;
+    updateItem(itemId, { addons: (item.addons ?? []).filter((a) => a.id !== addonId) });
+  };
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -411,6 +437,68 @@ function ProductProperties({
                   accept="image/*"
                   hint="Product image"
                 />
+                {data.itemAddonsEnabled ? (
+                  <div className="flex flex-col gap-3 rounded-[8px] border border-[#e8eef6] bg-[#f8fafc] p-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[12px] font-semibold text-[#7e7e7e]">Add-ons</span>
+                      <button
+                        type="button"
+                        onClick={() => addAddon(item.id)}
+                        className="flex items-center gap-1 text-[11px] font-semibold text-[#004299] hover:underline"
+                      >
+                        <Plus className="size-3" /> Add add-on
+                      </button>
+                    </div>
+                    {(item.addons ?? []).length === 0 ? (
+                      <p className="text-[11px] leading-snug text-[#acacac]">
+                        Optional extras (e.g. extended warranty). Shown as checkboxes under the item on the page.
+                      </p>
+                    ) : (
+                      <div className="flex flex-col gap-3">
+                        {(item.addons ?? []).map((addon) => (
+                          <div key={addon.id} className="rounded-[8px] border border-[#f0f0f0] bg-white p-2.5">
+                            <div className="mb-2 flex items-start justify-between gap-2">
+                              <span className="text-[11px] font-medium text-[#acacac]">Add-on</span>
+                              <button
+                                type="button"
+                                onClick={() => removeAddon(item.id, addon.id)}
+                                className="shrink-0 text-[#fd5154] hover:underline"
+                                aria-label="Remove add-on"
+                              >
+                                <Trash2 className="size-3.5" />
+                              </button>
+                            </div>
+                            <TextField
+                              label="Label"
+                              value={addon.label}
+                              onChange={(v) => updateAddon(item.id, addon.id, { label: v })}
+                              size="compact"
+                            />
+                            <div className="mt-2">
+                              <TextField
+                                label="Price"
+                                type="number"
+                                value={String(addon.price)}
+                                onChange={(v) =>
+                                  updateAddon(item.id, addon.id, { price: parseFloat(v) || 0 })
+                                }
+                                size="compact"
+                                prefix={data.currency === "INR" ? "₹" : "$"}
+                              />
+                            </div>
+                            <div className="mt-2 border-t border-[#f5f5f5] pt-2">
+                              <ToggleRow
+                                label="Selected by default in preview"
+                                checked={addon.defaultSelected}
+                                onChange={(v) => updateAddon(item.id, addon.id, { defaultSelected: v })}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : null}
               </div>
             )}
           </div>
@@ -739,15 +827,21 @@ function SelectField({
   return (
     <div className="flex flex-col gap-1">
       <span className="text-[12px] font-semibold text-[#7e7e7e]">{label}</span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="h-[36px] w-full rounded-[8px] border border-[#e0e0e0] bg-white px-2.5 text-[12px] text-[#101010] outline-none transition-colors hover:border-[#ccc] focus:border-[#004299]"
-      >
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>{o.label}</option>
-        ))}
-      </select>
+      <div className="relative">
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-[40px] w-full appearance-none rounded-[8px] border border-[#e0e0e0] bg-white py-2 pl-3 pr-10 text-[13px] leading-normal text-[#101010] outline-none transition-colors hover:border-[#ccc] focus:border-[#004299] focus:ring-1 focus:ring-[#004299]"
+        >
+          {options.map((o) => (
+            <option key={o.value} value={o.value}>{o.label}</option>
+          ))}
+        </select>
+        <ChevronDown
+          className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[#7e7e7e]"
+          aria-hidden
+        />
+      </div>
     </div>
   );
 }

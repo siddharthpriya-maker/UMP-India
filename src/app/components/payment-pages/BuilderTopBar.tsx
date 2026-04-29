@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, Save, ChevronRight, Monitor, Smartphone } from "lucide-react";
+import { Eye, Monitor, Smartphone } from "lucide-react";
 import type { DevicePreview } from "./builder-types";
 
 interface BuilderTopBarProps {
@@ -7,11 +7,7 @@ interface BuilderTopBarProps {
   onTitleChange: (title: string) => void;
   previewMode: DevicePreview;
   onPreviewModeChange: (mode: DevicePreview) => void;
-  onSaveDraft: () => void;
-  onContinue: () => void;
   onPreview: () => void;
-  continueDisabled: boolean;
-  isSaving: boolean;
 }
 
 export function BuilderTopBar({
@@ -19,11 +15,7 @@ export function BuilderTopBar({
   onTitleChange,
   previewMode,
   onPreviewModeChange,
-  onSaveDraft,
-  onContinue,
   onPreview,
-  continueDisabled,
-  isSaving,
 }: BuilderTopBarProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(title);
@@ -63,7 +55,7 @@ export function BuilderTopBar({
         <span className="text-[12px] text-[#7e7e7e]">— Payment Page Builder</span>
       </div>
 
-      {/* Center: device toggle + fit */}
+      {/* Center: device toggle */}
       <div className="flex items-center gap-2">
         <div className="flex items-center rounded-[8px] border border-[#e0e0e0] p-0.5">
           <button
@@ -95,7 +87,7 @@ export function BuilderTopBar({
         </div>
       </div>
 
-      {/* Right: actions */}
+      {/* Right: preview */}
       <div className="flex items-center gap-2">
         <button
           type="button"
@@ -104,24 +96,6 @@ export function BuilderTopBar({
         >
           <Eye className="size-3.5" />
           Preview
-        </button>
-        <button
-          type="button"
-          onClick={onSaveDraft}
-          disabled={isSaving}
-          className="flex items-center gap-1.5 rounded-[8px] border border-[#e0e0e0] px-3 py-2 text-[13px] font-semibold text-[#101010] transition-colors hover:bg-[#f5f9fe] disabled:opacity-50"
-        >
-          <Save className="size-3.5" />
-          {isSaving ? "Saving…" : "Save Draft"}
-        </button>
-        <button
-          type="button"
-          onClick={onContinue}
-          disabled={continueDisabled}
-          className="flex items-center gap-1.5 rounded-[8px] bg-[#004299] px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-[#003580] disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Continue
-          <ChevronRight className="size-3.5" />
         </button>
       </div>
     </header>

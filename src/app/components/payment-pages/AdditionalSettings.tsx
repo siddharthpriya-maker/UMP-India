@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { StepWizard } from "./StepWizard";
+import { WizardStepHeader } from "./WizardStepHeader";
 import { PageLevelMenu } from "./PageLevelMenu";
 import { TextField } from "../TextField";
 import type { BuilderStep, AdditionalSettingsData } from "./types";
 
 interface AdditionalSettingsProps {
   currentStep: BuilderStep;
-  onBack: () => void;
   onNext: () => void;
   onStepSelect?: (step: BuilderStep) => void;
 }
@@ -25,7 +25,7 @@ const defaultSettings: AdditionalSettingsData = {
   },
 };
 
-export function AdditionalSettings({ currentStep, onBack, onNext, onStepSelect }: AdditionalSettingsProps) {
+export function AdditionalSettings({ currentStep, onNext, onStepSelect }: AdditionalSettingsProps) {
   const [activeTab, setActiveTab] = useState<"post" | "notifications">("post");
   const [settings, setSettings] = useState<AdditionalSettingsData>(defaultSettings);
 
@@ -44,14 +44,14 @@ export function AdditionalSettings({ currentStep, onBack, onNext, onStepSelect }
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-[#ffffff]">
       <StepWizard currentStep={currentStep} onStepSelect={onStepSelect} />
+      <WizardStepHeader
+        title="Additional settings"
+        description="Configure post-transaction behaviour, redirects, and customer notification preferences."
+      />
 
       <div className="flex min-h-0 flex-1 flex-col">
         <div className="min-h-0 flex-1 overflow-y-auto px-[32px] pt-0 pb-4">
           <div className="flex w-full max-w-[640px] flex-col gap-6">
-            <h5 className="text-[14px] font-medium leading-[20px] text-[#7e7e7e]">
-              Configure post-transaction behaviour and notification preferences.
-            </h5>
-
             {/* Tabs */}
             <div className="relative flex gap-[32px]">
             {(
@@ -163,8 +163,6 @@ export function AdditionalSettings({ currentStep, onBack, onNext, onStepSelect }
         <PageLevelMenu
           showClearAll={false}
           assistiveText="Review settings before publishing your payment page."
-          secondaryLabel="Back to Builder"
-          onSecondary={onBack}
           primaryLabel="Save & Publish"
           onPrimary={onNext}
           primaryEmphasis="success"
