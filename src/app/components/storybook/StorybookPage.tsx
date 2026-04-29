@@ -9,17 +9,6 @@ function slugForTitle(title: string) {
   return title.replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase() || "section";
 }
 
-/** Scroll only `.shell-main-canvas` — avoids `scrollIntoView` moving outer letterbox/chrome (can hide the app header). */
-function scrollStorybookMainCanvasToElement(anchorId: string) {
-  const anchor = document.getElementById(anchorId);
-  const canvas = anchor?.closest(".shell-main-canvas") as HTMLElement | null;
-  if (!anchor || !canvas) return;
-  const c = canvas.getBoundingClientRect();
-  const a = anchor.getBoundingClientRect();
-  const nextTop = a.top - c.top + canvas.scrollTop - 12;
-  canvas.scrollTo({ top: Math.max(0, nextTop), behavior: "smooth" });
-}
-
 function StoryDocTable({
   title,
   items,
@@ -128,26 +117,12 @@ export function StorybookPage() {
         {showComponentEyebrow ? (
           <p className="text-[14px] font-medium leading-[20px] text-[#444746]">{resolved.component.label}</p>
         ) : null}
-        <div className="flex w-full min-w-0 items-center justify-between gap-4">
-          <h1 className="min-w-0 flex-1 text-[32px] font-semibold leading-[40px] text-[#101010]">{variant.label}</h1>
-          <StorybookInspectFab
-            pressed={inspectMode}
-            onPress={() => {
-              setInspectMode((on) => {
-                const next = !on;
-                if (next) {
-                  requestAnimationFrame(() => scrollStorybookMainCanvasToElement("storybook-preview-anchor"));
-                }
-                return next;
-              });
-            }}
-          />
-        </div>
+        <h1 className="min-w-0 text-[32px] font-semibold leading-[40px] text-[#101010]">{variant.label}</h1>
       </header>
 
       <div
         className={cn(
-          "flex min-h-0 w-full flex-1 flex-col gap-4 md:gap-6 px-[32px] pb-[32px]",
+          "flex min-h-0 w-full flex-1 flex-col gap-4 md:gap-6 px-[32px] pb-24 md:pb-28",
           previewWide && "max-w-full",
         )}
       >
@@ -161,9 +136,8 @@ export function StorybookPage() {
           </h2>
           {inspectMode ? (
             <p className="mb-3 text-[13px] leading-[20px] text-[#444746]">
-              Hover to highlight, click to lock layout readouts. Hold <kbd className="rounded border border-[#e0e0e0] bg-[#fafafa] px-1.5 py-0.5 font-mono text-[12px]">Alt</kbd>{" "}
-              while hovering to jump one level up. <span className="font-medium text-[#101010]">Esc</span> exits inspect
-              mode.
+              Hover to highlight, click to lock layout readouts. <span className="font-medium text-[#101010]">Esc</span>{" "}
+              exits inspect mode.
             </p>
           ) : null}
           {/* White card is layout-only; inspect targets live inside the inner wrapper (no ring/cursor on the card). */}
@@ -197,6 +171,8 @@ export function StorybookPage() {
           <StoryDocTable title="When to use" items={variant.whenToUse} detailColumnHeading="Guidance" />
         </div>
       </div>
+
+      <StorybookInspectFab pressed={inspectMode} onPress={() => setInspectMode((on) => !on)} />
     </>
   );
 }

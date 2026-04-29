@@ -3,6 +3,11 @@ import { Search } from "lucide-react";
 import { PrimaryButton } from "./Button";
 import { cn } from "./ui/utils";
 import {
+  ensureTwoLetterAvatar,
+  twoLetterInitialsFromEmail,
+  twoLetterInitialsFromName,
+} from "../lib/avatarInitials";
+import {
   HEADER_ACCOUNT_MERCHANTS,
   MERCHANT_SECTION_TITLES,
   type HeaderMerchantOption,
@@ -12,20 +17,12 @@ import {
 function merchantMatchesQuery(m: HeaderMerchantOption, q: string): boolean {
   const s = q.trim().toLowerCase();
   if (!s) return true;
+  const initials = twoLetterInitialsFromName(m.name).toLowerCase();
   return (
     m.name.toLowerCase().includes(s) ||
     m.mid.toLowerCase().includes(s) ||
-    m.initial.toLowerCase().includes(s)
+    initials.includes(s)
   );
-}
-
-function initialsFromEmail(email: string): string {
-  const local = email.split("@")[0]?.trim() ?? "";
-  const parts = local.split(/[._-]+/).filter(Boolean);
-  if (parts.length >= 2) {
-    return `${parts[0]![0] ?? ""}${parts[1]![0] ?? ""}`.toUpperCase().slice(0, 2);
-  }
-  return local.slice(0, 2).toUpperCase() || "—";
 }
 
 export type HeaderAccountMenuProps = {
@@ -50,7 +47,9 @@ export function HeaderAccountMenu({
 
   const rootRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
-  const avatarInitials = avatarInitialsProp ?? initialsFromEmail(userEmail);
+  const avatarInitials = ensureTwoLetterAvatar(
+    avatarInitialsProp ?? twoLetterInitialsFromEmail(userEmail),
+  );
 
   const filteredBySection = useMemo(() => {
     const qr = HEADER_ACCOUNT_MERCHANTS.filter(
@@ -108,8 +107,8 @@ export function HeaderAccountMenu({
                 )}
               >
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-[#e0e0e0] bg-[#ebebeb]">
-                  <span className="text-center text-[14px] font-bold leading-none text-[#101010]">
-                    {m.initial}
+                  <span className="text-center text-[12px] font-bold leading-none tracking-tight text-[#101010]">
+                    {twoLetterInitialsFromName(m.name)}
                   </span>
                 </div>
                 <div className="min-w-0 flex-1">
@@ -134,7 +133,7 @@ export function HeaderAccountMenu({
         aria-controls={open ? menuId : undefined}
         onClick={() => (open ? dismiss() : setOpen(true))}
       >
-        <span className="block text-center text-sm font-bold leading-none text-[#101010] md:text-base">
+        <span className="block text-center text-[11px] font-bold leading-none tracking-tight text-[#101010] md:text-xs">
           {avatarInitials}
         </span>
       </button>

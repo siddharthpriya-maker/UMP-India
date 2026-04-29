@@ -5,8 +5,6 @@ export type HeaderMerchantOption = {
   section: MerchantShellSectionId;
   name: string;
   mid: string;
-  /** Single-letter avatar label */
-  initial: string;
 };
 
 /** Demo catalogue — replace with API/context when wiring merchant switching. */
@@ -16,14 +14,12 @@ export const HEADER_ACCOUNT_MERCHANTS: HeaderMerchantOption[] = [
     section: "qr",
     name: "Siddharth Priya",
     mid: "TGUUoF56178296757890",
-    initial: "S",
   },
   {
     id: "corp-paytm-test",
     section: "corporate",
     name: "Paytm Test",
     mid: "PaytmT15396612289012",
-    initial: "P",
   },
 ];
 

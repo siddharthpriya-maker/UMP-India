@@ -5,7 +5,7 @@ import { TertiaryButton } from "../Button";
 
 const INSPECT_UI = "[data-storybook-inspect-ui]";
 
-function pickInspectableElement(root: HTMLElement, clientX: number, clientY: number, altKey: boolean): Element | null {
+function pickInspectableElement(root: HTMLElement, clientX: number, clientY: number): Element | null {
   const stack = document.elementsFromPoint(clientX, clientY);
   for (const cand of stack) {
     if (!(cand instanceof Element)) continue;
@@ -13,12 +13,7 @@ function pickInspectableElement(root: HTMLElement, clientX: number, clientY: num
     if (!root.contains(cand)) continue;
     const tag = cand.tagName;
     if (tag === "SCRIPT" || tag === "STYLE" || tag === "NOSCRIPT") continue;
-    let el: Element = cand;
-    if (altKey) {
-      const p = el.parentElement;
-      if (p && root.contains(p)) el = p;
-    }
-    return el;
+    return cand;
   }
   return null;
 }
@@ -175,7 +170,7 @@ export function StorybookPreviewInspector({ enabled, onExit, className, children
   const [hovered, setHovered] = useState<Element | null>(null);
   const [locked, setLocked] = useState<Element | null>(null);
   const [, bump] = useReducer((n) => n + 1, 0);
-  const posRef = useRef({ x: 0, y: 0, alt: false });
+  const posRef = useRef({ x: 0, y: 0 });
   const rafMove = useRef(0);
   const scheduled = useRef(false);
 
@@ -213,14 +208,14 @@ export function StorybookPreviewInspector({ enabled, onExit, className, children
     scheduled.current = false;
     const rootEl = rootRef.current;
     if (!rootEl || !enabled) return;
-    const { x, y, alt } = posRef.current;
-    const el = pickInspectableElement(rootEl, x, y, alt);
+    const { x, y } = posRef.current;
+    const el = pickInspectableElement(rootEl, x, y);
     setHovered((prev) => (prev === el ? prev : el));
   }, [enabled]);
 
   const onPointerMove = (e: React.PointerEvent) => {
     if (!enabled) return;
-    posRef.current = { x: e.clientX, y: e.clientY, alt: e.altKey };
+    posRef.current = { x: e.clientX, y: e.clientY };
     if (!scheduled.current) {
       scheduled.current = true;
       rafMove.current = requestAnimationFrame(() => {
@@ -245,7 +240,7 @@ export function StorybookPreviewInspector({ enabled, onExit, className, children
       if (!rootRef.current.contains(t)) return;
       e.preventDefault();
       e.stopImmediatePropagation();
-      const el = pickInspectableElement(rootRef.current, e.clientX, e.clientY, e.altKey);
+      const el = pickInspectableElement(rootRef.current, e.clientX, e.clientY);
       if (el) setLocked(el);
     };
     window.addEventListener("pointerdown", onPointerDown, true);
@@ -307,8 +302,7 @@ export function StorybookPreviewInspector({ enabled, onExit, className, children
       </div>
       {enabled ? (
         <p className="sr-only" aria-live="polite">
-          Inspect mode on. Hover the preview, then click to lock an element. Alt while hovering moves one level up.
-          Escape exits inspect mode.
+          Inspect mode on. Hover the preview, then click to lock an element. Escape exits inspect mode.
         </p>
       ) : null}
       {portal}
