@@ -8,6 +8,7 @@ interface AdditionalSettingsProps {
   currentStep: BuilderStep;
   onBack: () => void;
   onNext: () => void;
+  onStepSelect?: (step: BuilderStep) => void;
 }
 
 const defaultSettings: AdditionalSettingsData = {
@@ -24,7 +25,7 @@ const defaultSettings: AdditionalSettingsData = {
   },
 };
 
-export function AdditionalSettings({ currentStep, onBack, onNext }: AdditionalSettingsProps) {
+export function AdditionalSettings({ currentStep, onBack, onNext, onStepSelect }: AdditionalSettingsProps) {
   const [activeTab, setActiveTab] = useState<"post" | "notifications">("post");
   const [settings, setSettings] = useState<AdditionalSettingsData>(defaultSettings);
 
@@ -41,18 +42,15 @@ export function AdditionalSettings({ currentStep, onBack, onNext }: AdditionalSe
     }));
 
   return (
-    <div className="flex min-h-full min-h-0 flex-col bg-[#ffffff]">
-      <StepWizard currentStep={currentStep} />
+    <div className="flex min-h-0 flex-1 flex-col bg-[#ffffff]">
+      <StepWizard currentStep={currentStep} onStepSelect={onStepSelect} />
 
       <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex-1 px-[32px] pt-0 pb-4">
+        <div className="min-h-0 flex-1 overflow-y-auto px-[32px] pt-0 pb-4">
           <div className="flex w-full max-w-[640px] flex-col gap-6">
-            <div className="flex flex-col gap-1">
-              <h2 className="text-[24px] font-semibold text-[#101010]">Additional Settings</h2>
-              <p className="text-[14px] text-[#7e7e7e] leading-[20px]">
-                Configure post-transaction behaviour and notification preferences.
-              </p>
-            </div>
+            <h5 className="text-[14px] font-medium leading-[20px] text-[#7e7e7e]">
+              Configure post-transaction behaviour and notification preferences.
+            </h5>
 
             {/* Tabs */}
             <div className="relative flex gap-[32px]">

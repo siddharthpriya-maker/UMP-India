@@ -9,6 +9,7 @@ interface PageInfoFormProps {
   currentStep: BuilderStep;
   onBack: () => void;
   onNext: () => void;
+  onStepSelect?: (step: BuilderStep) => void;
   pageInfo: PageInfo;
   onPageInfoChange: (info: PageInfo) => void;
 }
@@ -23,7 +24,7 @@ const PAGE_CATEGORIES = [
   "Other",
 ];
 
-export function PageInfoForm({ currentStep, onBack, onNext, pageInfo, onPageInfoChange }: PageInfoFormProps) {
+export function PageInfoForm({ currentStep, onBack, onNext, onStepSelect, pageInfo, onPageInfoChange }: PageInfoFormProps) {
   const form = pageInfo;
 
   const update = (field: keyof PageInfo, value: string) =>
@@ -37,18 +38,15 @@ export function PageInfoForm({ currentStep, onBack, onNext, pageInfo, onPageInfo
     form.browserTabTitle.trim();
 
   return (
-    <div className="flex min-h-full min-h-0 flex-col bg-[#ffffff]">
-      <StepWizard currentStep={currentStep} />
+    <div className="flex min-h-0 flex-1 flex-col bg-[#ffffff]">
+      <StepWizard currentStep={currentStep} onStepSelect={onStepSelect} />
 
       <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex-1 px-[32px] pt-0 pb-4">
+        <div className="min-h-0 flex-1 overflow-y-auto px-[32px] pt-0 pb-4">
           <div className="flex w-full min-w-0 flex-col gap-6">
-            <div className="flex flex-col gap-1">
-              <h2 className="text-[24px] font-semibold text-[#101010]">Page Information</h2>
-              <p className="text-[14px] font-normal leading-[20px] text-[#7e7e7e]">
-                Provide basic details about your payment page.
-              </p>
-            </div>
+            <h5 className="text-[14px] font-medium leading-[20px] text-[#7e7e7e]">
+              Provide basic details about your payment page.
+            </h5>
 
             <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 md:gap-x-6 md:gap-y-5">
               <div className="min-w-0">
