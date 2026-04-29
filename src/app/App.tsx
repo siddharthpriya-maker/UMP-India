@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useLocation } from "react-router";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router";
 import { cn } from "./components/ui/utils";
 import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
@@ -50,6 +50,7 @@ export default function App() {
 
 function AppShell() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const isStorybook = pathname === "/storybook";
 
   return (
@@ -65,7 +66,7 @@ function AppShell() {
               )}
             >
               <div data-app-global-header className="shrink-0">
-                <Header />
+                <Header onAccountLogout={() => navigate("/login")} />
               </div>
               <main
                 className={cn(

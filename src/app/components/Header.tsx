@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation } from "react-router";
 import svgPaths from "../../imports/svg-9d73oqi9lc";
 import { RotatingSearchSuffix } from "./RotatingSearchSuffix";
+import { HeaderAccountMenu } from "./HeaderAccountMenu";
 import { cn } from "./ui/utils";
 
 /** Paytm for Business support (new tab). */
@@ -36,9 +37,18 @@ export type HeaderProps = {
    * router for this — nested routers can blank the app under `BrowserRouter`.
    */
   embeddedMerchantSearch?: boolean;
+  /** Profile menu — signed-in email (replace when auth is wired). */
+  accountUserEmail?: string;
+  accountAvatarInitials?: string;
+  onAccountLogout?: () => void;
 };
 
-export function Header({ embeddedMerchantSearch = false }: HeaderProps) {
+export function Header({
+  embeddedMerchantSearch = false,
+  accountUserEmail,
+  accountAvatarInitials,
+  onAccountLogout,
+}: HeaderProps) {
   const [query, setQuery] = useState("");
   const { pathname } = useLocation();
   const storybookRoute = pathname === "/storybook";
@@ -118,11 +128,11 @@ export function Header({ embeddedMerchantSearch = false }: HeaderProps) {
             <span className="text-center text-sm leading-5 text-[#444746] lg:text-base">Need Help?</span>
           </a>
         </div>
-        <div className="relative size-9 shrink-0 rounded-full border border-[#e0e0e0] bg-[#f5f9fe] md:size-10">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-sm font-bold leading-5 text-[#101010] md:text-base">SP</p>
-          </div>
-        </div>
+        <HeaderAccountMenu
+          userEmail={accountUserEmail ?? "siddharth.priya@paytm.com"}
+          avatarInitials={accountAvatarInitials}
+          onLogout={onAccountLogout}
+        />
       </div>
     </div>
   );

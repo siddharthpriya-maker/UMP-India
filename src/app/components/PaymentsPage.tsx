@@ -787,11 +787,11 @@ export function PaymentsPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-stretch gap-1">
           {/* Collections Card — ref + ring mark slot; expanded panel is fixed at same top/left */}
           <div
             ref={collectionsCardRef}
-            className={`relative flex min-w-0 flex-1 flex-col rounded-[12px] bg-[#F3F8FE] p-5 ${
+            className={`relative flex min-h-0 min-w-0 flex-1 flex-col rounded-[12px] bg-[#F3F8FE] p-5 ${
               summaryBreakdown === "collections" ? "ring-2 ring-inset ring-[#004299]/40" : ""
             }`}
           >
@@ -799,7 +799,7 @@ export function PaymentsPage() {
             <span className="min-w-0 break-words text-[20px] font-semibold leading-tight text-[#101010] tabular-nums">
               {formatInrRupeesPrecise(animCollections)}
             </span>
-            <div className="mt-3 flex items-center">
+            <div className="mt-auto flex items-center pt-3">
               <button
                 type="button"
                 className="inline-flex items-center gap-1.5 text-[12px] font-medium leading-4 text-[#004299] hover:underline"
@@ -812,14 +812,14 @@ export function PaymentsPage() {
           </div>
 
           {/* Minus Symbol */}
-          <div className="flex size-[16px] shrink-0 flex-col content-stretch items-center justify-center rounded-[12px] bg-white">
+          <div className="flex size-[16px] shrink-0 flex-col content-stretch items-center justify-center self-center rounded-[12px] bg-white">
             <div className="h-[2px] w-[8px] shrink-0 bg-[#7e7e7e]" />
           </div>
 
           {/* Adjustments Card */}
           <div
             ref={adjustmentsCardRef}
-            className={`relative flex min-w-0 flex-1 flex-col rounded-[12px] bg-[#FEF7F7] p-5 ${
+            className={`relative flex min-h-0 min-w-0 flex-1 flex-col rounded-[12px] bg-[#FEF7F7] p-5 ${
               summaryBreakdown === "adjustments" ? "ring-2 ring-inset ring-[#004299]/40" : ""
             }`}
           >
@@ -827,7 +827,7 @@ export function PaymentsPage() {
             <span className="min-w-0 break-words text-[20px] font-semibold leading-tight text-[#101010] tabular-nums">
               {formatInrRupeesPrecise(animAdjustments)}
             </span>
-            <div className="mt-3 flex items-center">
+            <div className="mt-auto flex items-center pt-3">
               <button
                 type="button"
                 className="inline-flex items-center gap-1.5 text-[12px] font-medium leading-4 text-[#004299] hover:underline"
@@ -840,14 +840,14 @@ export function PaymentsPage() {
           </div>
 
           {/* Minus Symbol */}
-          <div className="flex size-[16px] shrink-0 flex-col content-stretch items-center justify-center rounded-[12px] bg-white">
+          <div className="flex size-[16px] shrink-0 flex-col content-stretch items-center justify-center self-center rounded-[12px] bg-white">
             <div className="h-[2px] w-[8px] shrink-0 bg-[#7e7e7e]" />
           </div>
 
           {/* Deductions Card */}
           <div
             ref={deductionsCardRef}
-            className={`relative flex min-w-0 flex-1 flex-col rounded-[12px] bg-[#FEF7F7] p-5 ${
+            className={`relative flex min-h-0 min-w-0 flex-1 flex-col rounded-[12px] bg-[#FEF7F7] p-5 ${
               summaryBreakdown === "deductions" ? "ring-2 ring-inset ring-[#004299]/40" : ""
             }`}
           >
@@ -855,7 +855,7 @@ export function PaymentsPage() {
             <span className="min-w-0 break-words text-[20px] font-semibold leading-tight text-[#101010] tabular-nums">
               {formatInrRupeesPrecise(animDeductions)}
             </span>
-            <div className="mt-3 flex items-center">
+            <div className="mt-auto flex items-center pt-3">
               <button
                 type="button"
                 className="inline-flex items-center gap-1.5 text-[12px] font-medium leading-4 text-[#004299] hover:underline"
@@ -868,18 +868,18 @@ export function PaymentsPage() {
           </div>
 
           {/* Equals Symbol */}
-          <div className="flex size-[16px] shrink-0 flex-col content-stretch items-center justify-center gap-[2px] rounded-[12px] bg-white">
+          <div className="flex size-[16px] shrink-0 flex-col content-stretch items-center justify-center gap-[2px] self-center rounded-[12px] bg-white">
             <div className="h-[1.33px] w-[8px] shrink-0 bg-[#7e7e7e]" />
             <div className="h-[1.33px] w-[8px] shrink-0 bg-[#7e7e7e]" />
           </div>
 
           {/* Settlement Processed Card */}
-          <div className="flex flex-1 flex-col rounded-[12px] bg-[rgba(39,174,95,0.06)] p-5">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col rounded-[12px] bg-[rgba(39,174,95,0.06)] p-5">
             <span className="text-[14px] text-[#7e7e7e]">Settlement Processed</span>
             <span className="text-[20px] font-semibold text-[#101010] tabular-nums">
               {formatInrRupeesPrecise(animSettlementProcessed)}
             </span>
-            <div className="mt-3 flex items-center">
+            <div className="mt-auto flex items-center pt-3">
               <button
                 type="button"
                 className="inline-flex items-center gap-1.5 text-[12px] font-medium leading-4 text-[#004299] hover:underline"
@@ -891,20 +891,22 @@ export function PaymentsPage() {
           </div>
 
           {/* Plus Symbol */}
-          <div className="relative flex size-[16px] shrink-0 items-center justify-center rounded-[12px] bg-white content-stretch">
+          <div className="relative flex size-[16px] shrink-0 items-center justify-center self-center rounded-[12px] bg-white content-stretch">
             <div className="absolute h-[1.33px] w-[8px] bg-[#7e7e7e]" />
             <div className="absolute h-[8px] w-[1.33px] bg-[#7e7e7e]" />
           </div>
 
           {/* Available for Settlement Card - Primary */}
-          <div className="flex flex-1 flex-col rounded-[12px] bg-[#EFF8FD] p-5">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col rounded-[12px] bg-[#EFF8FD] p-5">
             <span className="truncate text-[14px] text-[#7e7e7e]">Available for Settlement</span>
             <span className="text-[20px] font-semibold text-[#101010] tabular-nums">
               {formatInrRupeesPrecise(animAvailable)}
             </span>
-            <PrimaryButton size="small" type="button" fullWidth className="mt-2">
-              Settle Now
-            </PrimaryButton>
+            <div className="mt-auto pt-3">
+              <PrimaryButton size="small" type="button" fullWidth>
+                Settle Now
+              </PrimaryButton>
+            </div>
           </div>
         </div>
       </div>
