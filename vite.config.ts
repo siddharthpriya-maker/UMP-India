@@ -17,4 +17,14 @@ function figmaAssetPlugin() {
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), figmaAssetPlugin()],
+  // Listen on all interfaces so `http://127.0.0.1:PORT` works, not only `localhost`
+  // (default can bind to IPv6-only; embedded browsers and bookmarks often use 127.0.0.1).
+  server: {
+    port: 5173,
+    host: true,
+  },
+  preview: {
+    port: 4173,
+    host: true,
+  },
 });

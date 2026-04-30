@@ -1,6 +1,6 @@
 import { useEffect, useId, useState } from "react";
 import {
-  X, ChevronDown, Upload, Plus, Trash2, Image, Type,
+  X, ChevronDown, Upload, Plus, Trash2,
   Layout,
 } from "lucide-react";
 import { TextField } from "../TextField";
@@ -16,10 +16,8 @@ import {
   type CustomerField,
   type CTAData,
   type PageCustomization,
-  type ProductMode,
-  type PricingType,
   type FieldType,
-  type DevicePreview,
+  resizeProductItems,
   type CoverType,
 } from "./builder-types";
 
@@ -289,20 +287,15 @@ function ProductProperties({
 }) {
   const patch = (p: Partial<ProductData>) => onChange({ ...data, ...p });
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
+  const useImage = data.itemCardsUseImage ?? true;
 
-  const addItem = () => {
-    const id = `item_${Date.now()}`;
-    patch({
-      items: [
-        ...data.items,
-        { id, image: "", title: "", description: "", price: 0, enableQuantity: false, quantity: 1, addons: [] },
-      ],
+  const setItemCardsUseImage = (next: boolean) => {
+    onChange({
+      ...data,
+      itemCardsUseImage: next,
+      items: next ? data.items : data.items.map((i) => ({ ...i, image: "" })),
     });
-    setExpandedItem(id);
   };
-
-  const removeItem = (id: string) =>
-    patch({ items: data.items.filter((i) => i.id !== id) });
 
   const updateItem = (id: string, p: Partial<ProductItem>) =>
     patch({ items: data.items.map((i) => (i.id === id ? { ...i, ...p } : i)) });
@@ -334,54 +327,55 @@ function ProductProperties({
 
   return (
     <div className="flex flex-col gap-4 p-4">
-      {/* Mode selector */}
       <div className="flex flex-col gap-1.5">
-        <span className="text-[12px] font-semibold text-[#7e7e7e]">Mode</span>
+        <span className="text-[12px] font-semibold text-[#7e7e7e]">Item card layout</span>
+        <p className="text-[11px] leading-snug text-[#acacac]">
+          Choose whether each line item shows a product image on the payment page.
+        </p>
         <div className="flex gap-1.5">
-          {(["single", "multiple", "catalog"] as ProductMode[]).map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => patch({ mode: m })}
-              className={[
-                "flex-1 rounded-[8px] border py-1.5 text-[11px] font-semibold capitalize transition-colors",
-                data.mode === m
-                  ? "border-[#004299] bg-[#f5f9fe] text-[#004299]"
-                  : "border-[#e0e0e0] text-[#7e7e7e] hover:border-[#ccc]",
-              ].join(" ")}
-            >
-              {m}
-            </button>
-          ))}
+          <button
+            type="button"
+            onClick={() => setItemCardsUseImage(true)}
+            className={[
+              "flex-1 rounded-[8px] border py-2 text-[11px] font-semibold transition-colors",
+              useImage
+                ? "border-[#004299] bg-[#f5f9fe] text-[#004299]"
+                : "border-[#e0e0e0] text-[#7e7e7e] hover:border-[#ccc]",
+            ].join(" ")}
+          >
+            With image
+          </button>
+          <button
+            type="button"
+            onClick={() => setItemCardsUseImage(false)}
+            className={[
+              "flex-1 rounded-[8px] border py-2 text-[11px] font-semibold transition-colors",
+              !useImage
+                ? "border-[#004299] bg-[#f5f9fe] text-[#004299]"
+                : "border-[#e0e0e0] text-[#7e7e7e] hover:border-[#ccc]",
+            ].join(" ")}
+          >
+            Without image
+          </button>
         </div>
       </div>
 
-      {/* Pricing type */}
       <SelectField
-        label="Pricing Type"
-        value={data.pricingType}
-        onChange={(v) => patch({ pricingType: v as PricingType })}
-        options={[
-          { value: "fixed", label: "Fixed Price" },
-          { value: "subscription", label: "Subscription" },
-          { value: "donation", label: "Donation" },
-          { value: "custom_donation", label: "Custom Donation" },
-          { value: "ecommerce", label: "eCommerce" },
-        ]}
+        label="Number of items"
+        value={String(data.items.length)}
+        onChange={(v) => {
+          const n = parseInt(v, 10) || 1;
+          const nextItems = resizeProductItems(data.items, n);
+          patch({ items: nextItems });
+        }}
+        options={Array.from({ length: 10 }, (_, i) => ({
+          value: String(i + 1),
+          label: `${i + 1} item${i === 0 ? "" : "s"}`,
+        }))}
       />
 
-      {/* Items */}
       <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <span className="text-[12px] font-semibold text-[#7e7e7e]">Items</span>
-          <button
-            type="button"
-            onClick={addItem}
-            className="flex items-center gap-1 text-[11px] font-semibold text-[#004299] hover:underline"
-          >
-            <Plus className="size-3" /> Add
-          </button>
-        </div>
+        <span className="text-[12px] font-semibold text-[#7e7e7e]">Item details</span>
         {data.items.map((item) => (
           <div key={item.id} className="rounded-[10px] border border-[#f0f0f0] bg-[#fafafa]">
             <button
@@ -390,18 +384,9 @@ function ProductProperties({
               className="flex w-full items-center justify-between px-3 py-2"
             >
               <span className="truncate text-[12px] font-medium text-[#101010]">
-                {item.title || "Untitled Item"}
+                {item.title || "Untitled item"}
               </span>
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); removeItem(item.id); }}
-                  className="flex size-5 items-center justify-center rounded text-[#fd5154] hover:bg-[#ffebef]"
-                >
-                  <Trash2 className="size-3" />
-                </button>
-                <ChevronDown className={`size-3.5 text-[#ccc] transition-transform ${expandedItem === item.id ? "" : "-rotate-90"}`} />
-              </div>
+              <ChevronDown className={`size-3.5 shrink-0 text-[#ccc] transition-transform ${expandedItem === item.id ? "" : "-rotate-90"}`} />
             </button>
             {expandedItem === item.id && (
               <div className="flex flex-col gap-3 border-t border-[#f0f0f0] p-3">
@@ -430,13 +415,15 @@ function ProductProperties({
                   checked={item.enableQuantity}
                   onChange={(v) => updateItem(item.id, { enableQuantity: v })}
                 />
-                <FileUploadField
-                  label="Image"
-                  value={item.image}
-                  onChange={(v) => updateItem(item.id, { image: v })}
-                  accept="image/*"
-                  hint="Product image"
-                />
+                {useImage ? (
+                  <FileUploadField
+                    label="Image"
+                    value={item.image}
+                    onChange={(v) => updateItem(item.id, { image: v })}
+                    accept="image/*"
+                    hint="Product image"
+                  />
+                ) : null}
                 {data.itemAddonsEnabled ? (
                   <div className="flex flex-col gap-3 rounded-[8px] border border-[#e8eef6] bg-[#f8fafc] p-3">
                     <div className="flex items-center justify-between gap-2">
@@ -504,37 +491,6 @@ function ProductProperties({
           </div>
         ))}
       </div>
-
-      {/* Donation goal */}
-      {(data.pricingType === "donation" || data.pricingType === "custom_donation") && (
-        <Collapsible title="Donation Goal">
-          <ToggleRow
-            label="Show donation goal"
-            checked={data.showDonationGoal}
-            onChange={(v) => patch({ showDonationGoal: v })}
-          />
-          {data.showDonationGoal && (
-            <>
-              <TextField
-                label="Goal Amount"
-                type="number"
-                value={String(data.donationGoal)}
-                onChange={(v) => patch({ donationGoal: parseFloat(v) || 0 })}
-                size="compact"
-                prefix="₹"
-              />
-              <TextField
-                label="Current Amount"
-                type="number"
-                value={String(data.donationCurrent)}
-                onChange={(v) => patch({ donationCurrent: parseFloat(v) || 0 })}
-                size="compact"
-                prefix="₹"
-              />
-            </>
-          )}
-        </Collapsible>
-      )}
     </div>
   );
 }
@@ -1049,23 +1005,6 @@ function FileUploadField({
         </label>
       )}
       {hint && <span className="text-[10px] text-[#ccc]">{hint}</span>}
-    </div>
-  );
-}
-
-function Collapsible({ title, children }: { title: string; children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="rounded-[10px] border border-[#f0f0f0]">
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between px-3 py-2"
-      >
-        <span className="text-[12px] font-semibold text-[#7e7e7e]">{title}</span>
-        <ChevronDown className={`size-3.5 text-[#ccc] transition-transform ${open ? "" : "-rotate-90"}`} />
-      </button>
-      {open && <div className="flex flex-col gap-3 border-t border-[#f0f0f0] p-3">{children}</div>}
     </div>
   );
 }

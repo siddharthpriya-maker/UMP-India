@@ -532,8 +532,8 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
             previewWide: true,
             specs: [
               "Three **horizontal line segments** only (no step titles in the UI): `ol` with `flex` + `gap-2` / `sm:gap-3`, each `li` is `flex-1`.",
-              "Track: **`h-1`**, **`rounded-full`**. Completed and current: **`#004299`**; upcoming: **`#e0e0e0`**. `transition-colors` on the bar.",
-              "**`WizardStepHeader`** (below the bar in the app): **`h1`** `text-[32px] font-semibold leading-[40px] text-[#101010]`; subtext **`p`** `text-[14px] leading-[20px] text-[#7e7e7e]`, `max-w-[720px]`, `px-[32px] pb-4` — same hierarchy as **Payment Pages** and **Reports** page titles.",
+              "Track: **`h-1`**, **`rounded-full`**. Completed: **`#21c179`** (success); current: **`#004299`**; upcoming: **`#e0e0e0`**. `transition-colors` on the bar.",
+              "**`WizardStepHeader`** (below the bar): optional **`trailing`** + **`borderBottom`** for Page builder (Desktop/Mobile + Preview on the title row); row `flex items-center justify-between` when **`trailing`** is set, else `flex items-center gap-2`; `flex items-center gap-2` for back + title; `pb-4 pt-0` + default **`px-[32px]`** (omit with **`flushHorizontal`**); title stack + optional **`p`** as before.",
               "`onStepSelect`: each completed or current segment is a `button` (full width of its cell); upcoming segments are static with `cursor-not-allowed` + `title`. Storybook uses local state for preview.",
             ],
             accessibility: [
@@ -550,7 +550,7 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
             preview: <StepWizardStorybookPreview currentStep="builder" />,
             previewWide: true,
             specs: [
-              "First segment **filled** (`#004299`); second **current** (blue); third **upcoming** (gray).",
+              "First segment **completed** (`#21c179`); second **current** (`#004299`); third **upcoming** (`#e0e0e0`).",
             ],
             accessibility: [
               "First two segments are focusable as buttons when `onStepSelect` is set; third is not in tab order.",
@@ -565,7 +565,7 @@ export const STORYBOOK_REGISTRY: StoryCategory[] = [
             preview: <StepWizardStorybookPreview currentStep="settings" />,
             previewWide: true,
             specs: [
-              "First two segments solid **#004299** (complete); third segment **#004299** (current). All three segments are `button`s for revisiting earlier steps.",
+              "First two segments **completed** (`#21c179`); third segment **current** (`#004299`). All three segments are `button`s for revisiting earlier steps.",
             ],
             accessibility: [
               "On the last step, steps 1–2 use **go to this step**; step 3 is current.",

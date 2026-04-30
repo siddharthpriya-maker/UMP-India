@@ -1,4 +1,4 @@
-import { Package, Plus, ShoppingCart, Heart, Eye, Check } from "lucide-react";
+import { Package, ShoppingCart, Check } from "lucide-react";
 import type { ProductData, ProductItem, PageCustomization, DevicePreview } from "./builder-types";
 
 interface ProductSectionProps {
@@ -17,15 +17,13 @@ export function ProductSection({
   onSelect,
 }: ProductSectionProps) {
   const isMobile = previewMode === "mobile";
-  const hasItems = data.items.some((i) => i.title.trim());
-
-  const visibleItems = data.items.slice(0, 3);
-  const hasMore = data.items.length > 3;
-
+  const useTwoCol = !isMobile && data.items.length > 1;
   const total = data.items.reduce((sum, i) => sum + lineTotal(i), 0);
 
   const formatAmount = (n: number) =>
     new Intl.NumberFormat("en-IN", { style: "currency", currency: data.currency, maximumFractionDigits: 0 }).format(n);
+
+  const hasAnyFilledItem = data.items.some((i) => i.title.trim());
 
   return (
     <div
@@ -49,62 +47,29 @@ export function ProductSection({
         Products
       </div>
 
-      {/* Mode badge */}
-      <div className="mb-3 flex items-center gap-2">
-        <span className="text-[12px] font-semibold uppercase tracking-wider text-[#7e7e7e]">
-          {data.mode === "single" ? "Single Item" : data.mode === "multiple" ? "Multiple Items" : "Catalog"}
-        </span>
-        {data.pricingType !== "fixed" && (
-          <span className="rounded-full bg-[#f0f0f0] px-2 py-0.5 text-[11px] font-medium text-[#7e7e7e]">
-            {data.pricingType.replace("_", " ")}
-          </span>
-        )}
-      </div>
-
-      {!hasItems ? (
+      {data.items.length === 0 ? (
         <EmptyProductState />
       ) : (
         <>
-          <div className={`grid gap-3 ${!isMobile && data.mode !== "single" ? "grid-cols-2" : "grid-cols-1"}`}>
-            {visibleItems.map((item) => (
-              <ItemCard
-                key={item.id}
-                item={item}
-                currency={data.currency}
-                primaryColor={customization.primaryColor}
-                showQuantity={item.enableQuantity}
-                itemAddonsEnabled={data.itemAddonsEnabled}
-              />
-            ))}
+          <div className={`grid gap-3 ${useTwoCol ? "grid-cols-2" : "grid-cols-1"}`}>
+            {data.items.map((item) =>
+              item.title.trim() ? (
+                <ItemCard
+                  key={item.id}
+                  item={item}
+                  currency={data.currency}
+                  primaryColor={customization.primaryColor}
+                  showQuantity={item.enableQuantity}
+                  itemAddonsEnabled={data.itemAddonsEnabled}
+                  showImageSlot={data.itemCardsUseImage ?? true}
+                />
+              ) : (
+                <ItemCardShimmer key={item.id} showImageSlot={data.itemCardsUseImage ?? true} />
+              ),
+            )}
           </div>
 
-          {hasMore && (
-            <button className="mt-3 flex w-full items-center justify-center gap-2 rounded-[10px] border border-dashed border-[#e0e0e0] py-3 text-[13px] font-semibold text-[#004299] transition-colors hover:border-[#004299] hover:bg-[#f5f9fe]">
-              <Eye className="size-4" />
-              View all {data.items.length} items
-            </button>
-          )}
-
-          {/* Donation goal */}
-          {data.pricingType === "donation" && data.showDonationGoal && (
-            <div className="mt-4 rounded-[10px] bg-[#f5f9fe] p-3">
-              <div className="flex items-center justify-between text-[12px] text-[#7e7e7e]">
-                <span>{formatAmount(data.donationCurrent)} raised</span>
-                <span>Goal: {formatAmount(data.donationGoal)}</span>
-              </div>
-              <div className="mt-1.5 h-[6px] overflow-hidden rounded-full bg-[#e0e0e0]">
-                <div
-                  className="h-full rounded-full transition-all"
-                  style={{
-                    width: `${Math.min(100, (data.donationCurrent / Math.max(data.donationGoal, 1)) * 100)}%`,
-                    backgroundColor: customization.primaryColor,
-                  }}
-                />
-              </div>
-            </div>
-          )}
-
-          {total > 0 && (
+          {hasAnyFilledItem && total > 0 && (
             <div className="mt-3 flex items-center justify-between border-t border-[#f0f0f0] pt-3">
               <span className="text-[13px] font-medium text-[#7e7e7e]">Total</span>
               <span className="text-[16px] font-bold" style={{ color: customization.primaryColor }}>
@@ -125,7 +90,7 @@ function EmptyProductState() {
         <Package className="size-6 text-[#7e7e7e]" />
       </div>
       <p className="text-center text-[13px] text-[#acacac]">
-        Add what you&apos;re selling — items, plans, or donations
+        Set the number of items in Properties, then fill in each item&apos;s details
       </p>
     </div>
   );
@@ -140,20 +105,46 @@ function lineTotal(item: ProductItem) {
   return base + addonSum;
 }
 
+function shimmerBar(className: string) {
+  return (
+    <div
+      className={["rounded-md bg-[#ebebeb] animate-pulse", className].join(" ")}
+      aria-hidden
+    />
+  );
+}
+
+function ItemCardShimmer({ showImageSlot }: { showImageSlot: boolean }) {
+  return (
+    <div className="flex gap-3 rounded-[12px] border border-[#f0f0f0] bg-white p-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+      {showImageSlot ? (
+        <div className="size-[56px] shrink-0 rounded-[8px] bg-[#ebebeb] animate-pulse" aria-hidden />
+      ) : null}
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 py-0.5">
+        {shimmerBar("h-3.5 w-[72%]")}
+        {shimmerBar("h-3 w-[55%]")}
+        {shimmerBar("h-4 w-20 mt-1")}
+      </div>
+    </div>
+  );
+}
+
 function ItemCard({
   item,
   currency,
   primaryColor,
   showQuantity,
   itemAddonsEnabled,
+  showImageSlot,
 }: {
   item: ProductItem;
   currency: string;
   primaryColor: string;
   showQuantity: boolean;
   itemAddonsEnabled: boolean;
+  showImageSlot: boolean;
 }) {
-  const hasImage = !!item.image;
+  const hasImage = showImageSlot && !!item.image;
   const formatAmount = (n: number) =>
     new Intl.NumberFormat("en-IN", { style: "currency", currency, maximumFractionDigits: 0 }).format(n);
 
@@ -161,13 +152,15 @@ function ItemCard({
 
   return (
     <div className="flex gap-3 rounded-[12px] border border-[#f0f0f0] bg-white p-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-shadow hover:shadow-md">
-      {hasImage ? (
-        <img src={item.image} alt={item.title} className="size-[56px] shrink-0 rounded-[8px] object-cover" />
-      ) : (
-        <div className="flex size-[56px] shrink-0 items-center justify-center rounded-[8px] bg-[#f5f5f5]">
-          <ShoppingCart className="size-5 text-[#ccc]" />
-        </div>
-      )}
+      {showImageSlot ? (
+        hasImage ? (
+          <img src={item.image} alt={item.title} className="size-[56px] shrink-0 rounded-[8px] object-cover" />
+        ) : (
+          <div className="flex size-[56px] shrink-0 items-center justify-center rounded-[8px] bg-[#f5f5f5]">
+            <ShoppingCart className="size-5 text-[#ccc]" />
+          </div>
+        )
+      ) : null}
       <div className="flex min-w-0 flex-1 flex-col justify-center">
         <span className="truncate text-[14px] font-semibold text-[#101010]">
           {item.title || "Untitled Item"}

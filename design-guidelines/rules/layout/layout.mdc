@@ -311,7 +311,7 @@ useEffect(() => {
 
 ### Step 2: Page Builder (`PageBuilder.tsx`)
 - Shell: `flex h-full min-h-0 flex-col bg-[#fafafa]`
-- `StepWizard` + `BuilderTopBar` (h-[56px])
+- `StepWizard` + `WizardStepHeader` (same white band): title row includes **Desktop / Mobile** toggle and **Preview** via `BuilderPreviewControls` + `border-b` to the canvas
 - Three-panel layout: `flex min-h-0 flex-1 overflow-hidden`
   - **Left — Section Component Library:** `w-[260px]`, section-aware tabs
   - **Center — Canvas Workspace:** `flex-1`, dotted grid background, zoom 40%–200%

@@ -1,7 +1,7 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, type Dispatch, type SetStateAction } from "react";
 import { StepWizard } from "./StepWizard";
 import { WizardStepHeader } from "./WizardStepHeader";
-import { BuilderTopBar } from "./BuilderTopBar";
+import { BuilderPreviewControls } from "./BuilderPreviewControls";
 import { SectionComponentLibrary } from "./SectionComponentLibrary";
 import { BuilderCanvas } from "./BuilderCanvas";
 import { PropertyPanel } from "./PropertyPanel";
@@ -19,45 +19,45 @@ import type {
   CustomerField,
 } from "./builder-types";
 import {
-  DEFAULT_PAGE_STATE,
+  createInitialStructuredPageStateFromPageInfo,
   SECTION_ORDER,
   isSectionComplete,
   isPageValid,
-  getProductDefaultsForCategory,
+  resizeProductItems,
 } from "./builder-types";
 import type { BuilderStep } from "./types";
 
 interface PageBuilderProps {
   currentStep: BuilderStep;
   onNext: () => void;
+  onBack: () => void;
   onStepSelect?: (step: BuilderStep) => void;
   pageName?: string;
   pageCategory?: string;
   businessEmail?: string;
   businessPhone?: string;
+  /** Lifted draft so navigating away from the builder step does not discard edits. */
+  pageState: StructuredPageState;
+  setPageState: Dispatch<SetStateAction<StructuredPageState>>;
 }
 
-export function PageBuilder({ currentStep, onNext, onStepSelect, pageName, pageCategory, businessEmail, businessPhone }: PageBuilderProps) {
-  const [pageState, setPageState] = useState<StructuredPageState>(() => {
-    const state = { ...DEFAULT_PAGE_STATE };
-    if (pageCategory) {
-      const productDefaults = getProductDefaultsForCategory(pageCategory);
-      state.product = { ...state.product, ...productDefaults };
-    }
-    if (businessEmail || businessPhone) {
-      state.branding = {
-        ...state.branding,
-        businessEmail: businessEmail || "",
-        businessPhone: businessPhone || "",
-      };
-    }
-    return state;
-  });
+export function PageBuilder({
+  currentStep,
+  onNext,
+  onBack,
+  onStepSelect,
+  pageName,
+  pageCategory,
+  businessEmail,
+  businessPhone,
+  pageState,
+  setPageState,
+}: PageBuilderProps) {
   const [selectedSection, setSelectedSection] = useState<SectionId | null>(null);
   const [previewMode, setPreviewMode] = useState<DevicePreview>("desktop");
   const [showGuide, setShowGuide] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [pageTitle, setPageTitle] = useState(pageName || "Untitled Payment Page");
+  const displayPageName = pageName?.trim() || "Untitled Payment Page";
 
   const autosaveTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -99,22 +99,9 @@ export function PageBuilder({ currentStep, onNext, onStepSelect, pageName, pageC
           break;
         case "product":
           if (def.id === "item_card") {
-            const id = `item_${Date.now()}`;
             next.product = {
               ...prev.product,
-              items: [
-                ...prev.product.items,
-                {
-                  id,
-                  image: "",
-                  title: "",
-                  description: "",
-                  price: 0,
-                  enableQuantity: false,
-                  quantity: 1,
-                  addons: [],
-                },
-              ],
+              items: resizeProductItems(prev.product.items, prev.product.items.length + 1),
             };
           }
           break;
@@ -154,22 +141,18 @@ export function PageBuilder({ currentStep, onNext, onStepSelect, pageName, pageC
   }, []);
 
   const handleClearAll = useCallback(() => {
-    setPageState(() => {
-      const state = { ...DEFAULT_PAGE_STATE };
-      if (pageCategory) {
-        state.product = { ...state.product, ...getProductDefaultsForCategory(pageCategory) };
-      }
-      if (businessEmail || businessPhone) {
-        state.branding = {
-          ...state.branding,
-          businessEmail: businessEmail || "",
-          businessPhone: businessPhone || "",
-        };
-      }
-      return state;
-    });
+    setPageState(
+      createInitialStructuredPageStateFromPageInfo({
+        pageName: pageName?.trim() ?? "",
+        pageCategory: pageCategory ?? "",
+        businessEmail: businessEmail ?? "",
+        businessPhone: businessPhone ?? "",
+        expiryDate: "",
+        browserTabTitle: "",
+      }),
+    );
     setSelectedSection(null);
-  }, [pageCategory, businessEmail, businessPhone]);
+  }, [setPageState, pageName, pageCategory, businessEmail, businessPhone]);
 
   const handleSaveDraft = useCallback(() => {
     setIsSaving(true);
@@ -190,21 +173,22 @@ export function PageBuilder({ currentStep, onNext, onStepSelect, pageName, pageC
       <div className="shrink-0 bg-white">
         <StepWizard currentStep={currentStep} onStepSelect={onStepSelect} />
         <WizardStepHeader
-          title="Page builder"
-          description="Add sections, set up products, and customise how your payment page looks and reads for customers."
+          title={`Payment Page Builder - ${displayPageName}`}
+          onBack={onBack}
+          flushHorizontal
+          borderBottom
+          trailing={
+            <BuilderPreviewControls
+              previewMode={previewMode}
+              onPreviewModeChange={setPreviewMode}
+              onPreview={() => {}}
+            />
+          }
         />
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col">
         <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
-          <BuilderTopBar
-            title={pageTitle}
-            onTitleChange={setPageTitle}
-            previewMode={previewMode}
-            onPreviewModeChange={setPreviewMode}
-            onPreview={() => {}}
-          />
-
           <div className="flex min-h-0 flex-1 overflow-hidden">
             <SectionComponentLibrary
               selectedSection={selectedSection}

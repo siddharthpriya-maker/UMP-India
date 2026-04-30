@@ -15,8 +15,8 @@ export interface StepWizardProps {
 }
 
 /**
- * Three-segment line progress (no step labels in the UI). Brand blue for
- * completed / current; neutral track for upcoming steps.
+ * Three-segment line progress (no step labels in the UI). Success green for
+ * completed steps, brand blue for the current step, neutral track for upcoming.
  */
 export function StepWizard({ currentStep, onStepSelect }: StepWizardProps) {
   const currentIdx = stepOrder.indexOf(currentStep);
@@ -29,9 +29,12 @@ export function StepWizard({ currentStep, onStepSelect }: StepWizardProps) {
       <ol className="m-0 flex w-full min-w-0 list-none items-stretch gap-2 p-0 sm:gap-3">
         {steps.map((step, idx) => {
           const isUpcoming = idx > currentIdx;
+          const isCurrent = idx === currentIdx;
           const lineClass = isUpcoming
             ? "bg-[#e0e0e0]"
-            : "bg-[#004299]";
+            : isCurrent
+              ? "bg-[#004299]"
+              : "bg-[#21c179]";
 
           const line = (
             <span

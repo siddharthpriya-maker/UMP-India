@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { Plus, ChevronDown, MoreVertical, Search } from "lucide-react";
 import type { PaymentPage, PageStatus, BuilderStep, PageInfo } from "./types";
+import { createInitialStructuredPageStateFromPageInfo, type StructuredPageState } from "./builder-types";
 import { CreatePageEntry } from "./CreatePageEntry";
 import { FilterBar } from "../FilterBar";
 import { Pagination } from "../Pagination";
@@ -90,6 +91,8 @@ const statusConfig: Record<PageStatus, { label: string; textClass: string; bgCla
 export function PaymentPagesPage() {
   const [showCreatePopup, setShowCreatePopup] = useState(false);
   const [builderStep, setBuilderStep] = useState<BuilderStep | null>(null);
+  /** Draft page builder canvas; kept while moving between info ↔ builder so back navigation does not reset edits. */
+  const [builderPageState, setBuilderPageState] = useState<StructuredPageState | null>(null);
   const [pageInfo, setPageInfo] = useState<PageInfo>({
     pageName: "",
     pageCategory: "",
@@ -109,6 +112,11 @@ export function PaymentPagesPage() {
   const dateRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  useLayoutEffect(() => {
+    if (builderStep !== "builder") return;
+    setBuilderPageState((prev) => prev ?? createInitialStructuredPageStateFromPageInfo(pageInfo));
+  }, [builderStep, pageInfo]);
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (statusRef.current && !statusRef.current.contains(e.target as Node)) setIsStatusOpen(false);
@@ -127,11 +135,13 @@ export function PaymentPagesPage() {
 
   const handleCreateSelect = () => {
     setShowCreatePopup(false);
+    setBuilderPageState(null);
     setBuilderStep("info");
   };
 
   const handleBuilderBack = () => {
     if (builderStep === "info") {
+      setBuilderPageState(null);
       setBuilderStep(null);
     } else if (builderStep === "builder") {
       setBuilderStep("info");
@@ -142,10 +152,12 @@ export function PaymentPagesPage() {
 
   const handleBuilderNext = () => {
     if (builderStep === "info") {
+      setBuilderPageState((prev) => prev ?? createInitialStructuredPageStateFromPageInfo(pageInfo));
       setBuilderStep("builder");
     } else if (builderStep === "builder") {
       setBuilderStep("settings");
     } else if (builderStep === "settings") {
+      setBuilderPageState(null);
       setBuilderStep(null);
     }
   };
@@ -165,16 +177,26 @@ export function PaymentPagesPage() {
     );
   }
   if (builderStep === "builder") {
+    if (!builderPageState) {
+      return (
+        <div className="flex w-full min-h-0 flex-1 flex-col overflow-hidden bg-[#fafafa]" aria-busy="true">
+          <span className="sr-only">Loading page builder</span>
+        </div>
+      );
+    }
     return (
       <div className="flex w-full min-h-0 flex-1 flex-col overflow-hidden">
         <PageBuilder
           currentStep={builderStep}
           onNext={handleBuilderNext}
+          onBack={handleBuilderBack}
           onStepSelect={setBuilderStep}
           pageName={pageInfo.pageName}
           pageCategory={pageInfo.pageCategory}
           businessEmail={pageInfo.businessEmail}
           businessPhone={pageInfo.businessPhone}
+          pageState={builderPageState}
+          setPageState={setBuilderPageState}
         />
       </div>
     );

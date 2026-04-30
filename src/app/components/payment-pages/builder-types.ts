@@ -1,5 +1,7 @@
 /* ─── Structured Payment Page Builder Types ───────────────────────────────── */
 
+import type { PageInfo } from "./types";
+
 export type DevicePreview = "desktop" | "mobile";
 
 /* ─── Sections ─────────────────────────────────────────────────────────────── */
@@ -97,7 +99,9 @@ export interface ProductItem {
 export type PricingType = "fixed" | "subscription" | "donation" | "custom_donation" | "ecommerce";
 
 export interface ProductData {
+  /** Legacy layout hint; canvas derives columns from item count. */
   mode: ProductMode;
+  /** Legacy; checkout flows use fixed pricing in this builder. */
   pricingType: PricingType;
   items: ProductItem[];
   showDonationGoal: boolean;
@@ -105,6 +109,8 @@ export interface ProductData {
   donationCurrent: number;
   currency: string;
   itemCardEnabled: boolean;
+  /** When true, item cards show an image slot (canvas + properties). */
+  itemCardsUseImage: boolean;
   /** Optional extras (checkbox list) for each item card. */
   itemAddonsEnabled: boolean;
   pricingPlanEnabled: boolean;
@@ -132,11 +138,42 @@ export const DEFAULT_PRODUCT: ProductData = {
   donationCurrent: 0,
   currency: "INR",
   itemCardEnabled: true,
+  itemCardsUseImage: true,
   itemAddonsEnabled: false,
   pricingPlanEnabled: false,
   donationAmountEnabled: false,
   donationGoalEnabled: false,
 };
+
+const MIN_ITEM_SLOTS = 1;
+const MAX_ITEM_SLOTS = 10;
+
+/** Grow or shrink the items list while preserving existing rows (trim from the end). */
+export function resizeProductItems(items: ProductItem[], targetCount: number): ProductItem[] {
+  const t = Math.max(MIN_ITEM_SLOTS, Math.min(MAX_ITEM_SLOTS, Math.floor(targetCount)));
+  if (items.length > t) {
+    return items.slice(0, t);
+  }
+  if (items.length === t) {
+    return items;
+  }
+  const out = [...items];
+  let idx = out.length;
+  while (idx < t) {
+    out.push({
+      id: `item_${Date.now()}_${idx}_${Math.random().toString(36).slice(2, 9)}`,
+      image: "",
+      title: "",
+      description: "",
+      price: 0,
+      enableQuantity: false,
+      quantity: 1,
+      addons: [],
+    });
+    idx += 1;
+  }
+  return out;
+}
 
 /* ─── Customer Details ─────────────────────────────────────────────────────── */
 
@@ -264,6 +301,23 @@ export function getProductDefaultsForCategory(category: string): Pick<
         donationGoalEnabled: false,
       };
   }
+}
+
+/** Fresh builder canvas from page info (step 1). Matches `PageBuilder` initial merge behaviour. */
+export function createInitialStructuredPageStateFromPageInfo(info: PageInfo): StructuredPageState {
+  const state: StructuredPageState = { ...DEFAULT_PAGE_STATE };
+  if (info.pageCategory) {
+    const productDefaults = getProductDefaultsForCategory(info.pageCategory);
+    state.product = { ...state.product, ...productDefaults };
+  }
+  if (info.businessEmail || info.businessPhone) {
+    state.branding = {
+      ...state.branding,
+      businessEmail: info.businessEmail || "",
+      businessPhone: info.businessPhone || "",
+    };
+  }
+  return state;
 }
 
 /* ─── Section component library definitions ────────────────────────────────── */
