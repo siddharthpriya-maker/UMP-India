@@ -15,6 +15,7 @@ import { SettingsPage } from "./components/SettingsPage";
 import { AuthorizationPopupDemo } from "./components/AuthorizationPopupDemo";
 import { LoginPage } from "./components/LoginPage";
 import { StorybookPage } from "./components/storybook/StorybookPage";
+import { AgentStudioPage } from "./components/ai-agent-studio/AgentStudioPage";
 import { MerchantReportingProvider } from "./context/MerchantReportingContext";
 
 export const TAB_ROUTES: Record<string, string> = {
@@ -23,6 +24,7 @@ export const TAB_ROUTES: Record<string, string> = {
   "Settlements": "/settlements",
   "Refunds": "/refunds",
   "Reports": "/reports",
+  "AI Agent Studio": "/ai-agent-studio",
   "Accept Payments": "/accept-payments",
   "Payment Links": "/payment-links",
   "Payment Pages": "/payment-pages",
@@ -86,6 +88,15 @@ function AppShell() {
                       <Route path="/refunds" element={<RefundsPage />} />
                       <Route path="/reports" element={<ReportsPage />} />
                       <Route path="/report" element={<Navigate to="/reports" replace />} />
+                      <Route path="/ai-agent-studio" element={<AgentStudioPage />} />
+                      <Route
+                        path="/ai-agent-studio/marketplace"
+                        element={<Navigate to="/ai-agent-studio?tab=marketplace" replace />}
+                      />
+                      <Route
+                        path="/ai-agent-studio/my-agents"
+                        element={<Navigate to="/ai-agent-studio?tab=my_agents" replace />}
+                      />
                       <Route path="/accept-payments" element={<DesignInProgress pageName="Accept Payments" />} />
                       <Route path="/payment-links" element={<DesignInProgress pageName="Payment Links" />} />
                       <Route path="/payment-pages" element={<PaymentPagesPage />} />

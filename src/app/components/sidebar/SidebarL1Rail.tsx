@@ -7,6 +7,7 @@ import SettingsDuo from "../../../imports/SettingsDuo";
 import Dev from "../../../imports/Dev";
 import ReportDuo from "../../../imports/ReportDuo";
 import { MyServicesIcon } from "../Icons";
+import aiAgentStudioIconUrl from "../../../assets/icons/ai_agent_studio.svg";
 
 /** Same `d` as `src/assets/icons/symbol.svg` — keep in sync with `storybook/storyRegistry.tsx` SYMBOL_PATH_FROM_ASSET. */
 const RAIL_SYMBOL_PATH =
@@ -105,6 +106,15 @@ function SettlementIcon() {
   );
 }
 
+/** AI Agent Studio — robot head with sparkles (matches `src/assets/icons/ai_agent_studio.svg`). */
+function AiAgentStudioIcon() {
+  return (
+    <div className="flex size-6 shrink-0 items-center justify-center">
+      <img src={aiAgentStudioIconUrl} alt="" width={24} height={24} className="block size-6" aria-hidden />
+    </div>
+  );
+}
+
 function RefundsIcon() {
   return (
     <svg className="size-6" fill="none" viewBox="0 0 24 24">
@@ -180,7 +190,7 @@ function NavItem({ icon, label, isActive, onClick, onMouseEnter }: NavItemProps)
       >
         {icon}
       </div>
-      <p className={`text-center text-[10px] leading-[12px] ${isActive ? "font-bold" : ""}`}>{label}</p>
+      <p className={`max-w-[60px] text-center text-[10px] leading-[12px] ${isActive ? "font-bold" : ""}`}>{label}</p>
     </button>
   );
 }
@@ -195,6 +205,7 @@ const menuItems = [
 
 const bottomItems = [
   { icon: <LabelIcon />, label: "Accept Payments" },
+  { icon: <AiAgentStudioIcon />, label: "AI Agent Studio" },
   { icon: <MyServicesIcon className="size-6" />, label: "My Services" },
   { icon: <div className="size-6"><SettingsDuo /></div>, label: "Settings" },
   { icon: <div className="size-6"><Dev /></div>, label: "Developer" },
