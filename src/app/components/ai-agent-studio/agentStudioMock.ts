@@ -6,10 +6,14 @@ export type MarketplaceAgent = {
   id: string;
   name: string;
   tagline: string;
-  category: "Payments" | "Settlements" | "Disputes" | "Subscriptions" | "Insights";
+  category: "Payments" | "Settlements" | "Disputes" | "Subscriptions" | "Insights" | "Reconciliation";
   installs: number;
   rating: number;
   observeByDefault: boolean;
+  /** Headline outcome the merchant should expect (PRD "Value saved" KPI — the why). */
+  valueProp?: string;
+  /** Lowercased keywords for AI Assist intent matching. */
+  intents?: string[];
 };
 
 export type InstalledAgent = {
@@ -30,6 +34,8 @@ export const MARKETPLACE_AGENTS: MarketplaceAgent[] = [
     installs: 12_400,
     rating: 4.7,
     observeByDefault: true,
+    valueProp: "Recovers ~7% of failed payments — avg ₹1.8L / month",
+    intents: ["failed", "fail", "retry", "recover", "upi", "card", "checkout", "drop", "abandon", "payment", "cart"],
   },
   {
     id: "def_subscription_recovery",
@@ -39,6 +45,8 @@ export const MARKETPLACE_AGENTS: MarketplaceAgent[] = [
     installs: 8_200,
     rating: 4.5,
     observeByDefault: true,
+    valueProp: "Saves ~12% of churning subscribers from involuntary failures",
+    intents: ["subscription", "renewal", "renew", "churn", "mandate", "recur", "winback", "retention"],
   },
   {
     id: "def_settlement_insights",
@@ -48,6 +56,8 @@ export const MARKETPLACE_AGENTS: MarketplaceAgent[] = [
     installs: 15_100,
     rating: 4.8,
     observeByDefault: true,
+    valueProp: "Flags settlement gaps in minutes instead of next-day discovery",
+    intents: ["settlement", "settle", "payout", "credited", "money", "bank", "delay", "missing", "anomaly"],
   },
   {
     id: "def_dispute_responder",
@@ -57,6 +67,8 @@ export const MARKETPLACE_AGENTS: MarketplaceAgent[] = [
     installs: 6_300,
     rating: 4.6,
     observeByDefault: true,
+    valueProp: "Cuts dispute response time from 2 days to 4 hours",
+    intents: ["dispute", "chargeback", "evidence", "respond", "refund", "complaint"],
   },
   {
     id: "def_cashflow_forecast",
@@ -66,6 +78,19 @@ export const MARKETPLACE_AGENTS: MarketplaceAgent[] = [
     installs: 9_800,
     rating: 4.4,
     observeByDefault: true,
+    valueProp: "Predicts cash position 30 / 90 days out — plan vendor payouts confidently",
+    intents: ["cashflow", "cash flow", "forecast", "liquidity", "predict", "plan", "vendor", "burn", "runway"],
+  },
+  {
+    id: "def_reconciliation",
+    name: "SmartRecon",
+    tagline: "Compares PG, settlement, and bank records; flags mismatches with corrective actions.",
+    category: "Reconciliation",
+    installs: 11_700,
+    rating: 4.7,
+    observeByDefault: true,
+    valueProp: "Closes books in 1 hour instead of a full day — finance team unblocked",
+    intents: ["recon", "reconcile", "reconciliation", "match", "bank", "statement", "ledger", "books", "finance", "utr", "rrn"],
   },
 ];
 

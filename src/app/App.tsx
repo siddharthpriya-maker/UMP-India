@@ -16,6 +16,7 @@ import { AuthorizationPopupDemo } from "./components/AuthorizationPopupDemo";
 import { LoginPage } from "./components/LoginPage";
 import { StorybookPage } from "./components/storybook/StorybookPage";
 import { AgentStudioPage } from "./components/ai-agent-studio/AgentStudioPage";
+import { AgentStudioEmptyPage } from "./components/ai-agent-studio/AgentStudioEmptyPage";
 import { MerchantReportingProvider } from "./context/MerchantReportingContext";
 
 export const TAB_ROUTES: Record<string, string> = {
@@ -89,6 +90,7 @@ function AppShell() {
                       <Route path="/reports" element={<ReportsPage />} />
                       <Route path="/report" element={<Navigate to="/reports" replace />} />
                       <Route path="/ai-agent-studio" element={<AgentStudioPage />} />
+                      <Route path="/ai-agent-studio-new" element={<AgentStudioEmptyPage />} />
                       <Route
                         path="/ai-agent-studio/marketplace"
                         element={<Navigate to="/ai-agent-studio?tab=marketplace" replace />}
